@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+		<LangVersion>latest</LangVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+		<Company>Eshava</Company>
+    <Authors>Eshava</Authors>
+    <Product>Eshava.Report.Pdf</Product>
+    <Description>A library to create pdf from xml. Based on PdfSharp</Description>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/eshava/report.pdf</RepositoryUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RootNamespace>Eshava.Report.Pdf</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

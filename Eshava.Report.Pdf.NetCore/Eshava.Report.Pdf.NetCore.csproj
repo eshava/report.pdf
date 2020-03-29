@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Authors>Eshava</Authors>
+    <Company>EshavaEshava</Company>
+    <Product>Eshava.Report.Pdf</Product>
+    <Description>A library to create pdf from xml. Based on PdfSharp</Description>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/eshava/report.pdf</RepositoryUrl>
+    <RootNamespace>Eshava.Report.Pdf</RootNamespace>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="PdfSharpCore" Version="1.1.22" />
+		<PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta0009" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0007" />
+		<PackageReference Include="System.Runtime.Caching" Version="4.7.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+    <ProjectReference Include="..\Eshava.Report.Pdf.Core\Eshava.Report.Pdf.Core.csproj" />
+  </ItemGroup>
+
+</Project>
