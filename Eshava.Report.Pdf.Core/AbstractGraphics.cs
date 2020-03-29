@@ -5,17 +5,16 @@ namespace Eshava.Report.Pdf.Core
 {
 	public abstract class AbstractGraphics
 	{
-		protected double CalculateLineGap(Func<string, double> measureTextHeight)
+		protected double CalculateSingleLineHeight(Func<string, double> measureTextHeight)
 		{
 			var spaceHeight = measureTextHeight(" ");
 			var totalMultilineHeight = measureTextHeight("#\n#");
 			var lineGap = totalMultilineHeight - spaceHeight - spaceHeight;
 
-			return lineGap;
+			return lineGap + spaceHeight;
 		}
 
-
-		protected Size CalculateTextSize(string text, double lineGap, double elementWidth, Func<string, double> measureTextWith)
+		protected Size CalculateTextSize(string text, double singleLineHeight, double elementWidth, Func<string, double> measureTextWith)
 		{
 			var spaceWidth = measureTextWith(" ");
 			var height = 0.0;
@@ -26,7 +25,7 @@ namespace Eshava.Report.Pdf.Core
 			{
 				var words = line.Split(' ');
 				var lineWidth = 0.0;
-				height += lineGap;
+				height += singleLineHeight;
 
 				foreach (var word in words)
 				{
@@ -34,7 +33,7 @@ namespace Eshava.Report.Pdf.Core
 					if (lineWidth + spaceWidth + wordWidth > elementWidth)
 					{
 						lineWidth = wordWidth;
-						height += lineGap;
+						height += singleLineHeight;
 					}
 					else
 					{

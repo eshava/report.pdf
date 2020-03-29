@@ -49,8 +49,8 @@ namespace Eshava.Report.Pdf
 			//format.Alignment = XStringAlignment.Near;
 			//format.LineAlignment = XLineAlignment.Near;
 
-			//var lineGap = CalculateLineGap(t => _xGraphics.MeasureString(t, xFont, format).Height);
-			//var textSize = CalculateTextSize(text, lineGap, elementWidth, t => _xGraphics.MeasureString(t, xFont, format).Width);
+			//var singleLineHeight = CalculateSingleLineHeight(t => _xGraphics.MeasureString(t, xFont, format).Height);
+			//var textSize = CalculateTextSize(text, singleLineHeight, elementWidth, t => _xGraphics.MeasureString(t, xFont, format).Width);
 
 			//return textSize;
 

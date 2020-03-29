@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <Authors>Eshava</Authors>
-    <Company>EshavaEshava</Company>
+    <Company>Eshava</Company>
     <Product>Eshava.Report.Pdf</Product>
     <Description>A library to create pdf from xml. Based on PdfSharp</Description>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>

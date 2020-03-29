@@ -68,7 +68,11 @@ namespace Eshava.Report.Pdf.Core.Models
 			HeightDifference = 0;
 
 			// Height == 0: Can have an infinite height
-			if (ExpandAndShift && textSize.Height > Height)
+			if (Math.Abs(textSize.Height) < 0.001)
+			{
+				height = 0.0;
+			}
+			else if (ExpandAndShift && textSize.Height > Height)
 			{
 				var referenceSize = graphics.GetTextSize(GetFont(), Width, "a");
 

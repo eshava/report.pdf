@@ -29,15 +29,15 @@ namespace Eshava.Report.Pdf.Core
 
 				var remove = false;
 				var indexCurrent = -1;
-				for (var inx = 0; inx < elements.Count; inx++)
+				for (var index = 0; index < elements.Count; index++)
 				{
-					indexCurrent = inx;
+					indexCurrent = index;
 
 					// Check if the element is allowed to grow and move other elements
-					ShiftElementsDown(graphics, elements, inx, pointsStart, pointsEnd, sizes);
+					ShiftElementsDown(graphics, elements, index, pointsStart, pointsEnd, sizes);
 
 					// Check if the element is empty and underlying elements can move up
-					remove = ShiftElementsUp(graphics, elements, inx, pointsStart, pointsEnd, sizes);
+					remove = ShiftElementsUp(graphics, elements, index, pointsStart, pointsEnd, sizes);
 
 					if (remove)
 					{
@@ -61,34 +61,34 @@ namespace Eshava.Report.Pdf.Core
 		/// </summary>
 		/// <param name="graphics">Graphics element</param>
 		/// <param name="elements">List of all elements to be considered</param>
-		/// <param name="inx">Index of the current element of the list</param>
+		/// <param name="index">Index of the current element of the list</param>
 		/// <param name="pointsStart">List of all start coordinates</param>
 		/// <param name="pointsEnd">List of all end coordinates</param>
 		/// <param name="sizes">List of all element sizes</param>
 		/// <returns>Remove element</returns>
-		private bool ShiftElementsUp(IGraphics graphics, List<ElementBase> elements, int inx, Dictionary<Guid, Point> pointsStart, Dictionary<Guid, Point> pointsEnd, Dictionary<Guid, Size> sizes)
+		private bool ShiftElementsUp(IGraphics graphics, List<ElementBase> elements, int index, Dictionary<Guid, Point> pointsStart, Dictionary<Guid, Point> pointsEnd, Dictionary<Guid, Size> sizes)
 		{
-			CalculateElement(graphics, elements[inx], pointsStart, pointsEnd, sizes);
+			CalculateElement(graphics, elements[index], pointsStart, pointsEnd, sizes);
 
-			if (!IsShiftUpElement(elements[inx]))
+			if (!IsShiftUpElement(elements[index]))
 			{
 				return false;
 			}
 
-			var elementCurrent = (ElementText)elements[inx];
+			var elementCurrent = (ElementText)elements[index];
 			var startCurrent = pointsStart[elementCurrent.Id];
 			var endCurrent = pointsEnd[elementCurrent.Id];
 
-			var calculatedElement = CheckCollisions(graphics, elements, new List<int> { inx }, pointsStart, pointsEnd, sizes, startCurrent, endCurrent);
+			var calculatedResult = CheckCollisions(graphics, elements, new List<int> { index }, pointsStart, pointsEnd, sizes, startCurrent, endCurrent);
 
 			var borderLeft = 0.0;
 			var borderRight = Double.MaxValue;
 
-			foreach (var collision in calculatedElement.Item1)
+			foreach (var collision in calculatedResult.Collisions)
 			{
-				if (collision.Item2 != Collision.None)
+				if (collision.Vertical != Collision.None)
 				{
-					var element = elements[collision.Item3];
+					var element = elements[collision.ElementIndex];
 
 					if (!IsShiftUpElement(elementCurrent))
 					{
@@ -108,17 +108,17 @@ namespace Eshava.Report.Pdf.Core
 				}
 			}
 
-			foreach (var below in calculatedElement.Item2)
+			foreach (var below in calculatedResult.ElementIndexesBelow)
 			{
-				ShiftElementsUp(graphics, elements, inx, below, borderLeft, borderRight, elementCurrent.ShiftUpHeight, pointsStart, pointsEnd, sizes);
+				ShiftElementsUp(graphics, elements, index, below, borderLeft, borderRight, elementCurrent.ShiftUpHeight, pointsStart, pointsEnd, sizes);
 			}
 
 			return true;
 		}
 
-		private void ShiftElementsUp(IGraphics graphics, List<ElementBase> elements, int inxCurrent, int inxBelow, double borderLeft, double borderRight, double shiftUpHeight, Dictionary<Guid, Point> pointsStart, Dictionary<Guid, Point> pointsEnd, Dictionary<Guid, Size> sizes)
+		private void ShiftElementsUp(IGraphics graphics, List<ElementBase> elements, int indexCurrent, int indexBelow, double borderLeft, double borderRight, double shiftUpHeight, Dictionary<Guid, Point> pointsStart, Dictionary<Guid, Point> pointsEnd, Dictionary<Guid, Size> sizes)
 		{
-			var element = elements[inxBelow];
+			var element = elements[indexBelow];
 			var start = pointsStart[element.Id];
 			var end = pointsEnd[element.Id];
 
@@ -150,8 +150,8 @@ namespace Eshava.Report.Pdf.Core
 				pointsEnd[element.Id] = new Point(end.X, Math.Round(end.Y - shiftUpHeight, 2));
 
 				// Check whether the shift has caused overlaps with other elements
-				var calculatedElementNew = CheckCollisions(graphics, elements, new List<int> { inxCurrent, inxBelow }, pointsStart, pointsEnd, sizes, pointsStart[element.Id], pointsEnd[element.Id]);
-				if (calculatedElementNew.Item1.Any(c => c.Item2 != Collision.None && c.Item1 != Collision.None && !IsShiftUpElement(elements[c.Item3])))
+				var collisionItemResult = CheckCollisions(graphics, elements, new List<int> { indexCurrent, indexBelow }, pointsStart, pointsEnd, sizes, pointsStart[element.Id], pointsEnd[element.Id]);
+				if (collisionItemResult.Collisions.Any(c => c.Vertical != Collision.None && c.Horizontal != Collision.None && !IsShiftUpElement(elements[c.ElementIndex])))
 				{
 					// There was at least one overlap with another element, so the shift must be reversed
 					element.PosY = backupPosY;
@@ -244,16 +244,17 @@ namespace Eshava.Report.Pdf.Core
 			return element.IsEmpty && element is ElementText && Math.Round(((ElementText)element).ShiftUpHeight, 2) > 0.0;
 		}
 
-		private Tuple<List<Tuple<Collision, Collision, int>>, List<int>> CheckCollisions(IGraphics graphics, List<ElementBase> elements, List<int> indexe, Dictionary<Guid, Point> pointsStart, Dictionary<Guid, Point> pointsEnd, Dictionary<Guid, Size> sizes, Point startCurrent, Point endCurrent)
+		private CollisionResult CheckCollisions(IGraphics graphics, List<ElementBase> elements, List<int> indexes, Dictionary<Guid, Point> pointsStart, Dictionary<Guid, Point> pointsEnd, Dictionary<Guid, Size> sizes, Point startCurrent, Point endCurrent)
 		{
-			var collisionList = new List<Tuple<Collision, Collision, int>>();
+			var collisionList = new List<CollisionItem>();
 			var belowList = new List<int>();
 
-			for (var i = 0; i < elements.Count; i++)
+			for (var elementIndex = 0; elementIndex < elements.Count; elementIndex++)
 			{
-				if (!indexe.Contains(i))
+				if (!indexes.Contains(elementIndex))
 				{
-					var element = elements[i];
+					var element = elements[elementIndex];
+
 					CalculateElement(graphics, element, pointsStart, pointsEnd, sizes);
 
 					var start = pointsStart[element.Id];
@@ -265,17 +266,26 @@ namespace Eshava.Report.Pdf.Core
 					// All elements that have an overlap with the current element either horizontally or vertically
 					if (collisionHorizontal != Collision.None || collisionVertical != Collision.None)
 					{
-						collisionList.Add(new Tuple<Collision, Collision, int>(collisionHorizontal, collisionVertical, i));
+						collisionList.Add(new CollisionItem
+						{
+							Horizontal = collisionHorizontal,
+							Vertical = collisionVertical,
+							ElementIndex = elementIndex
+						});
 					}
 
 					if (collisionVertical == Collision.None && endCurrent.Y < start.Y)
 					{
-						belowList.Add(i);
+						belowList.Add(elementIndex);
 					}
 				}
 			}
 
-			return new Tuple<List<Tuple<Collision, Collision, int>>, List<int>>(collisionList, belowList);
+			return new CollisionResult
+			{
+				Collisions = collisionList,
+				ElementIndexesBelow = belowList
+			};
 		}
 
 		private Collision DetectCollision(double borderAMin, double borderAMax, double borderBMin, double borderBMax)
@@ -309,6 +319,19 @@ namespace Eshava.Report.Pdf.Core
 			}
 
 			return Collision.None;
+		}
+
+		private class CollisionItem
+		{
+			public Collision Horizontal { get; set; }
+			public Collision Vertical { get; set; }
+			public int ElementIndex { get; set; }
+		}
+
+		private class CollisionResult
+		{
+			public IEnumerable<CollisionItem> Collisions { get; set; }
+			public IEnumerable<int> ElementIndexesBelow { get; set; }
 		}
 	}
 }
