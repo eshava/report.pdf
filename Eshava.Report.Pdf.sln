@@ -9,6 +9,24 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshava.Report.Pdf.NetCore",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshava.Report.Pdf.NetFramework", "Eshava.Report.Pdf.NetFramework\Eshava.Report.Pdf.NetFramework.csproj", "{79BC3212-1B46-40A6-B345-02F55DD0567C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Report.Pdf", "Report.Pdf", "{E422DA83-5CE7-4C80-844D-953803C83254}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{815550AA-65D1-49CE-8A49-26CC91FDD594}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Input", "Input", "{949E8A6B-F6E0-4C9D-A648-B555B7D62B0B}"
+	ProjectSection(SolutionItems) = preProject
+		Input\document_portrait.xml = Input\document_portrait.xml
+		Input\image_blue.png = Input\image_blue.png
+		Input\image_green.png = Input\image_green.png
+		Input\image_red.png = Input\image_red.png
+		Input\stationery_first_page.pdf = Input\stationery_first_page.pdf
+		Input\stationery_following_page.pdf = Input\stationery_following_page.pdf
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshava.Test.Report.Pdf.NetCore", "Eshava.Test.Report.Pdf.NetCore\Eshava.Test.Report.Pdf.NetCore.csproj", "{F1671A3E-79DB-48A2-874D-504C1C96100B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshava.Test.Report.Pdf.NetFramework", "Eshava.Test.Report.Pdf.NetFramework\Eshava.Test.Report.Pdf.NetFramework.csproj", "{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +45,25 @@ Global
 		{79BC3212-1B46-40A6-B345-02F55DD0567C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79BC3212-1B46-40A6-B345-02F55DD0567C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79BC3212-1B46-40A6-B345-02F55DD0567C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1671A3E-79DB-48A2-874D-504C1C96100B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1671A3E-79DB-48A2-874D-504C1C96100B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1671A3E-79DB-48A2-874D-504C1C96100B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1671A3E-79DB-48A2-874D-504C1C96100B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F2213CDD-BB83-48D0-A9E3-B9729D40EEAF} = {E422DA83-5CE7-4C80-844D-953803C83254}
+		{F5C79850-67CB-4840-BAE5-BB7836B7E7C6} = {E422DA83-5CE7-4C80-844D-953803C83254}
+		{79BC3212-1B46-40A6-B345-02F55DD0567C} = {E422DA83-5CE7-4C80-844D-953803C83254}
+		{949E8A6B-F6E0-4C9D-A648-B555B7D62B0B} = {815550AA-65D1-49CE-8A49-26CC91FDD594}
+		{F1671A3E-79DB-48A2-874D-504C1C96100B} = {815550AA-65D1-49CE-8A49-26CC91FDD594}
+		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280} = {815550AA-65D1-49CE-8A49-26CC91FDD594}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D4C08238-8454-4950-9FB5-C4F09385713A}

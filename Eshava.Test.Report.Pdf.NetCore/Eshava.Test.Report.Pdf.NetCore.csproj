@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+		<OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Description>A library to create pdf from xml. Based on PdfSharp</Description>
+    <Authors>Eshava</Authors>
+    <Company>Eshava</Company>
+    <Product>Eshava.Report.Pdf</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="..\Input\document_portrait.xml" Link="Input\document_portrait.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Input\image_blue.png" Link="Input\image_blue.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Input\image_green.png" Link="Input\image_green.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Input\image_red.png" Link="Input\image_red.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MSTest.TestFramework" Version="2.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Input\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\Input\stationery_first_page.pdf" Link="Input\stationery_first_page.pdf">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	  <None Include="..\Input\stationery_following_page.pdf" Link="Input\stationery_following_page.pdf">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Eshava.Report.Pdf.NetCore\Eshava.Report.Pdf.NetCore.csproj" />
+	</ItemGroup>
+</Project>
