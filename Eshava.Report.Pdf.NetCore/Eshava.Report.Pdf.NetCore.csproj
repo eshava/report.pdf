@@ -1,25 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Authors>Eshava</Authors>
-    <Company>Eshava</Company>
-    <Product>Eshava.Report.Pdf</Product>
-    <Description>A library to create pdf from xml. Based on PdfSharp</Description>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
-    <RepositoryUrl>https://github.com/eshava/report.pdf</RepositoryUrl>
-    <RootNamespace>Eshava.Report.Pdf</RootNamespace>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Configurations>Debug;Release;IncludeP2PAssets</Configurations>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp2.2</TargetFramework>
+		<Authors>Eshava</Authors>
+		<Company>Eshava</Company>
+		<Product>Eshava.Report.Pdf</Product>
+		<Description>A library to create pdf from xml. Based on PdfSharp</Description>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<RepositoryUrl>https://github.com/eshava/report.pdf</RepositoryUrl>
+		<RootNamespace>Eshava.Report.Pdf</RootNamespace>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<Configurations>Debug;Release;IncludeP2PAssets</Configurations>
 		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeP2PAssets</TargetsForTfmSpecificBuildOutput>
-  </PropertyGroup>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\LICENSE.txt">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\LICENSE.txt">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="PdfSharpCore" Version="1.1.23" />
@@ -29,8 +29,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\Eshava.Report.Pdf.Core\Eshava.Report.Pdf.Core.csproj" PrivateAssets="All" />
-  </ItemGroup>
+		<ProjectReference Include="..\Eshava.Report.Pdf.Core\Eshava.Report.Pdf.Core.csproj" >
+			<PrivateAssets>all</PrivateAssets>
+		</ProjectReference>
+	</ItemGroup>
 
 	<Target Name="IncludeP2PAssets">
 		<ItemGroup>

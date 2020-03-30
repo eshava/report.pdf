@@ -26,7 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eshava.Report.Pdf.Core\Eshava.Report.Pdf.Core.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\Eshava.Report.Pdf.Core\Eshava.Report.Pdf.Core.csproj" >
+			<PrivateAssets>all</PrivateAssets>
+		</ProjectReference>
   </ItemGroup>
 
 
