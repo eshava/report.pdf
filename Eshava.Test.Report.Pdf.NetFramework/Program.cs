@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Eshava.Test.Report.Pdf.NetFramework
+﻿namespace Eshava.Test.Report.Pdf.NetFramework
 {
 	public static class Program
 	{
@@ -8,6 +6,7 @@ namespace Eshava.Test.Report.Pdf.NetFramework
 		{
 			var test = new PdfPrinterTests();
 			test.GeneratePortraitDocumentTest();
+			test.GenerateLandscapeDocumentTest();
 		}
 	}
 }

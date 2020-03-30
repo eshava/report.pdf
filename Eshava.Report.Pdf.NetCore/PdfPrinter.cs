@@ -40,7 +40,7 @@ namespace Eshava.Report.Pdf
 
 			_itemCache.Remove(internalDocumentId);
 
-			return pdfDocument.Pdf;
+			return pdfDocument?.Pdf;
 		}
 
 

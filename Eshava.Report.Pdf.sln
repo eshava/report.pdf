@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{815550AA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Input", "Input", "{949E8A6B-F6E0-4C9D-A648-B555B7D62B0B}"
 	ProjectSection(SolutionItems) = preProject
+		Input\document_landscape.xml = Input\document_landscape.xml
 		Input\document_portrait.xml = Input\document_portrait.xml
 		Input\image_blue.png = Input\image_blue.png
 		Input\image_green.png = Input\image_green.png

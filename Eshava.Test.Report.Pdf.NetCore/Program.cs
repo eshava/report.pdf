@@ -6,6 +6,7 @@
 		{
 			var test = new PdfPrinterTests();
 			test.GeneratePortraitDocumentTest();
+			test.GenerateLandscapeDocumentTest();
 		}
 	}
 }

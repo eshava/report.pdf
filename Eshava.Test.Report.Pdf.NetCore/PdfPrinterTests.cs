@@ -55,12 +55,12 @@ namespace Eshava.Test.Report.Pdf.NetCore
 					{
 						{ "image_blue", imageBlue },
 						{ "image_green", imageGreen },
-						{ "image_red", imageRed },
+						{ "image_red", imageRed }
 					},
 					Stationaries = new System.Collections.Generic.Dictionary<string, byte[]>
 					{
 						{ "stationery_first_page", fileStationeryFisrPageArray },
-						{ "stationery_following_page", fileStationeryFollowingPageArray },
+						{ "stationery_following_page", fileStationeryFollowingPageArray }
 					}
 				};
 
@@ -72,6 +72,42 @@ namespace Eshava.Test.Report.Pdf.NetCore
 			catch (System.Exception ex)
 			{
 
+			}
+		}
+
+		[TestMethod]
+		public void GenerateLandscapeDocumentTest()
+		{
+			var xmlFileName = "document_landscape";
+			var xmlFullFileName = Path.Combine("Input", xmlFileName + ".xml");
+			string xmlString;
+
+			using (var stream = new StreamReader(File.Open(xmlFullFileName, FileMode.Open), Encoding.UTF8))
+			{
+				var doc = new XmlDocument();
+				doc.Load(stream);
+				xmlString = doc.OuterXml;
+			}
+
+			var imageBlue = SixLabors.ImageSharp.Image.Load(Path.Combine("Input", "image_blue.png"));
+
+			try
+			{
+				var cacheItem = new CacheItem<SixLabors.ImageSharp.Image>
+				{
+					Images = new System.Collections.Generic.Dictionary<string, SixLabors.ImageSharp.Image>
+					{
+						{ "image_blue", imageBlue }
+					}
+				};
+
+				var printer = new PdfPrinter();
+				var document = printer.CreatePDF(xmlString, cacheItem);
+
+				document.Save(Path.Combine(Environment.CurrentDirectory, xmlFileName + ".pdf"));
+			}
+			catch (System.Exception ex)
+			{
 
 			}
 		}

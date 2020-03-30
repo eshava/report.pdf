@@ -10,6 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\Input\document_landscape.xml" Link="Input\document_landscape.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="..\Input\document_portrait.xml" Link="Input\document_portrait.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
