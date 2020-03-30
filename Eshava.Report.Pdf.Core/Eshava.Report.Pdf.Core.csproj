@@ -11,6 +11,7 @@
     <RepositoryUrl>https://github.com/eshava/report.pdf</RepositoryUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RootNamespace>Eshava.Report.Pdf</RootNamespace>
+    <Configurations>Debug;Release;IncludeP2PAssets</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshava.Report.Pdf.Core", "Eshava.Report.Pdf.Core\Eshava.Report.Pdf.Core.csproj", "{F2213CDD-BB83-48D0-A9E3-B9729D40EEAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshava.Report.Pdf.Core", "Eshava.Report.Pdf.Core\Eshava.Report.Pdf.Core.csproj", "{F2213CDD-BB83-48D0-A9E3-B9729D40EEAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshava.Report.Pdf.NetCore", "Eshava.Report.Pdf.NetCore\Eshava.Report.Pdf.NetCore.csproj", "{F5C79850-67CB-4840-BAE5-BB7836B7E7C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshava.Report.Pdf.NetCore", "Eshava.Report.Pdf.NetCore\Eshava.Report.Pdf.NetCore.csproj", "{F5C79850-67CB-4840-BAE5-BB7836B7E7C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshava.Report.Pdf.NetFramework", "Eshava.Report.Pdf.NetFramework\Eshava.Report.Pdf.NetFramework.csproj", "{79BC3212-1B46-40A6-B345-02F55DD0567C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshava.Report.Pdf.NetFramework", "Eshava.Report.Pdf.NetFramework\Eshava.Report.Pdf.NetFramework.csproj", "{79BC3212-1B46-40A6-B345-02F55DD0567C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Report.Pdf", "Report.Pdf", "{E422DA83-5CE7-4C80-844D-953803C83254}"
 EndProject
@@ -24,34 +24,45 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Input", "Input", "{949E8A6B
 		Input\stationery_following_page.pdf = Input\stationery_following_page.pdf
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshava.Test.Report.Pdf.NetCore", "Eshava.Test.Report.Pdf.NetCore\Eshava.Test.Report.Pdf.NetCore.csproj", "{F1671A3E-79DB-48A2-874D-504C1C96100B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshava.Test.Report.Pdf.NetCore", "Eshava.Test.Report.Pdf.NetCore\Eshava.Test.Report.Pdf.NetCore.csproj", "{F1671A3E-79DB-48A2-874D-504C1C96100B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshava.Test.Report.Pdf.NetFramework", "Eshava.Test.Report.Pdf.NetFramework\Eshava.Test.Report.Pdf.NetFramework.csproj", "{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshava.Test.Report.Pdf.NetFramework", "Eshava.Test.Report.Pdf.NetFramework\Eshava.Test.Report.Pdf.NetFramework.csproj", "{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		IncludeP2PAssets|Any CPU = IncludeP2PAssets|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F2213CDD-BB83-48D0-A9E3-B9729D40EEAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F2213CDD-BB83-48D0-A9E3-B9729D40EEAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2213CDD-BB83-48D0-A9E3-B9729D40EEAF}.IncludeP2PAssets|Any CPU.ActiveCfg = IncludeP2PAssets|Any CPU
+		{F2213CDD-BB83-48D0-A9E3-B9729D40EEAF}.IncludeP2PAssets|Any CPU.Build.0 = IncludeP2PAssets|Any CPU
 		{F2213CDD-BB83-48D0-A9E3-B9729D40EEAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2213CDD-BB83-48D0-A9E3-B9729D40EEAF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F5C79850-67CB-4840-BAE5-BB7836B7E7C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F5C79850-67CB-4840-BAE5-BB7836B7E7C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5C79850-67CB-4840-BAE5-BB7836B7E7C6}.IncludeP2PAssets|Any CPU.ActiveCfg = IncludeP2PAssets|Any CPU
+		{F5C79850-67CB-4840-BAE5-BB7836B7E7C6}.IncludeP2PAssets|Any CPU.Build.0 = IncludeP2PAssets|Any CPU
 		{F5C79850-67CB-4840-BAE5-BB7836B7E7C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5C79850-67CB-4840-BAE5-BB7836B7E7C6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{79BC3212-1B46-40A6-B345-02F55DD0567C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{79BC3212-1B46-40A6-B345-02F55DD0567C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79BC3212-1B46-40A6-B345-02F55DD0567C}.IncludeP2PAssets|Any CPU.ActiveCfg = IncludeP2PAssets|Any CPU
+		{79BC3212-1B46-40A6-B345-02F55DD0567C}.IncludeP2PAssets|Any CPU.Build.0 = IncludeP2PAssets|Any CPU
 		{79BC3212-1B46-40A6-B345-02F55DD0567C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79BC3212-1B46-40A6-B345-02F55DD0567C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F1671A3E-79DB-48A2-874D-504C1C96100B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F1671A3E-79DB-48A2-874D-504C1C96100B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1671A3E-79DB-48A2-874D-504C1C96100B}.IncludeP2PAssets|Any CPU.ActiveCfg = IncludeP2PAssets|Any CPU
+		{F1671A3E-79DB-48A2-874D-504C1C96100B}.IncludeP2PAssets|Any CPU.Build.0 = IncludeP2PAssets|Any CPU
 		{F1671A3E-79DB-48A2-874D-504C1C96100B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1671A3E-79DB-48A2-874D-504C1C96100B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.IncludeP2PAssets|Any CPU.ActiveCfg = IncludeP2PAssets|Any CPU
+		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.IncludeP2PAssets|Any CPU.Build.0 = IncludeP2PAssets|Any CPU
 		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

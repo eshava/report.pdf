@@ -9,6 +9,8 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/eshava/report.pdf</RepositoryUrl>
     <Description>A library to create pdf from xml. Based on PdfSharp</Description>
+    <Configurations>Debug;Release;IncludeP2PAssets</Configurations>
+		<TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);IncludeP2PAssets</TargetsForTfmSpecificBuildOutput>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Eshava.Report.Pdf.Core\Eshava.Report.Pdf.Core.csproj" />
+    <ProjectReference Include="..\Eshava.Report.Pdf.Core\Eshava.Report.Pdf.Core.csproj" PrivateAssets="All" />
   </ItemGroup>
 
+
+	<Target Name="IncludeP2PAssets">
+		<ItemGroup>
+			<BuildOutputInPackage Include="$(OutputPath)Eshava.Report.Pdf.Core.dll" />
+		</ItemGroup>
+	</Target>
 </Project>
