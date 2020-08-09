@@ -72,7 +72,7 @@ namespace Eshava.Report.Pdf
 					if (localImage != null)
 					{
 						var imageStream = new MemoryStream();
-						localImage.Save(imageStream, new PngEncoder { CompressionLevel = 1, ColorType = PngColorType.RgbWithAlpha });
+						localImage.Save(imageStream, new PngEncoder { CompressionLevel =  PngCompressionLevel.BestSpeed, ColorType = PngColorType.RgbWithAlpha });
 						imageStream.Position = 0;
 						image = XImage.FromStream(() => imageStream);
 					}

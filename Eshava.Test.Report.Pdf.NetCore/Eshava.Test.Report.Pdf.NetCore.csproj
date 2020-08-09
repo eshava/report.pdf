@@ -2,7 +2,7 @@
 
   <PropertyGroup>
 		<OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Description>A library to create pdf from xml. Based on PdfSharp</Description>
     <Authors>Eshava</Authors>
     <Company>Eshava</Company>
@@ -46,6 +46,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Eshava.Report.Pdf.Core\Eshava.Report.Pdf.Core.csproj" />
 	  <ProjectReference Include="..\Eshava.Report.Pdf.NetCore\Eshava.Report.Pdf.NetCore.csproj" />
 	</ItemGroup>
+
 </Project>

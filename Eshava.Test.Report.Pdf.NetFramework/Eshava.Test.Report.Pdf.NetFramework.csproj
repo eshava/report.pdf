@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Eshava.Report.Pdf.Core\Eshava.Report.Pdf.Core.csproj" />
     <ProjectReference Include="..\Eshava.Report.Pdf.NetFramework\Eshava.Report.Pdf.NetFramework.csproj" />
   </ItemGroup>
 
