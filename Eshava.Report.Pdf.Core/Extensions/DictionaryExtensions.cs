@@ -6,7 +6,9 @@ namespace Eshava.Report.Pdf.Core.Extensions
 	{
 		public static T CheckDictionary<K, T>(this Dictionary<K, T> dictionary, K key, T defaultResult = default)
 		{
-			return dictionary != null && dictionary.ContainsKey(key) ? dictionary[key] : defaultResult;
+			return dictionary != default
+				&& key != null
+				&& dictionary.ContainsKey(key) ? dictionary[key] : defaultResult;
 		}
 	}
 }
