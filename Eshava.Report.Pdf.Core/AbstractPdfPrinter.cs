@@ -100,8 +100,10 @@ namespace Eshava.Report.Pdf.Core
 					graphics.SetStationery(stationery2nd);
 				}
 
+				var headerHeight = page.Header?.Height ?? 0;
+
 				DrawHeader(currentPage, graphics, page);
-				DrawPositions(graphics, page.Positions, page.Margins, new Size(page.MaxPositionPartWidth, page.MaxPositionPartHeight + page.Header.Height + page.Margins.Top), page.Header.Height);
+				DrawPositions(graphics, page.Positions, page.Margins, new Size(page.MaxPositionPartWidth, page.MaxPositionPartHeight + headerHeight + page.Margins.Top), headerHeight);
 				DrawFooter(currentPage, graphics, page);
 
 				graphics.Dispose();
@@ -139,6 +141,11 @@ namespace Eshava.Report.Pdf.Core
 		/// <param name="reportPage">Report page</param>
 		private void DrawHeader(P page, IGraphics graphics, ReportPage reportPage)
 		{
+			if (reportPage.Header == default)
+			{
+				return;
+			}
+
 			var containerSize = new Size(page.Width - reportPage.Margins.Left - reportPage.Margins.Right, reportPage.Header.Height);
 			var start = new Point(reportPage.Margins.Left, reportPage.Margins.Top);
 
@@ -153,6 +160,11 @@ namespace Eshava.Report.Pdf.Core
 		/// <param name="reportPage">Report page</param>
 		private void DrawFooter(P page, IGraphics graphics, ReportPage reportPage)
 		{
+			if (reportPage.Footer == default)
+			{
+				return;
+			}
+
 			var containerSize = new Size(page.Width - reportPage.Margins.Left - reportPage.Margins.Right, reportPage.Footer.Height);
 			var maxSize = reportPage.Footer.GetSize(graphics);
 			var start = new Point(reportPage.Margins.Left, page.Height - reportPage.Margins.Bottom - maxSize.Height);
