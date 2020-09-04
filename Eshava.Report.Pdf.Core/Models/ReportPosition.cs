@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 using Eshava.Report.Pdf.Core.Enums;
+using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
 
 namespace Eshava.Report.Pdf.Core.Models
@@ -374,6 +375,11 @@ namespace Eshava.Report.Pdf.Core.Models
 				// Assign text that still fits on the page to the position
 				currentText.Content = tempText;
 				position.ContentText.Add(currentText);
+			}
+
+			if (!(eText?.Content.IsNullOrEmpty() ?? true))
+			{
+				eText.Content = eText.Content.Trim();
 			}
 
 			return eText;
