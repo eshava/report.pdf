@@ -680,19 +680,26 @@ namespace Eshava.Report.Pdf.Core
 			// Position is now tried to split, to the current page and to the following pages
 			var splittPositions = position.SplitPosition(graphics, maxElementHeight, maxElementHeightOnCurrentPage);
 
+			var postMainPositionHeight = 0.0;
+			if (positionContainer.PostMainPositionHeight.ContainsKey(position.SequenceNo))
+			{
+				postMainPositionHeight = positionContainer.PostMainPositionHeight[position.SequenceNo];
+			}
+
 			if (splittPositions[0].IsEmpty)
 			{
 				// Continue use exising page
 				// Don't add first empty splitt position
 				// Add post position to the previous page
-				AddPostMainPosition(page, positionContainer, position.SequenceNo - 1, maxElementHeightOnCurrentPage + positionContainer.PostMainPositionHeight[position.SequenceNo], 0);
+
+				AddPostMainPosition(page, positionContainer, position.SequenceNo - 1, maxElementHeightOnCurrentPage + postMainPositionHeight, 0);
 			}
 			else
 			{
 				// Continue use exising page
 				page.Positions.Add(splittPositions[0]);
 				// Add post position to the current page
-				AddPostMainPosition(page, positionContainer, position.SequenceNo, maxElementHeightOnCurrentPage + positionContainer.PostMainPositionHeight[position.SequenceNo], splittPositions[0].GetSize(graphics).Height);
+				AddPostMainPosition(page, positionContainer, position.SequenceNo, maxElementHeightOnCurrentPage + postMainPositionHeight, splittPositions[0].GetSize(graphics).Height);
 			}
 
 			// Complete existing page, because current position fits on the next page
