@@ -4,6 +4,7 @@
 	{
 		public const string IMAGE = "ElementImage";
 		public const string TEXT = "ElementText";
+		public const string HYPERLINK = "ElementHyperlink";
 		public const string LINE = "ElementLine";
 		public const string RECTANGLE = "ElementRectangle";
 		public const string RECTANGLEFILL = "ElementRectangleFill";

@@ -28,6 +28,12 @@ namespace Eshava.Report.Pdf.Core.Models
 			get { return _collection.GetElements<ElementText>(); }
 		}
 
+		[XmlElement(ElementTypes.HYPERLINK)]
+		public List<ElementHyperlink> ContentHyperlink
+		{
+			get { return _collection.GetElements<ElementHyperlink>(); }
+		}
+
 		[XmlElement(ElementTypes.LINE)]
 		public List<ElementLine> ContentLine
 		{
@@ -77,6 +83,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			elements.AddRange(_collection.GetElements<ElementRectangleFill>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementImage>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementText>().Select(e => (ElementBase)e));
+			elements.AddRange(_collection.GetElements<ElementHyperlink>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementRectangle>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementPageNo>().Select(e => (ElementBase)e));
 

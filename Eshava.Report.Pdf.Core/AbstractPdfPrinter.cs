@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Eshava.Report.Pdf.Core.Interfaces;
 using Eshava.Report.Pdf.Core.Models;
 
@@ -103,7 +102,7 @@ namespace Eshava.Report.Pdf.Core
 				var headerHeight = page.Header?.Height ?? 0;
 
 				DrawHeader(currentPage, graphics, page);
-				DrawPositions(graphics, page.Positions, page.Margins, new Size(page.MaxPositionPartWidth, page.MaxPositionPartHeight + headerHeight + page.Margins.Top), headerHeight);
+				DrawPositions(currentPage, graphics, page.Positions, page.Margins, new Size(page.MaxPositionPartWidth, page.MaxPositionPartHeight + headerHeight + page.Margins.Top), headerHeight);
 				DrawFooter(currentPage, graphics, page);
 
 				graphics.Dispose();
@@ -118,7 +117,7 @@ namespace Eshava.Report.Pdf.Core
 		/// <param name="margins">Page borders</param>
 		/// <param name="positionArea">Size of the postion area of this page</param>
 		/// <param name="headerHeight">Height of the header area of this page</param>
-		private void DrawPositions(IGraphics graphics, IEnumerable<ReportPosition> positions, PageMargins margins, Size positionArea, double headerHeight)
+		private void DrawPositions(P page, IGraphics graphics, IEnumerable<ReportPosition> positions, PageMargins margins, Size positionArea, double headerHeight)
 		{
 			var positionAreaHeight = headerHeight;
 			foreach (var position in positions)
@@ -126,7 +125,7 @@ namespace Eshava.Report.Pdf.Core
 				//Determine starting point for drawing the position
 				var start = new Point(margins.Left, margins.Top + positionAreaHeight);
 
-				DrawElements(graphics, start, position, positionArea, 0, 0);
+				DrawElements(page, graphics, start, position, positionArea, 0, 0);
 
 				//Add height of current position to current total page height
 				positionAreaHeight += position.GetSize(graphics).Height;
@@ -149,7 +148,7 @@ namespace Eshava.Report.Pdf.Core
 			var containerSize = new Size(page.Width - reportPage.Margins.Left - reportPage.Margins.Right, reportPage.Header.Height);
 			var start = new Point(reportPage.Margins.Left, reportPage.Margins.Top);
 
-			DrawElements(graphics, start, reportPage.Header, containerSize, reportPage.PageNumber, reportPage.TotalPageCount);
+			DrawElements(page, graphics, start, reportPage.Header, containerSize, reportPage.PageNumber, reportPage.TotalPageCount);
 		}
 
 		/// <summary>
@@ -169,10 +168,10 @@ namespace Eshava.Report.Pdf.Core
 			var maxSize = reportPage.Footer.GetSize(graphics);
 			var start = new Point(reportPage.Margins.Left, page.Height - reportPage.Margins.Bottom - maxSize.Height);
 
-			DrawElements(graphics, start, reportPage.Footer, containerSize, reportPage.PageNumber, reportPage.TotalPageCount);
+			DrawElements(page, graphics, start, reportPage.Footer, containerSize, reportPage.PageNumber, reportPage.TotalPageCount);
 		}
 
-		private void DrawElements(IGraphics graphics, Point start, ElementContainer part, Size container, int currentPageNumber, int totalPageCount)
+		private void DrawElements(P page, IGraphics graphics, Point start, ElementContainer part, Size container, int currentPageNumber, int totalPageCount)
 		{
 			var elements = part.GetAllElements();
 			foreach (var element in elements)
@@ -184,6 +183,13 @@ namespace Eshava.Report.Pdf.Core
 				}
 
 				element.Draw(graphics, start, container);
+
+				if (element is ElementHyperlink)
+				{
+					var hyperlink = (ElementHyperlink)element;
+					var location = hyperlink.GetElementPosition(graphics, start);
+					page.AddWebLink(location.Start, location.Size, hyperlink.Hyperlink);
+				}
 
 				//Check whether the page number must be removed from the current element
 				if (element is ElementPageNo)
@@ -215,6 +221,6 @@ namespace Eshava.Report.Pdf.Core
 		{
 			page.Size = information.DocumentSize;
 			page.Orientation = information.Orientation;
-		}		
+		}
 	}
 }

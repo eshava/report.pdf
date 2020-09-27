@@ -96,19 +96,6 @@ namespace Eshava.Report.Pdf.Core.Models
 			graphics.DrawText(GetFont(), Content, Alignment, topLeftPage, sizePage, new Point(PosX, PosY), GetSize(graphics));
 		}
 
-		public ElementText Clone()
-		{
-			var clone = new ElementText();
-			foreach (var propertyInfo in GetType().GetProperties())
-			{
-				if (propertyInfo.CanWrite)
-				{
-					propertyInfo.SetValue(clone, propertyInfo.GetValue(this, null));
-				}
-			}
-			return clone;
-		}
-
 		public List<string> SplittByNewLine()
 		{
 			var textLines = new List<string>();
@@ -172,6 +159,19 @@ namespace Eshava.Report.Pdf.Core.Models
 			}
 
 			return textLines;
+		}
+
+		public static T Clone<T>(T element) where T : ElementText, new()
+		{
+			var clone = new T();
+			foreach (var propertyInfo in element.GetType().GetProperties())
+			{
+				if (propertyInfo.CanWrite)
+				{
+					propertyInfo.SetValue(clone, propertyInfo.GetValue(element, null));
+				}
+			}
+			return clone;
 		}
 
 		private Font GetFont()

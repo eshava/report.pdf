@@ -1,4 +1,5 @@
 ﻿using Eshava.Report.Pdf.Core.Enums;
+using Eshava.Report.Pdf.Core.Models;
 
 namespace Eshava.Report.Pdf.Core.Interfaces
 {
@@ -9,5 +10,7 @@ namespace Eshava.Report.Pdf.Core.Interfaces
 
 		PageSize Size { get; set; }
 		PageOrientation Orientation { get; set; }
+
+		void AddWebLink(Point start, Size size, string hyperlink);
 	}
 }
