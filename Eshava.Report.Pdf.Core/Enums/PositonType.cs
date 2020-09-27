@@ -6,6 +6,7 @@
 		Pagebreak = 2,
 		RepeatOnTop = 3,
 		OnlyOnNewPage = 4,
-		OnlyAsLastOnPage = 5
+		OnlyAsLastOnPage = 5,
+		ForceNewPage = 6
 	}
 }

@@ -146,7 +146,7 @@ consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
 			<ElementText Width="85.87" Height="7.09" PosX="410.20" PosY="7.09" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Right" >950.00</ElementText>
 			<ElementLine Width="496.06" Height="21.27" PosX="0" PosY="21.27" Color="255 255 255 255" Style="Solid" Linewidth="1"></ElementLine>
 		</Position>
-		<Position SequenceNo="4" Type="Default">
+		<Position SequenceNo="4" Type="Default" PreventLastOnPage="1">
 			<ElementText Width="22.68" Height="7.09" PosX="0" PosY="10.09" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Center" >4</ElementText>
 			<ElementText Width="56.7" Height="7.09" PosX="28.35" PosY="10.09" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Left" >20H000004</ElementText>
 			<ElementText Width="198.41" Height="7.09" PosX="85.05" PosY="10.09" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Bold="1" Alignment="Left" >Lorem ipsum dolor sit amet, consetetur sadipscing elitr</ElementText>
@@ -171,6 +171,11 @@ consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
 		</Position>
 		<Position SequenceNo="5"  Type="Pagebreak"></Position>
 			<Position SequenceNo="5"  Type="OnlyAsLastOnPage">
+			<ElementLine Width="496.06" Height="2" PosX="0" PosY="2" Color="255 0 0 0" Style="Solid" Linewidth="1"></ElementLine>
+			<ElementText Width="70.87" Height="7.09" PosX="339.33" PosY="7.09" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Right" >Sub Total:</ElementText>
+			<ElementText Width="85.87" Height="7.09" PosX="410.20" PosY="7.09" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Right" >5950.00</ElementText>
+		</Position>
+		<Position SequenceNo="5"  Type="OnlyAsLastOnPage">
 			<ElementLine Width="496.06" Height="2" PosX="0" PosY="2" Color="255 0 0 0" Style="Solid" Linewidth="1"></ElementLine>
 			<ElementText Width="70.87" Height="7.09" PosX="339.33" PosY="7.09" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Right" >Sub Total:</ElementText>
 			<ElementText Width="85.87" Height="7.09" PosX="410.20" PosY="7.09" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Right" >5950.00</ElementText>

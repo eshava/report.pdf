@@ -5,6 +5,7 @@ using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
 using Eshava.Report.Pdf.Core.Models;
+using Eshava.Report.Pdf.Enums;
 
 namespace Eshava.Report.Pdf.Core
 {
@@ -63,9 +64,14 @@ namespace Eshava.Report.Pdf.Core
 			get { return _report != null && ContainerHasPositions(_report.PostPositionContainer); }
 		}
 
-		private bool IsPageBreak(PositonType type)
+		private bool IsPageBreak(ReportPosition position)
 		{
-			return type == PositonType.Pagebreak;
+			return position.Type == PositonType.Pagebreak;
+		}
+
+		private bool IsForceNewPage(ReportPosition position)
+		{
+			return position.Type == PositonType.ForceNewPage;
 		}
 
 		private bool ContainerHasPositions(ReportPositionContainer container)
@@ -116,7 +122,7 @@ namespace Eshava.Report.Pdf.Core
 			state.PositionPartHeight += state.PositionToRepeatHeight;
 			state.NewPageHeight = CreatePage(state.CurrentPageNumber, state.IsFirstPage).MaxPositionPartHeight;
 
-			// Check whether all post positions still fits on the one page or whether they have to be splitted
+			// Check whether all post positions still fits on one page or whether they have to be splitted
 			if (_postPositionHeight <= state.NewPageHeight)
 			{
 				// Check whether all post positions still fits on the current page
@@ -187,13 +193,18 @@ namespace Eshava.Report.Pdf.Core
 			return page;
 		}
 
-		private (ReportPage Page, bool Cancel) AddPosition(IGraphics graphics, ReportPage page, CalulationState state, ReportPosition position, ReportPositionContainer positionContainer)
+		private (ReportPage Page, PositionResult Result) AddPosition(IGraphics graphics, ReportPage page, CalulationState state, ReportPosition position, ReportPositionContainer positionContainer)
 		{
 			// Remember the sequence number of the current position
 			state.CurrentSequenceNumber = position.SequenceNo;
 
 			// Calculate position height
 			var currentPosHeight = positionContainer.MainPositionHeight.CheckDictionary(state.CurrentSequenceNumber);
+
+			if (IsForceNewPage(position))
+			{
+				state.PositionPartHeight -= currentPosHeight;
+			}
 
 			// Check whether the cancelation condition is reached
 			if (state.PositionToRepeatHeight + state.PositionPartHeight + currentPosHeight > page.MaxPositionPartHeight)
@@ -204,7 +215,7 @@ namespace Eshava.Report.Pdf.Core
 				{
 					state.Pages.Add(page);
 
-					return (page, true);
+					return (page, PositionResult.Cancel);
 				}
 			}
 
@@ -214,7 +225,7 @@ namespace Eshava.Report.Pdf.Core
 
 			// Check whether the new position incl. post position still fits on the current page
 			PositionState positionState;
-			if (state.PositionToRepeatHeight + state.PositionPartHeight + currentPosHeight + postPositionHeight > page.MaxPositionPartHeight || IsPageBreak(position.Type))
+			if (state.PositionToRepeatHeight + state.PositionPartHeight + currentPosHeight + postPositionHeight > page.MaxPositionPartHeight || IsPageBreak(position) || IsForceNewPage(position))
 			{
 				// The current position no longer fits on the current page when the post position is taken into account.
 				// Fits the current position as a whole on the next page (including pre- and post-position)
@@ -224,8 +235,14 @@ namespace Eshava.Report.Pdf.Core
 
 				state.NewPageHeight = CreatePage(state.CurrentPageNumber, state.IsFirstPage).MaxPositionPartHeight;
 
-				if (state.PositionToRepeatHeight + currentPosHeight + prePositionHeight + postPositionHeight <= state.NewPageHeight || IsPageBreak(position.Type))
+				if (state.PositionToRepeatHeight + currentPosHeight + prePositionHeight + postPositionHeight <= state.NewPageHeight || IsPageBreak(position) || IsForceNewPage(position))
 				{
+					// Check if the preview position is set to "PreventLastOnPage"
+					if ((page.Positions.LastOrDefault(p => p.Type == PositonType.Default)?.PreventLastOnPage ?? false))
+					{
+						return (page, PositionResult.MovePreviewPositonToNextPage);
+					}
+
 					// The current position fits completely on a new page including pre- and post-position, 
 					// so the post position is added to the previous position and the current page is closed
 					// Continue use existing page and add pre-position
@@ -251,7 +268,7 @@ namespace Eshava.Report.Pdf.Core
 			}
 
 			// Forced page breaks have already been considered
-			if (!IsPageBreak(position.Type))
+			if (!IsPageBreak(position))
 			{
 				// If the current page is not the first page but the position is the first to be displayed
 				if (state.IsNewPage && !state.IsFirstPage)
@@ -293,7 +310,7 @@ namespace Eshava.Report.Pdf.Core
 				}
 			}
 
-			return (page, false);
+			return (page, PositionResult.Next);
 		}
 
 		/// <summary>
@@ -356,16 +373,55 @@ namespace Eshava.Report.Pdf.Core
 						// Remember current container
 						var positionContainer = _report.PositionContainer;
 
-						foreach (var position in positionContainer.MainPositions)
+						var positionIndex = 0;
+						do
 						{
+							var position = positionContainer.MainPositions[positionIndex];
 							var result = AddPosition(graphics, page, state, position, positionContainer);
 							page = result.Page;
 
-							if (result.Cancel)
+							if (result.Result == PositionResult.Cancel)
 							{
 								break;
 							}
-						}
+
+							if (result.Result == PositionResult.MovePreviewPositonToNextPage)
+							{
+								var previousSequenceNumber = position.SequenceNo - 1;
+								var tempPositionIndex = positionIndex;
+								while (true)
+								{
+									tempPositionIndex--;
+									position = positionContainer.MainPositions[tempPositionIndex];
+									if (position.SequenceNo == previousSequenceNumber)
+									{
+										var indexPositonRemove = page.Positions.IndexOf(position);
+										for (var i = page.Positions.Count - 1; i >= indexPositonRemove; i--)
+										{
+											page.Positions.RemoveAt(i);
+										}
+									}
+
+									if (position.Type == PositonType.Default || position.SequenceNo < previousSequenceNumber)
+									{
+										break;
+									}
+								}
+
+								if (position.SequenceNo == previousSequenceNumber)
+								{
+									position.Type = PositonType.ForceNewPage;
+									position.PreventLastOnPage = false;
+
+									result = AddPosition(graphics, page, state, position, positionContainer);
+									position.Type = PositonType.Default;
+									page = result.Page;
+									positionIndex = tempPositionIndex;
+								}
+							}
+
+							positionIndex++;
+						} while (positionIndex < positionContainer.MainPositions.Count);
 					}
 
 					// Add post position elements (these are to be inserted on the last page between the last position and footer)

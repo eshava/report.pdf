@@ -21,6 +21,9 @@ namespace Eshava.Report.Pdf.Core.Models
 		[XmlAttribute]
 		public int SequenceNo { get; set; }
 
+		[XmlAttribute]
+		public bool PreventLastOnPage { get; set; }
+
 		public bool IsEmpty
 		{
 			get { return GetAllElements().Count == 0; }

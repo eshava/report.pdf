@@ -89,6 +89,13 @@ public enum Alignment
 }
 ```
 
+### Position Attributes
+| Attribute | Description |
+| ------ | ------ |
+| SequenceNo | Groups positions to an unit (important for page height calculation |
+| Type | Type of the position, see enum PositonType |
+| PreventLastOnPage | Specifies whether a page break is forced when the position is the last position on the page |
+
 
 ### Xml Frame
 ```xml
@@ -114,9 +121,11 @@ public enum Alignment
 	</PrePositions>
 	<Positions>
 		<Position SequenceNo="0" Type="RepeatOnTop"></Position>
-		<Position SequenceNo="0" Type="Default"></Position>
-		<Position SequenceNo="0" Type="OnlyAsLastOnPage"></Position>
-		<Position SequenceNo="0" Type="OnlyOnNewPage"></Position>
+		<Position SequenceNo="1" Type="Default"></Position>
+		<Position SequenceNo="1" Type="OnlyAsLastOnPage"></Position>
+		<Position SequenceNo="2" Type="OnlyOnNewPage"></Position>
+		<Position SequenceNo="2" Type="Default"></Position>
+		<Position SequenceNo="2" Type="OnlyAsLastOnPage"></Position>
 	</Positions>
 	<PostPositions>
 		<Position></Position>
