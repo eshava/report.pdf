@@ -2,6 +2,7 @@
 using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
+using Eshava.Report.Pdf.Enums;
 
 namespace Eshava.Report.Pdf.Core.Models
 {
@@ -9,6 +10,9 @@ namespace Eshava.Report.Pdf.Core.Models
 	{
 		[XmlAttribute]
 		public Alignment Alignment { get; set; }
+
+		[XmlAttribute]
+		public Scale Scale { get; set; }
 
 		public override void Draw(IGraphics graphics, Point start, Size container)
 		{
@@ -41,9 +45,22 @@ namespace Eshava.Report.Pdf.Core.Models
 				size = new Size(size.Width, container.Height - PosY);
 			}
 
-			var scale = size.Height / imageSize.Height;
-			var differenceWidth = size.Width - (imageSize.Width * scale);
-			size = new Size(imageSize.Width * scale, imageSize.Height * scale);
+			var differenceWidth = 0.0;
+			double scale;
+			switch (Scale)
+			{
+				case Scale.Width:
+
+					scale = size.Width / imageSize.Width;
+					size = new Size(imageSize.Width * scale, imageSize.Height * scale);
+					break;
+				case Scale.Height:
+				default:
+					scale = size.Height / imageSize.Height;
+					differenceWidth = size.Width - (imageSize.Width * scale);
+					size = new Size(imageSize.Width * scale, imageSize.Height * scale);
+					break;
+			}
 
 			Point location;
 			switch (Alignment)

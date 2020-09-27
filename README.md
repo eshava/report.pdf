@@ -66,6 +66,7 @@ Platform independent core to calculate and generate pdf documents
 | MaxHeight | Point | | | yes | yes | yes | | |
 | EndsDiffHeight | Point | | | yes | yes | yes | | |
 | SuppressOnSinglePage | Boolean (1,0) | | | | | | yes | |
+| Scale | Scale | | yes | | | | | |
 
 ```csharp
 public enum DashStyle
@@ -89,6 +90,16 @@ public enum Alignment
 	Justify = 4
 }
 ```
+
+```csharp
+public enum Scale
+{
+	Default = 0,
+	Width = 1,
+	Height = 2
+}
+```
+
 
 ### Position Attributes
 | Attribute | Description |
