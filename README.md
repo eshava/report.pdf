@@ -58,6 +58,7 @@ Platform independent core to calculate and generate pdf documents
 | Italic | Boolean (1,0) | yes | | | | | yes | yes |
 | Underline | Boolean (1,0) | yes | | | | | yes | yes |
 | Alignment | Alignment | yes | yes | | | | yes | yes |
+| VerticalAlignment | VerticalAlignment | | yes | | | | | |
 | ExpandAndShift | Boolean (1,0) | yes | | | | | yes | yes |
 | ShiftUpHeight | Point | yes | | | | | yes | yes |
 | NoShift | Boolean (1,0) | yes | | | | | yes | yes |
@@ -92,14 +93,38 @@ public enum Alignment
 ```
 
 ```csharp
+public enum VerticalAlignment
+{
+	Default = 0,
+	Top = 1,
+	Center = 2,
+	Bottom = 3
+}
+```
+
+```csharp
 public enum Scale
 {
 	Default = 0,
 	Width = 1,
-	Height = 2
+	Height = 2   /* Default */,
+	WidthOrHeight = 3,
+	FitsWidth = 4,
+	FitsHeight = 5,
+	FitsWidthOrHeight = 6
 }
 ```
 
+### Scale Definitions
+| Option | Description |
+| ------ | ------ |
+| Default | See Height |
+| Width | Scales the image width to the maximum element width. The element height is ignored. |
+| Height | Scales the image height to the maximum element height. The element width is ignored. |
+| WidthOrHeight | Scales the image height or width to the maximum value without exceeding the element size. |
+| FitsWidth | Reduces the image width to the maximum element width if the image width exceeds the element width. The element height is ignored. |
+| FitsHeight | Reduces the image height to the maximum element height if the image height exceeds the element height. The element width is ignored. |
+| FitsWidthOrHeight | Reduces the image width and/or height if they exceeds the element size. |
 
 ### Position Attributes
 | Attribute | Description |
