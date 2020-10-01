@@ -64,8 +64,8 @@ Platform independent core to calculate and generate pdf documents
 | NoShift | Boolean (1,0) | yes | | | | | yes | yes |
 | Style | DashStyle | | | yes | yes | yes | | |
 | Linewidth | Point | | | yes | yes | yes | | |
-| MaxHeight | Point | | | yes | yes | yes | | |
-| EndsDiffHeight | Point | | | yes | yes | yes | | |
+| MaxHeight | Boolean (1,0) | | | yes | yes | yes | | |
+| EndsDiffHeight | Boolean (1,0) | | | yes | yes | yes | | |
 | SuppressOnSinglePage | Boolean (1,0) | | | | | | yes | |
 | Scale | Scale | | yes | | | | | |
 
