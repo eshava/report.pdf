@@ -66,6 +66,7 @@ Platform independent core to calculate and generate pdf documents
 | Linewidth | Point | | | yes | yes | yes | | |
 | MaxHeight | Boolean (1,0) | | | yes | yes | yes | | |
 | EndsDiffHeight | Boolean (1,0) | | | yes | yes | yes | | |
+| SplittExtraMargin | Point | | | | | yes | | |
 | SuppressOnSinglePage | Boolean (1,0) | | | | | | yes | |
 | Scale | Scale | | yes | | | | | |
 
@@ -183,6 +184,16 @@ public enum PositonType
 	OnlyAsLastOnPage = 5
 }
 ```
+
+## How to use ElementText
+Text blocks need a height to determine the height of the container. 
+If a text block should be able to grow dynamically, the Height property must be set to 0.
+If underlying elements are to be moved down, the ExpandAndShift property must also be set to 1.
+If an underlying element does not move down, it does not have enough initial distance to the dynamic text block.
+
+## How to use ElementLine
+Vertical lines that are to take up the entire position height must have the value 0 for PosY and Height. Additionally, the property MaxHeight must be set to 1.
+In case a dynamic text block has to be spread over several pages, a distance to the text block can be specified for underlying horizontal lines. For this purpose the property SplittExtraMargin must be set.
 
 ## Examples
 * Document in portait format 

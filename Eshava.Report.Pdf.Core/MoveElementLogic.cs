@@ -198,6 +198,13 @@ namespace Eshava.Report.Pdf.Core
 						{
 							// Move element below and note new position
 							elements[jnx].PosY += eText.HeightDifference;
+
+							// Also move the end point of the line 
+							if (elements[jnx] is ElementLine)
+							{
+								elements[jnx].Height += eText.HeightDifference;
+							}
+
 							pointsStart[elements[jnx].Id] = new Point(elements[jnx].PosX, elements[jnx].PosY);
 							pointsEnd[elements[jnx].Id] = new Point(pointsEnd[elements[jnx].Id].X, elements[jnx].PosY + sizes[elements[jnx].Id].Height);
 

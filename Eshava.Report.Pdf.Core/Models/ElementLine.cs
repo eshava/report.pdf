@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Linq;
+using System.Xml.Serialization;
 using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Interfaces;
 
@@ -21,6 +22,9 @@ namespace Eshava.Report.Pdf.Core.Models
 		[XmlAttribute]
 		public bool EndsDiffHeight { get; set; }
 
+		[XmlAttribute]
+		public double SplittExtraMargin { get; set; }
+		
 		public override void Draw(IGraphics graphics, Point topLeftPage, Size sizePage)
 		{
 			var size = GetSize(graphics);
@@ -47,6 +51,17 @@ namespace Eshava.Report.Pdf.Core.Models
 
 				graphics.DrawLine(Color, Linewidth, Style, lineStart, newLineEnd);
 			}
+		}
+
+		public ElementLine Clone()
+		{
+			var line = new ElementLine();
+			foreach (var propertyInfo in line.GetType().GetProperties().Where(p => p.CanWrite && p.CanRead))
+			{
+				propertyInfo.SetValue(line, propertyInfo.GetValue(this));
+			}
+
+			return line;
 		}
 
 		private Point CalculatEndCoordinateX(Point start, Point end, double newEndY)

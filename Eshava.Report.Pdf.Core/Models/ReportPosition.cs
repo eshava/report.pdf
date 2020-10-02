@@ -67,13 +67,18 @@ namespace Eshava.Report.Pdf.Core.Models
 			CheckContentImage(graphics, position, this, noMatch, ref currentHeight, maxElementHeight, maxElementHeightOnPage);
 			CheckContentRectangle(graphics, position, this, noMatch, ref currentHeight, maxElementHeight, maxElementHeightOnPage);
 			AddContentLine(this, noMatch);
+
+			var notMatchedLineVertical = noMatch.ContentLine.Where(l => l.PosX == l.Width).ToList();
+			var notMatchedLineHorizontal = noMatch.ContentLine.Where(l => l.PosX != l.Width).ToList();
+			var extraHeight = notMatchedLineHorizontal.Any() ? notMatchedLineHorizontal.Max(line => line.SplittExtraMargin) : 0.0;
+
 			if (invertAnalyse)
 			{
-				CheckContentTextInvert(graphics, position, this, noMatch, ref currentHeight, maxElementHeightOnPage);
+				CheckContentTextInvert(graphics, position, this, noMatch, ref currentHeight, maxElementHeightOnPage - extraHeight);
 			}
 			else
 			{
-				CheckContentText(graphics, position, this, noMatch, ref currentHeight, maxElementHeightOnPage);
+				CheckContentText(graphics, position, this, noMatch, ref currentHeight, maxElementHeightOnPage - extraHeight);
 			}
 			// PageNo elements are ignored in positions
 			positions.Add(position);
@@ -85,18 +90,13 @@ namespace Eshava.Report.Pdf.Core.Models
 			CheckContentImage(graphics, position, noMatch, null, ref currentHeight, maxElementHeight, maxElementHeight);
 			CheckContentRectangle(graphics, position, noMatch, null, ref currentHeight, maxElementHeight, maxElementHeightOnPage);
 
-			foreach (var line in noMatch.ContentLine)
-			{
-				position.ContentLine.Add(line);
-			}
-
 			if (invertAnalyse)
 			{
-				CheckContentTextInvert(graphics, position, noMatch, noMatch2nd, ref currentHeight, maxElementHeight);
+				CheckContentTextInvert(graphics, position, noMatch, noMatch2nd, ref currentHeight, maxElementHeight - extraHeight);
 			}
 			else
 			{
-				CheckContentText(graphics, position, noMatch, noMatch2nd, ref currentHeight, maxElementHeight);
+				CheckContentText(graphics, position, noMatch, noMatch2nd, ref currentHeight, maxElementHeight - extraHeight);
 			}
 
 			positions.Add(position);
@@ -110,15 +110,42 @@ namespace Eshava.Report.Pdf.Core.Models
 				position = new ReportPosition();
 				if (invertAnalyse)
 				{
-					CheckContentTextInvert(graphics, position, noMatch, noMatch2nd, ref currentHeight, maxElementHeight);
+					CheckContentTextInvert(graphics, position, noMatch, noMatch2nd, ref currentHeight, maxElementHeight - extraHeight);
 				}
 				else
 				{
-					CheckContentText(graphics, position, noMatch, noMatch2nd, ref currentHeight, maxElementHeight);
+					CheckContentText(graphics, position, noMatch, noMatch2nd, ref currentHeight, maxElementHeight - extraHeight);
 				}
 
 				positions.Add(position);
 			}
+
+			// If the lines do not fit on the current page, 
+			// it is assumed that they were moved to the end of the position by a dynamic text field
+
+			// Calculate new height for the vertical lines
+			notMatchedLineHorizontal.ForEach(line => line.Height = line.PosY = 0.0);
+			notMatchedLineVertical.ForEach(line => line.Height = 0.0);
+
+			positions.ForEach(pos =>
+			{
+				var posSize = pos.GetSize(graphics);
+				notMatchedLineHorizontal.ForEach(line =>
+				{
+					var newLine = line.Clone();
+					newLine.Height = posSize.Height + extraHeight;
+					newLine.PosY = posSize.Height + extraHeight;
+
+					pos.ContentLine.Add(newLine);
+				});
+
+				notMatchedLineVertical.ForEach(line =>
+				{
+					var newLine = line.Clone();
+					newLine.Height = posSize.Height + extraHeight;
+					pos.ContentLine.Add(newLine);
+				});
+			});
 
 			return positions;
 		}
