@@ -271,14 +271,6 @@ namespace Eshava.Report.Pdf.Core.Models
 					AddElementToList(graphics, text, position.ContentText, noMatch.ContentText, ref currentHeight, maxElementHeightOnPage, true);
 				}
 			}
-
-			if (current.ContentHyperlink.Count > 0)
-			{
-				foreach (var text in current.ContentHyperlink)
-				{
-					AddElementToList(graphics, text, position.ContentHyperlink, noMatch.ContentHyperlink, ref currentHeight, maxElementHeightOnPage, true);
-				}
-			}
 		}
 
 		private void CheckContentText(IGraphics graphics, ReportPosition position, ElementContainer current, ElementContainer noMatch, ref double currentHeight, double maxElementHeightOnPage)
@@ -288,14 +280,6 @@ namespace Eshava.Report.Pdf.Core.Models
 				foreach (var text in current.ContentText)
 				{
 					AddElementToList(graphics, text, position.ContentText, noMatch.ContentText, ref currentHeight, maxElementHeightOnPage, false);
-				}
-			}
-
-			if (current.ContentHyperlink.Count > 0)
-			{
-				foreach (var text in current.ContentHyperlink)
-				{
-					AddElementToList(graphics, text, position.ContentHyperlink, noMatch.ContentHyperlink, ref currentHeight, maxElementHeightOnPage, false);
 				}
 			}
 		}
@@ -461,7 +445,6 @@ namespace Eshava.Report.Pdf.Core.Models
 				ContentRectangle.Where(e => e.MaxHeight).ToList().ForEach(e => { e.Height += heightDifference; });
 				ContentRectangleFill.Where(e => e.MaxHeight).ToList().ForEach(e => { e.Height += heightDifference; });
 				ContentText.ToList().ForEach(e => { e.PosY += heightDifference; });
-				ContentHyperlink.ToList().ForEach(e => { e.PosY += heightDifference; });
 				ContentPageNo.ToList().ForEach(e => { e.PosY += heightDifference; });
 			}
 		}

@@ -3,10 +3,11 @@ using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
 using Eshava.Report.Pdf.Enums;
+using Eshava.Report.Pdf.Interfaces;
 
 namespace Eshava.Report.Pdf.Core.Models
 {
-	public class ElementImage : ElementBase
+	public class ElementImage : ElementBase, IHyperlink
 	{
 		[XmlAttribute]
 		public Alignment Alignment { get; set; }
@@ -16,6 +17,9 @@ namespace Eshava.Report.Pdf.Core.Models
 
 		[XmlAttribute]
 		public Scale Scale { get; set; }
+
+		[XmlAttribute]
+		public string Hyperlink { get; set; }
 
 		public override void Draw(IGraphics graphics, Point start, Size container)
 		{
@@ -28,6 +32,36 @@ namespace Eshava.Report.Pdf.Core.Models
 			if (calculationResult.Image == default)
 			{
 				return;
+			}
+
+			var drawInfo = CalculateDrawPosition(graphics, start);
+
+			graphics.DrawImage(calculationResult.Image, drawInfo.Start, calculationResult.Size);
+		}
+
+		public override Size GetSize(IGraphics graphics)
+		{
+			return CalculateSize(graphics).Size;
+		}
+
+		public (Point Start, Size Size) GetHyperlinkPosition(IGraphics graphics, Point topLeftPage)
+		{
+			var drawInfo = CalculateDrawPosition(graphics, topLeftPage);
+			
+			return (drawInfo.Start, drawInfo.Size);
+		}
+
+		private (Point Start, Size Size) CalculateDrawPosition(IGraphics graphics, Point start)
+		{
+			if (Content.IsNullOrEmpty())
+			{
+				return (start, default);
+			}
+
+			var calculationResult = CalculateSize(graphics);
+			if (calculationResult.Image == default)
+			{
+				return (start, default);
 			}
 
 			var differenceWidth = calculationResult.ElementSize.Width - calculationResult.Size.Width;
@@ -63,14 +97,7 @@ namespace Eshava.Report.Pdf.Core.Models
 					break;
 			}
 
-			var location = new Point(locationX, locationY);
-
-			graphics.DrawImage(calculationResult.Image, location, calculationResult.Size);
-		}
-
-		public override Size GetSize(IGraphics graphics)
-		{
-			return CalculateSize(graphics).Size;
+			return (new Point(locationX, locationY), calculationResult.Size);
 		}
 
 		private CalculationResult CalculateSize(IGraphics graphics)

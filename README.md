@@ -45,30 +45,31 @@ Platform independent core to calculate and generate pdf documents
 | ElementPageNo | Draw the current and total page number |
 
 ### Element Properties
-| Property | Unit | Text | Image | Rectangle | Rectangle Fill | Line | Page No | Hyperlink |
-| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
-| Width | Point | yes | yes | yes | yes | yes | yes | yes |
-| Height | Point | yes | yes | yes | yes | yes | yes | yes |
-| PosX | Point | yes | yes | yes | yes | yes | yes | yes |
-| PosY | Point | yes | yes | yes | yes | yes | yes | yes |
-| Color | Alpha RGB, decimal | yes | | yes | yes | yes | yes | yes |
-| FontFamily | string | yes | | | | | yes | yes |
-| Size | Point | yes | | | | | yes | yes |
-| Bold | Boolean (1,0) | yes | | | | | yes | yes |
-| Italic | Boolean (1,0) | yes | | | | | yes | yes |
-| Underline | Boolean (1,0) | yes | | | | | yes | yes |
-| Alignment | Alignment | yes | yes | | | | yes | yes |
-| VerticalAlignment | VerticalAlignment | | yes | | | | | |
-| ExpandAndShift | Boolean (1,0) | yes | | | | | yes | yes |
-| ShiftUpHeight | Point | yes | | | | | yes | yes |
-| NoShift | Boolean (1,0) | yes | | | | | yes | yes |
-| Style | DashStyle | | | yes | yes | yes | | |
-| Linewidth | Point | | | yes | yes | yes | | |
-| MaxHeight | Boolean (1,0) | | | yes | yes | yes | | |
-| EndsDiffHeight | Boolean (1,0) | | | yes | yes | yes | | |
-| SplittExtraMargin | Point | | | | | yes | | |
-| SuppressOnSinglePage | Boolean (1,0) | | | | | | yes | |
-| Scale | Scale | | yes | | | | | |
+| Property | Unit | Text | Image | Rectangle | Rectangle Fill | Line | Page No |
+| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
+| Width | Point | yes | yes | yes | yes | yes | yes |
+| Height | Point | yes | yes | yes | yes | yes | yes |
+| PosX | Point | yes | yes | yes | yes | yes | yes |
+| PosY | Point | yes | yes | yes | yes | yes | yes |
+| Color | Alpha RGB, decimal | yes | | yes | yes | yes | yes |
+| FontFamily | string | yes | | | | | yes |
+| Size | Point | yes | | | | | yes |
+| Bold | Boolean (1,0) | yes | | | | | yes |
+| Italic | Boolean (1,0) | yes | | | | | yes |
+| Underline | Boolean (1,0) | yes | | | | | yes |
+| Alignment | Alignment | yes | yes | | | | yes |
+| VerticalAlignment | VerticalAlignment | | yes | | | | |
+| ExpandAndShift | Boolean (1,0) | yes | | | | | yes |
+| ShiftUpHeight | Point | yes | | | | | yes |
+| NoShift | Boolean (1,0) | yes | | | | | yes |
+| Style | DashStyle | | | yes | yes | yes | |
+| Linewidth | Point | | | yes | yes | yes | |
+| MaxHeight | Boolean (1,0) | | | yes | yes | yes | |
+| EndsDiffHeight | Boolean (1,0) | | | yes | yes | yes | |
+| SplittExtraMargin | Point | | | | | yes | |
+| SuppressOnSinglePage | Boolean (1,0) | | | | | | yes |
+| Scale | Scale | | yes | | | | |
+| Hyperlink | string | yes | yes | | | | |
 
 ```csharp
 public enum DashStyle

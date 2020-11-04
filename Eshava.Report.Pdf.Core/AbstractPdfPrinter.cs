@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
 using Eshava.Report.Pdf.Core.Models;
+using Eshava.Report.Pdf.Interfaces;
 
 namespace Eshava.Report.Pdf.Core
 {
@@ -183,11 +185,11 @@ namespace Eshava.Report.Pdf.Core
 				}
 
 				element.Draw(graphics, start, container);
+				var hyperlink = element as IHyperlink;
 
-				if (element is ElementHyperlink)
+				if (hyperlink != default && !hyperlink.Hyperlink.IsNullOrEmpty())
 				{
-					var hyperlink = (ElementHyperlink)element;
-					var location = hyperlink.GetElementPosition(graphics, start);
+					var location = hyperlink.GetHyperlinkPosition(graphics, start);
 					page.AddWebLink(location.Start, location.Size, hyperlink.Hyperlink);
 				}
 

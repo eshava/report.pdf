@@ -6,10 +6,11 @@ using System.Xml.Serialization;
 using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
+using Eshava.Report.Pdf.Interfaces;
 
 namespace Eshava.Report.Pdf.Core.Models
 {
-	public class ElementText : ElementBase
+	public class ElementText : ElementBase, IHyperlink
 	{
 		private Font _font;
 
@@ -45,6 +46,9 @@ namespace Eshava.Report.Pdf.Core.Models
 
 		[XmlAttribute]
 		public bool NoShift { get; set; }
+
+		[XmlAttribute]
+		public string Hyperlink { get; set; }
 
 		public Size GetTextSize(IGraphics graphics, string text)
 		{
@@ -159,6 +163,13 @@ namespace Eshava.Report.Pdf.Core.Models
 			}
 
 			return textLines;
+		}
+
+		public (Point Start, Size Size) GetHyperlinkPosition(IGraphics graphics, Point topLeftPage)
+		{
+			var topLeftTotal = new Point(topLeftPage.X + PosX, topLeftPage.Y + PosY);
+
+			return (topLeftTotal, GetSize(graphics));
 		}
 
 		public static T Clone<T>(T element) where T : ElementText, new()
