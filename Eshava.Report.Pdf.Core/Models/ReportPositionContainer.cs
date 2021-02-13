@@ -166,11 +166,11 @@ namespace Eshava.Report.Pdf.Core.Models
 			{
 				if (p.Height > 0)
 				{
-					p.Height = size.Height - p.PosY - p.Height;
+					p.Height = size.Height - p.Height;
 				}
 				else
 				{
-					p.Height = size.Height - p.PosY;
+					p.Height = size.Height;
 				}
 			});
 		}
