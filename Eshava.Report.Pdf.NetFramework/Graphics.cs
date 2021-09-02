@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Eshava.Report.Pdf.Core;
 using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
@@ -33,6 +34,15 @@ namespace Eshava.Report.Pdf
 				_xGraphics = null;
 				_isDisposed = true;
 			}
+		}
+
+		public Size GetTextSize(IEnumerable<TextSegment> textSegments, double width)
+		{
+			//Fallback
+			var text = String.Join(" ", textSegments.Select(ts => ts.Text));
+			var font = textSegments.First().Font;
+
+			return GetTextSize(font, width, text);
 		}
 
 		public Size GetTextSize(Font font, double elementWidth, string text)
@@ -140,6 +150,16 @@ namespace Eshava.Report.Pdf
 			}
 
 			return this;
+		}
+
+		public IGraphics DrawText(IEnumerable<TextSegment> textSegments, Alignment alignment, Point topLeftPage, Size sizePage, Point topLeftText, Size textSize)
+		{
+			// Fallback
+
+			var text = String.Join(" ", textSegments.Select(ts => ts.Text));
+			var font = textSegments.First().Font;
+
+			return DrawText(font, text, alignment, topLeftPage, sizePage, topLeftText, textSize);
 		}
 
 		public IGraphics DrawText(Font font, string text, Alignment alignment, Point topLeftPage, Size sizePage, Point topLeftText, Size textSize)

@@ -47,7 +47,14 @@ namespace Eshava.Report.Pdf.Core
 
 				if (remove)
 				{
-					container.RemoveElementText(elements[indexCurrent] as ElementText);
+					if (elements[indexCurrent] is ElementText)
+					{
+						container.RemoveElementText(elements[indexCurrent] as ElementText);
+					}
+					else if (elements[indexCurrent] is ElementHtml)
+					{
+						container.RemoveElementHtml(elements[indexCurrent] as ElementHtml);
+					}
 				}
 				else
 				{
@@ -75,9 +82,10 @@ namespace Eshava.Report.Pdf.Core
 				return false;
 			}
 
-			var elementCurrent = (ElementText)elements[index];
-			var startCurrent = pointsStart[elementCurrent.Id];
-			var endCurrent = pointsEnd[elementCurrent.Id];
+			var elementCurrentText = elements[index] as ElementText;
+			var elementCurrentHtml = elements[index] as ElementHtml;
+			var startCurrent = pointsStart[elementCurrentText != default ? elementCurrentText.Id : elementCurrentHtml.Id];
+			var endCurrent = pointsEnd[elementCurrentText != default ? elementCurrentText.Id : elementCurrentHtml.Id];
 
 			var calculatedResult = CheckCollisions(graphics, elements, new List<int> { index }, pointsStart, pointsEnd, sizes, startCurrent, endCurrent);
 
@@ -90,7 +98,7 @@ namespace Eshava.Report.Pdf.Core
 				{
 					var element = elements[collision.ElementIndex];
 
-					if (!IsShiftUpElement(elementCurrent))
+					if (!IsShiftUpElement(element))
 					{
 						var start = pointsStart[element.Id];
 						var end = pointsEnd[element.Id];
@@ -110,7 +118,8 @@ namespace Eshava.Report.Pdf.Core
 
 			foreach (var below in calculatedResult.ElementIndexesBelow)
 			{
-				ShiftElementsUp(graphics, elements, index, below, borderLeft, borderRight, elementCurrent.ShiftUpHeight, pointsStart, pointsEnd, sizes);
+				var ShiftUpHeight = elementCurrentText != default ? elementCurrentText.ShiftUpHeight : elementCurrentHtml.ShiftUpHeight;
+				ShiftElementsUp(graphics, elements, index, below, borderLeft, borderRight, ShiftUpHeight, pointsStart, pointsEnd, sizes);
 			}
 
 			return true;
@@ -178,15 +187,20 @@ namespace Eshava.Report.Pdf.Core
 		/// <param name="sizes">List of all element sizes</param>
 		private void ShiftElementsDown(IGraphics graphics, List<ElementBase> elements, int inx, Dictionary<Guid, Point> pointsStart, Dictionary<Guid, Point> pointsEnd, Dictionary<Guid, Size> sizes)
 		{
-			if (elements[inx] is ElementText && ((ElementText)elements[inx]).ExpandAndShift)
+
+
+			if ((elements[inx] is ElementText && ((ElementText)elements[inx]).ExpandAndShift) || (elements[inx] is ElementHtml && ((ElementHtml)elements[inx]).ExpandAndShift))
 			{
-				var eText = (ElementText)elements[inx];
+				var eText = elements[inx] as ElementText;
+				var eHtml = elements[inx] as ElementHtml;
 				CalculateElement(graphics, elements[inx], pointsStart, pointsEnd, sizes);
 				var start = pointsStart[eText.Id];
 				var end = pointsEnd[eText.Id];
 
+				var heightDifference = eText != default ? eText.HeightDifference : eHtml.HeightDifference;
+
 				// Element may grow and move other elements
-				if (eText.ExpandAndShift && eText.HeightDifference > 0)
+				if (heightDifference > 0)
 				{
 					for (var jnx = inx + 1; jnx < elements.Count; jnx++)
 					{
@@ -197,12 +211,12 @@ namespace Eshava.Report.Pdf.Core
 						if ((pointsStart[elements[jnx].Id].X < start.X && pointsEnd[elements[jnx].Id].X > start.X) || (pointsStart[elements[jnx].Id].X >= start.X && pointsStart[elements[jnx].Id].X < end.X))
 						{
 							// Move element below and note new position
-							elements[jnx].PosY += eText.HeightDifference;
+							elements[jnx].PosY += heightDifference;
 
 							// Also move the end point of the line 
 							if (elements[jnx] is ElementLine)
 							{
-								elements[jnx].Height += eText.HeightDifference;
+								elements[jnx].Height += heightDifference;
 							}
 
 							pointsStart[elements[jnx].Id] = new Point(elements[jnx].PosX, elements[jnx].PosY);
@@ -248,7 +262,22 @@ namespace Eshava.Report.Pdf.Core
 
 		private bool IsShiftUpElement(ElementBase element)
 		{
-			return element.IsEmpty && element is ElementText && Math.Round(((ElementText)element).ShiftUpHeight, 2) > 0.0;
+			if (!element.IsEmpty)
+			{
+				return false;
+			}
+
+			if (element is ElementText)
+			{
+				return Math.Round(((ElementText)element).ShiftUpHeight, 2) > 0.0;
+			}
+
+			if (element is ElementHtml)
+			{
+				return Math.Round(((ElementHtml)element).ShiftUpHeight, 2) > 0.0;
+			}
+
+			return false;
 		}
 
 		private CollisionResult CheckCollisions(IGraphics graphics, List<ElementBase> elements, List<int> indexes, Dictionary<Guid, Point> pointsStart, Dictionary<Guid, Point> pointsEnd, Dictionary<Guid, Size> sizes, Point startCurrent, Point endCurrent)

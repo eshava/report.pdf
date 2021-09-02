@@ -211,7 +211,7 @@ namespace Eshava.Report.Pdf.Core
 			{
 				// Cancelation condition: if the pre postions of a page uses so many space, that no further positions can be displayed. 
 				// Check whether the postion can be split so that it can still be displayed
-				if (Math.Abs(state.PositionPartHeight) < 0.0001)
+				if (Math.Abs(state.PositionPartHeight + currentPosHeight) < 0.0001)
 				{
 					state.Pages.Add(page);
 

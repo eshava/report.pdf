@@ -14,9 +14,14 @@ namespace Eshava.Report.Pdf.Core
 			return lineGap + spaceHeight;
 		}
 
+		protected double GetSpaceWidth(Func<string, double> measureTextWith)
+		{
+			return measureTextWith("x x") - measureTextWith("xx");
+		}
+
 		protected Size CalculateTextSize(string text, double singleLineHeight, double elementWidth, Func<string, double> measureTextWith)
 		{
-			var spaceWidth = measureTextWith(" ");
+			var spaceWidth = GetSpaceWidth(measureTextWith);
 			var height = 0.0;
 			var maxWidth = 0.0;
 			var lines = text.Replace("\r", "").Split('\n');
