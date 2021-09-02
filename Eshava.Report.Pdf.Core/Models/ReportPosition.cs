@@ -83,6 +83,19 @@ namespace Eshava.Report.Pdf.Core.Models
 			// PageNo elements are ignored in positions
 			positions.Add(position);
 
+			// Move only lines that are below all text elements
+			var horizontalLineToRemove = new List<ElementLine>();
+			foreach (var elementLine in notMatchedLineHorizontal)
+			{
+				var count = position.ContentText.Count(e => e.PosY > elementLine.PosY);
+				if (count > 0)
+				{
+					horizontalLineToRemove.Add(elementLine);
+					position.ContentLine.Add(elementLine);
+				}
+			}
+			horizontalLineToRemove.ForEach(e => notMatchedLineHorizontal.Remove(e));
+
 			currentHeight = 0;
 			// Create position for next page
 			position = new ReportPosition();
