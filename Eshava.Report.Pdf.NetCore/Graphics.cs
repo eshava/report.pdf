@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Eshava.Report.Pdf.Core;
 using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
@@ -15,7 +14,7 @@ using SixLabors.ImageSharp.Formats.Png;
 
 namespace Eshava.Report.Pdf
 {
-	public class Graphics : AbstractGraphics, IGraphics
+	public class Graphics : IGraphics
 	{
 		private XGraphics _xGraphics;
 		private readonly Dictionary<string, SixLabors.ImageSharp.Image> _pictures;
@@ -37,23 +36,26 @@ namespace Eshava.Report.Pdf
 			}
 		}
 
-		public Size GetTextSize(Font font, double elementWidth, string text)
+		public double GetTextWidth(Font font, string text)
 		{
-			if (text.IsNullOrEmpty())
-			{
-				return new Size(0, 0);
-			}
-
 			var options = new XPdfFontOptions(PdfFontEncoding.Unicode);
 			var xFont = new XFont(font.Fontfamily, font.Size, GetXFontstyle(font.Bold, font.Italic, font.Underline), options);
 			var format = XStringFormats.Default;
 			format.Alignment = XStringAlignment.Near;
 			format.LineAlignment = XLineAlignment.Near;
+			
+			return _xGraphics.MeasureString(text, xFont, format).Width;
+		}
 
-			var singleLineHeight = CalculateSingleLineHeight(t => _xGraphics.MeasureString(t, xFont, format).Height);
-			var textSize = CalculateTextSize(text, singleLineHeight, elementWidth, t => _xGraphics.MeasureString(t, xFont, format).Width);
+		public Size GetTextSize(Font font, double elementWidth, string text)
+		{
+			var textSegment = new Core.Models.TextSegment
+			{
+				Text = text,
+				Font = font
+			};
 
-			return textSize;
+			return GetTextSize(new[] { textSegment }, elementWidth);
 		}
 
 		public Size GetTextSize(IEnumerable<Core.Models.TextSegment> textSegments, double width)
@@ -64,7 +66,9 @@ namespace Eshava.Report.Pdf
 				{
 					Text = ts.Text,
 					Font = new XFont(ts.Font.Fontfamily, ts.Font.Size, GetXFontstyle(ts.Font.Bold, ts.Font.Italic, ts.Font.Underline), options),
-					Brush = new XSolidBrush(TranslateColor(ts.Font.Color))
+					Brush = new XSolidBrush(TranslateColor(ts.Font.Color)),
+					LineIndent = ts.LineIndent,
+					SkipParagraphAlignment = ts.SkipParagraphAlignment
 				})
 				.ToList();
 
@@ -72,53 +76,10 @@ namespace Eshava.Report.Pdf
 			format.Alignment = XStringAlignment.Near;
 			format.LineAlignment = XLineAlignment.Near;
 
-			var height = 0.0;
-			var maxWidth = 0.0;
-			var lineWidth = 0.0;
+			var tf = new XTextSegmentFormatter(_xGraphics);
+			var size = tf.CalculateTextSize(pdfSharpTextSegments, width, format);
 
-			var maxSegmentLineHeight = 0.0;
-			foreach (var pdfSharpTextSegment in pdfSharpTextSegments)
-			{
-				var currentSegmentLineHeight = CalculateSingleLineHeight(t => _xGraphics.MeasureString(t, pdfSharpTextSegment.Font, format).Height);
-				maxSegmentLineHeight = Math.Max(maxSegmentLineHeight, currentSegmentLineHeight);
-
-				if (pdfSharpTextSegment.Text == Environment.NewLine)
-				{
-					height += maxSegmentLineHeight;
-					lineWidth = 0.0;
-
-					continue;
-				}
-
-				var spaceWidth = GetSpaceWidth(t => _xGraphics.MeasureString(t, pdfSharpTextSegment.Font, format).Width);
-				var words = pdfSharpTextSegment.Text.Split(' ');
-				var firstWord = true;
-
-				foreach (var word in words)
-				{
-					var wordWidth = _xGraphics.MeasureString(word, pdfSharpTextSegment.Font, format).Width;
-					if (lineWidth + spaceWidth + wordWidth > width)
-					{
-						lineWidth = wordWidth;
-						height += maxSegmentLineHeight;
-
-						if (firstWord)
-						{
-							firstWord = false;
-							maxSegmentLineHeight = currentSegmentLineHeight;
-						}
-					}
-					else
-					{
-						lineWidth += wordWidth + spaceWidth;
-						maxWidth = Math.Max(maxWidth, lineWidth);
-					}
-				}
-			}
-
-			height += maxSegmentLineHeight * 1.5;
-
-			return new Size(maxWidth, height);
+			return new Size(size.Width, size.Height);
 		}
 
 		public IImage LoadImage(string imageName)
@@ -221,7 +182,9 @@ namespace Eshava.Report.Pdf
 				{
 					Text = ts.Text,
 					Font = new XFont(ts.Font.Fontfamily, ts.Font.Size, GetXFontstyle(ts.Font.Bold, ts.Font.Italic, ts.Font.Underline), options),
-					Brush = new XSolidBrush(TranslateColor(ts.Font.Color))
+					Brush = new XSolidBrush(TranslateColor(ts.Font.Color)),
+					LineIndent = ts.LineIndent,
+					SkipParagraphAlignment = ts.SkipParagraphAlignment
 				})
 				.ToList();
 

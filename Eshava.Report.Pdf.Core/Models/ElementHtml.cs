@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
-using Eshava.Report.Pdf.Interfaces;
 
 namespace Eshava.Report.Pdf.Core.Models
 {
@@ -64,7 +62,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			}
 			set
 			{
-				_textSegments = value;
+				_textSegments = SummerizeTextSegments(value);
 			}
 		}
 
@@ -83,6 +81,20 @@ namespace Eshava.Report.Pdf.Core.Models
 			if (!TextSegments.Any() || TextSegments.All(ts => ts.Text.IsNullOrEmpty()))
 			{
 				return new Size(0, 0);
+			}
+
+			// calculate line indent reduction
+			var lineIndentReductions = TextSegments.Where(ts => ts.ReduceLineIndent).ToList();
+			foreach (var textSegment in lineIndentReductions)
+			{
+				var textWidth = graphics.GetTextWidth(GetFont(), textSegment.ReduceLineIndentByText);
+				if (textSegment.LineIndent > textWidth)
+				{
+					textSegment.LineIndent -= textWidth;
+				}
+
+				textSegment.ReduceLineIndent = false;
+				textSegment.ReduceLineIndentByText = null;
 			}
 
 			var textSize = GetTextSize(graphics, TextSegments);
@@ -118,7 +130,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			graphics.DrawText(TextSegments, Alignment, topLeftPage, sizePage, new Point(PosX, PosY), GetSize(graphics));
 		}
 
-		public List<TextSegment> SplittOnEndOfSentences()
+		public List<TextSegment> SplittBySpaces()
 		{
 			var textSegments = new List<TextSegment>();
 			var text = new StringBuilder();
@@ -130,42 +142,29 @@ namespace Eshava.Report.Pdf.Core.Models
 
 			foreach (var textSegment in TextSegments)
 			{
-				if (!textSegment.Text.Contains("."))
+				if (textSegment.Text == Environment.NewLine)
 				{
-					textSegments.Add(textSegment);
+					textSegments.Add(new TextSegment
+					{
+						Text = textSegment.Text,
+						Font = textSegment.Font,
+						LineIndent = textSegment.LineIndent,
+						SkipParagraphAlignment = textSegment.SkipParagraphAlignment
+					});
 
 					continue;
 				}
 
-				var parts = textSegment.Text.Split(' ');
-				for (var i = 0; i < parts.Length; i++)
+				var words = textSegment.Text.Split(' ');
+				foreach (var word in words)
 				{
-					if (parts[i].EndsWith(".") && ((i + 1) == parts.Length || IsCapitalLetter(parts[i + 1][0])))
+					textSegments.Add(new TextSegment
 					{
-						// Last text section reached
-						if (i > 0)
-						{
-							text.Append(" ");
-						}
-
-						text.Append(parts[i]);
-						textSegments.Add(new TextSegment
-						{
-							Text = text.ToString(),
-							Font = textSegment.Font
-						});
-						text.Clear();
-					}
-					else
-					{
-						// It continues after the space character with a lower case character or there's no point at the end of the word
-						if (i > 0)
-						{
-							text.Append(" ");
-						}
-
-						text.Append(parts[i]);
-					}
+						Text = word,
+						Font = textSegment.Font,
+						LineIndent = textSegment.LineIndent,
+						SkipParagraphAlignment = textSegment.SkipParagraphAlignment
+					});
 				}
 			}
 
@@ -202,11 +201,40 @@ namespace Eshava.Report.Pdf.Core.Models
 
 			return _font;
 		}
-		private bool IsCapitalLetter(char letter)
-		{
-			var letterString = letter.ToString(CultureInfo.InvariantCulture);
 
-			return Equals(letterString, letterString.ToUpper());
+		private IEnumerable<TextSegment> SummerizeTextSegments(IEnumerable<TextSegment> textSegments)
+		{
+			var summerizedTextSegments = new List<TextSegment>();
+
+			var lastTextSegment = default(TextSegment);
+			foreach (var textSegment in textSegments)
+			{
+				if (textSegment.Text != Environment.NewLine
+					&& lastTextSegment != default
+					&& lastTextSegment.Font.GetHashCode() == textSegment.Font.GetHashCode()
+					&& lastTextSegment.LineIndent == textSegment.LineIndent)
+				{
+					lastTextSegment.Text += " " + textSegment.Text;
+				}
+				else
+				{
+					lastTextSegment = default(TextSegment);
+				}
+
+				if (lastTextSegment == default)
+				{
+					lastTextSegment = new TextSegment
+					{
+						Text = textSegment.Text,
+						Font = textSegment.Font,
+						LineIndent = textSegment.LineIndent,
+						SkipParagraphAlignment = textSegment.SkipParagraphAlignment
+					};
+					summerizedTextSegments.Add(lastTextSegment);
+				}
+			}
+
+			return summerizedTextSegments;
 		}
 	}
 }

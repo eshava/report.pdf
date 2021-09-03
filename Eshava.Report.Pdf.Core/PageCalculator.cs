@@ -238,7 +238,7 @@ namespace Eshava.Report.Pdf.Core
 				if (state.PositionToRepeatHeight + currentPosHeight + prePositionHeight + postPositionHeight <= state.NewPageHeight || IsPageBreak(position) || IsForceNewPage(position))
 				{
 					// Check if the preview position is set to "PreventLastOnPage"
-					if ((page.Positions.LastOrDefault(p => p.Type == PositonType.Default)?.PreventLastOnPage ?? false))
+					if ((page.Positions.LastOrDefault(p => p.Type == PositonType.Default)?.PreventLastOnPage ?? false) && page.Positions.Count(p => p.Type == PositonType.Default) > 1)
 					{
 						return (page, PositionResult.MovePreviewPositonToNextPage);
 					}

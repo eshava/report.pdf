@@ -323,13 +323,11 @@ namespace Eshava.Report.Pdf.Core.Models
 			if (maxElementHeightOnPage < size.Height + text.PosY)
 			{
 				// Split text until it fits on the rest of the current page
-				var textparts = text.SplittByNewLine();
+				var textparts = text.SplittBySpaces();
 				var eText = CheckTextparts(graphics, textparts, text, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
 				if (eText == null)
 				{
 					// Nothing could be split
-					textparts = text.SplittOnEndOfSentences();
-					eText = CheckTextparts(graphics, textparts, text, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
 
 					// IF eText == null -> Add complete text to the list of elements for the next page 
 					// ELSE -> otherwise add remaining text to the list of elements for the next page
@@ -360,13 +358,11 @@ namespace Eshava.Report.Pdf.Core.Models
 			if (maxElementHeightOnPage < size.Height + text.PosY)
 			{
 				// Split text until it fits on the rest of the current page
-				var textparts = text.TextSegments.ToList();
+				var textparts = text.SplittBySpaces();
 				var eText = CheckTextparts(graphics, textparts, text, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
 				if (eText == null)
 				{
-					// Nothing could be split
-					textparts = text.SplittOnEndOfSentences();
-					eText = CheckTextparts(graphics, textparts, text, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
+					//// Nothing could be split
 
 					// IF eText == null -> Add complete text to the list of elements for the next page 
 					// ELSE -> otherwise add remaining text to the list of elements for the next page
@@ -415,18 +411,20 @@ namespace Eshava.Report.Pdf.Core.Models
 				// The entire text must be scrolled backwards
 				for (var i = textparts.Count - 1; i >= 0; i--)
 				{
-					textSize = currentText.GetTextSize(graphics, textparts[i] + tempText);
+					var endWidthLineBreak = textparts[i].EndsWith("\n");
+
+					textSize = currentText.GetTextSize(graphics, textparts[i] + tempText + (endWidthLineBreak ? "" : " "));
 
 					// Check how many text parts fit on the current page
 					if (textSize.Height < maxElementHeightOnPage && !newPage)
 					{
-						tempText = textparts[i] + tempText;
+						tempText = textparts[i] + (endWidthLineBreak ? "" : " ") + tempText;
 						tempHeight = textSize.Height;
 					}
 					else
 					{
 						newPage = true;
-						textNewPage = textparts[i] + textNewPage;
+						textNewPage = textparts[i] + (endWidthLineBreak ? "" : " ") + textNewPage;
 					}
 				}
 			}
@@ -434,18 +432,20 @@ namespace Eshava.Report.Pdf.Core.Models
 			{
 				foreach (var part in textparts)
 				{
+					var endWidthLineBreak = part.EndsWith("\n");
+
 					textSize = currentText.GetTextSize(graphics, tempText + part);
 
 					// Check how many text parts fit on the current page
 					if (textSize.Height + currentText.PosY < maxElementHeightOnPage && !newPage)
 					{
-						tempText += part;
+						tempText += part + (endWidthLineBreak ? "" : " ");
 						tempHeight = textSize.Height;
 					}
 					else
 					{
 						newPage = true;
-						textNewPage += part;
+						textNewPage += part + (endWidthLineBreak ? "" : " ");
 					}
 				}
 			}
@@ -576,10 +576,6 @@ namespace Eshava.Report.Pdf.Core.Models
 				elementList.Add(currentHtml);
 			}
 
-			if (!(eHtml?.Content.IsNullOrEmpty() ?? true))
-			{
-				eHtml.Content = eHtml.Content.Trim();
-			}
 
 			return eHtml;
 		}

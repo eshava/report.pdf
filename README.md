@@ -206,11 +206,15 @@ Supported html tags
 * i
 * br
 * p (creates a line break before and after tag content)
+* ul (creates a line break before and after tag content)
+* ol (creates a line break before and after tag content)
+* li (creates a line break after tag content)
 
 Supported html attributes
 * font-family
 * font-size
 * color
+* margin-left (only for li-tag; custom line indent)
 
 
 ## How to use ElementLine

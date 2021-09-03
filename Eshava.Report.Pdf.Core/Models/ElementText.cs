@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
+using System.Linq;
 using System.Xml.Serialization;
 using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
@@ -100,7 +99,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			graphics.DrawText(GetFont(), Content, Alignment, topLeftPage, sizePage, new Point(PosX, PosY), GetSize(graphics));
 		}
 
-		public List<string> SplittByNewLine()
+		public List<string> SplittBySpaces()
 		{
 			var textLines = new List<string>();
 			if (Content.IsNullOrEmpty())
@@ -108,61 +107,8 @@ namespace Eshava.Report.Pdf.Core.Models
 				return textLines;
 			}
 
-			var parts = Content.Split('\n');
-			for (var i = 0; i < parts.Length; i++)
-			{
-				// As long as the text part is not the last block, the NewLine character must be added again
-				if (i + 1 < parts.Length)
-				{
-					textLines.Add(parts[i] + "\n");
-				}
-				else
-				{
-					textLines.Add(parts[i]);
-				}
-			}
-
-			return textLines;
-		}
-
-		public List<string> SplittOnEndOfSentences()
-		{
-			var textLines = new List<string>();
-			var text = new StringBuilder();
-
-			if (Content.IsNullOrEmpty())
-			{
-				return textLines;
-			}
-
-			var parts = Content.Split(' ');
-			for (var i = 0; i < parts.Length; i++)
-			{
-				if (parts[i].EndsWith(".") && ((i + 1) == parts.Length || IsCapitalLetter(parts[i + 1][0])))
-				{
-					// Last text section reached
-					if (i > 0)
-					{
-						text.Append(" ");
-					}
-
-					text.Append(parts[i]);
-					textLines.Add(text.ToString());
-					text.Clear();
-				}
-				else
-				{
-					// It continues after the space character with a lower case character or there's no point at the end of the word
-					if (i > 0)
-					{
-						text.Append(" ");
-					}
-
-					text.Append(parts[i]);
-				}
-			}
-
-			return textLines;
+			
+			return Content.Split(' ').ToList();
 		}
 
 		public (Point Start, Size Size) GetHyperlinkPosition(IGraphics graphics, Point topLeftPage)
@@ -201,13 +147,6 @@ namespace Eshava.Report.Pdf.Core.Models
 			}
 
 			return _font;
-		}
-
-		private bool IsCapitalLetter(char letter)
-		{
-			var letterString = letter.ToString(CultureInfo.InvariantCulture);
-
-			return Equals(letterString, letterString.ToUpper());
 		}
 	}
 }

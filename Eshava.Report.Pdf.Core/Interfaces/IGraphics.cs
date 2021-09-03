@@ -6,6 +6,7 @@ namespace Eshava.Report.Pdf.Core.Interfaces
 {
 	public interface IGraphics
 	{
+		double GetTextWidth(Font font, string text);
 		Size GetTextSize(IEnumerable<TextSegment> textSegments, double width);
 		Size GetTextSize(Font font, double width, string text);
 		IGraphics SetStationery(byte[] stationery);
