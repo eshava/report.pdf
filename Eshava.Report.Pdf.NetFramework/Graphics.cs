@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Eshava.Report.Pdf.Core;
+using System.Linq;
 using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
@@ -13,7 +13,7 @@ using PdfSharp.Pdf;
 
 namespace Eshava.Report.Pdf
 {
-	public class Graphics : AbstractGraphics, IGraphics
+	public class Graphics : IGraphics
 	{
 		private XGraphics _xGraphics;
 		private readonly Dictionary<string, System.Drawing.Image> _pictures;
@@ -33,6 +33,34 @@ namespace Eshava.Report.Pdf
 				_xGraphics = null;
 				_isDisposed = true;
 			}
+		}
+
+		public double GetTextWidth(Font font, string text)
+		{
+			// Pdf Sharp 1.50 -> without gdi
+			//var options = new XPdfFontOptions(PdfFontEncoding.Unicode);
+			//var xFont = new XFont(font.Fontfamily, font.Size, GetXFontstyle(font.Bold, font.Italic, font.Underline), options);
+			//var format = XStringFormats.Default;
+			//format.Alignment = XStringAlignment.Near;
+			//format.LineAlignment = XLineAlignment.Near;
+
+			//return _xGraphics.MeasureString(text, xFont, format).Width;
+
+			//Pdf Sharp 1.32 -> use gdi
+			var frameworkFont = new System.Drawing.Font(font.Fontfamily, (float)font.Size, GetFontstyle(font.Bold, font.Italic, font.Underline));
+			var xSize = XSize.FromSizeF(_xGraphics.Graphics.MeasureString(text, frameworkFont));
+			xSize = new XSize(xSize.Width * 72 / _xGraphics.Graphics.DpiX, (xSize.Height * 72 / _xGraphics.Graphics.DpiY)); //Pixel to Point
+
+			return xSize.Width;
+		}
+
+		public Size GetTextSize(IEnumerable<TextSegment> textSegments, double width)
+		{
+			//Fallback
+			var text = String.Join(" ", textSegments.Select(ts => ts.Text));
+			var font = textSegments.First().Font;
+
+			return GetTextSize(font, width, text);
 		}
 
 		public Size GetTextSize(Font font, double elementWidth, string text)
@@ -140,6 +168,16 @@ namespace Eshava.Report.Pdf
 			}
 
 			return this;
+		}
+
+		public IGraphics DrawText(IEnumerable<TextSegment> textSegments, Alignment alignment, Point topLeftPage, Size sizePage, Point topLeftText, Size textSize)
+		{
+			// Fallback
+
+			var text = String.Join(" ", textSegments.Select(ts => ts.Text));
+			var font = textSegments.First().Font;
+
+			return DrawText(font, text, alignment, topLeftPage, sizePage, topLeftText, textSize);
 		}
 
 		public IGraphics DrawText(Font font, string text, Alignment alignment, Point topLeftPage, Size sizePage, Point topLeftText, Size textSize)
@@ -284,5 +322,51 @@ namespace Eshava.Report.Pdf
 				return XColor.FromArgb(0, 0, 0); // System.Drawing.Color.Black;
 			}
 		}
+
+		//private double CalculateSingleLineHeight(Func<string, double> measureTextHeight)
+		//{
+		//	var spaceHeight = measureTextHeight(" ");
+		//	var totalMultilineHeight = measureTextHeight("#\n#");
+		//	var lineGap = totalMultilineHeight - spaceHeight - spaceHeight;
+
+		//	return lineGap + spaceHeight;
+		//}
+
+		//private double GetSpaceWidth(Func<string, double> measureTextWith)
+		//{
+		//	return measureTextWith("x x") - measureTextWith("xx");
+		//}
+
+		//private Size CalculateTextSize(string text, double singleLineHeight, double elementWidth, Func<string, double> measureTextWith)
+		//{
+		//	var spaceWidth = GetSpaceWidth(measureTextWith);
+		//	var height = 0.0;
+		//	var maxWidth = 0.0;
+		//	var lines = text.Replace("\r", "").Split('\n');
+
+		//	foreach (var line in lines)
+		//	{
+		//		var words = line.Split(' ');
+		//		var lineWidth = 0.0;
+		//		height += singleLineHeight;
+
+		//		foreach (var word in words)
+		//		{
+		//			var wordWidth = measureTextWith(word);
+		//			if (lineWidth + wordWidth > elementWidth)
+		//			{
+		//				lineWidth = wordWidth;
+		//				height += singleLineHeight;
+		//			}
+		//			else
+		//			{
+		//				lineWidth += wordWidth + spaceWidth;
+		//				maxWidth = Math.Max(maxWidth, lineWidth);
+		//			}
+		//		}
+		//	}
+
+		//	return new Size(maxWidth, height);
+		//}
 	}
 }

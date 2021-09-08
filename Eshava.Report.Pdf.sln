@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshava.Test.Report.Pdf.NetC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eshava.Test.Report.Pdf.NetFramework", "Eshava.Test.Report.Pdf.NetFramework\Eshava.Test.Report.Pdf.NetFramework.csproj", "{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eshava.Test.Report.Pdf.Core", "Eshava.Test.Report.Pdf.Core\Eshava.Test.Report.Pdf.Core.csproj", "{421B5EB9-2CC9-452C-9F5D-D5923BC07F50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,6 +67,12 @@ Global
 		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.IncludeP2PAssets|Any CPU.Build.0 = IncludeP2PAssets|Any CPU
 		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280}.Release|Any CPU.Build.0 = Release|Any CPU
+		{421B5EB9-2CC9-452C-9F5D-D5923BC07F50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{421B5EB9-2CC9-452C-9F5D-D5923BC07F50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{421B5EB9-2CC9-452C-9F5D-D5923BC07F50}.IncludeP2PAssets|Any CPU.ActiveCfg = Debug|Any CPU
+		{421B5EB9-2CC9-452C-9F5D-D5923BC07F50}.IncludeP2PAssets|Any CPU.Build.0 = Debug|Any CPU
+		{421B5EB9-2CC9-452C-9F5D-D5923BC07F50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{421B5EB9-2CC9-452C-9F5D-D5923BC07F50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +84,7 @@ Global
 		{949E8A6B-F6E0-4C9D-A648-B555B7D62B0B} = {815550AA-65D1-49CE-8A49-26CC91FDD594}
 		{F1671A3E-79DB-48A2-874D-504C1C96100B} = {815550AA-65D1-49CE-8A49-26CC91FDD594}
 		{93DA1B69-9CC1-46B3-8239-5BE85AE2D280} = {815550AA-65D1-49CE-8A49-26CC91FDD594}
+		{421B5EB9-2CC9-452C-9F5D-D5923BC07F50} = {815550AA-65D1-49CE-8A49-26CC91FDD594}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D4C08238-8454-4950-9FB5-C4F09385713A}
