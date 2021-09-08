@@ -37,6 +37,7 @@ Platform independent core to calculate and generate pdf documents
 | Element tag | Description |
 | ------ | ------ |
 | ElementText | Draw a string single/multi line |
+| ElementHtml | Draw a html formatted string |
 | ElementHyperlink | Draw a string single/multi line and embedded a hyperlink  |
 | ElementImage | Draw an image |
 | ElementRectangle | Draw a rectangle (only border line) |
@@ -45,31 +46,31 @@ Platform independent core to calculate and generate pdf documents
 | ElementPageNo | Draw the current and total page number |
 
 ### Element Properties
-| Property | Unit | Text | Image | Rectangle | Rectangle Fill | Line | Page No |
-| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
-| Width | Point | yes | yes | yes | yes | yes | yes |
-| Height | Point | yes | yes | yes | yes | yes | yes |
-| PosX | Point | yes | yes | yes | yes | yes | yes |
-| PosY | Point | yes | yes | yes | yes | yes | yes |
-| Color | Alpha RGB, decimal | yes | | yes | yes | yes | yes |
-| FontFamily | string | yes | | | | | yes |
-| Size | Point | yes | | | | | yes |
-| Bold | Boolean (1,0) | yes | | | | | yes |
-| Italic | Boolean (1,0) | yes | | | | | yes |
-| Underline | Boolean (1,0) | yes | | | | | yes |
-| Alignment | Alignment | yes | yes | | | | yes |
-| VerticalAlignment | VerticalAlignment | | yes | | | | |
-| ExpandAndShift | Boolean (1,0) | yes | | | | | yes |
-| ShiftUpHeight | Point | yes | | | | | yes |
-| NoShift | Boolean (1,0) | yes | | | | | yes |
-| Style | DashStyle | | | yes | yes | yes | |
-| Linewidth | Point | | | yes | yes | yes | |
-| MaxHeight | Boolean (1,0) | | | yes | yes | yes | |
-| EndsDiffHeight | Boolean (1,0) | | | yes | yes | yes | |
-| SplittExtraMargin | Point | | | | | yes | |
-| SuppressOnSinglePage | Boolean (1,0) | | | | | | yes |
-| Scale | Scale | | yes | | | | |
-| Hyperlink | string | yes | yes | | | | |
+| Property | Unit | Text | Html | Image | Rectangle | Rectangle Fill | Line | Page No |
+| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ |
+| Width | Point | yes | yes | yes | yes | yes | yes | yes |
+| Height | Point | yes | yes | yes | yes | yes | yes | yes |
+| PosX | Point | yes | yes | yes | yes | yes | yes | yes |
+| PosY | Point | yes | yes | yes | yes | yes | yes | yes |
+| Color | Alpha RGB, decimal | yes | yes | | yes | yes | yes | yes |
+| FontFamily | string | yes | yes | | | | | yes |
+| Size | Point | yes | yes | | | | | yes |
+| Bold | Boolean (1,0) | yes | yes | | | | | yes |
+| Italic | Boolean (1,0) | yes | yes | | | | | yes |
+| Underline | Boolean (1,0) | yes | yes | | | | | yes |
+| Alignment | Alignment | yes | yes | yes | | | | yes |
+| VerticalAlignment | VerticalAlignment | | | yes | | | | |
+| ExpandAndShift | Boolean (1,0) | yes | yes | | | | | yes |
+| ShiftUpHeight | Point | yes | yes | | | | | yes |
+| NoShift | Boolean (1,0) | yes | yes | | | | | yes |
+| Style | DashStyle | | | | yes | yes | yes | |
+| Linewidth | Point | | | | yes | yes | yes | |
+| MaxHeight | Boolean (1,0) | | | | yes | yes | yes | |
+| EndsDiffHeight | Boolean (1,0) | | | | yes | yes | yes | |
+| SplittExtraMargin | Point | | | | | | yes | |
+| SuppressOnSinglePage | Boolean (1,0) | | | | | | | yes |
+| Scale | Scale | | | yes | | | | |
+| Hyperlink | string | yes | | yes | | | | |
 
 ```csharp
 public enum DashStyle
@@ -191,6 +192,30 @@ Text blocks need a height to determine the height of the container.
 If a text block should be able to grow dynamically, the Height property must be set to 0.
 If underlying elements are to be moved down, the ExpandAndShift property must also be set to 1.
 If an underlying element does not move down, it does not have enough initial distance to the dynamic text block.
+
+## How to use ElementHtml
+Text blocks need a height to determine the height of the container. 
+If a text block should be able to grow dynamically, the Height property must be set to 0.
+If underlying elements are to be moved down, the ExpandAndShift property must also be set to 1.
+If an underlying element does not move down, it does not have enough initial distance to the dynamic text block.
+Element content has to be wrapped in ```<![CDATA[]]>```
+
+Supported html tags
+* b
+* u
+* i
+* br
+* p (creates a line break before and after tag content)
+* ul (creates a line break before and after tag content)
+* ol (creates a line break before and after tag content)
+* li (creates a line break after tag content)
+
+Supported html attributes
+* font-family
+* font-size
+* color
+* margin-left (only for li-tag; custom line indent)
+
 
 ## How to use ElementLine
 Vertical lines that are to take up the entire position height must have the value 0 for PosY and Height. Additionally, the property MaxHeight must be set to 1.

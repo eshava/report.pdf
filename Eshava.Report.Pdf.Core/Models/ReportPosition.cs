@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
+using Eshava.Report.Pdf.Interfaces;
 
 namespace Eshava.Report.Pdf.Core.Models
 {
@@ -87,7 +88,9 @@ namespace Eshava.Report.Pdf.Core.Models
 			var horizontalLineToRemove = new List<ElementLine>();
 			foreach (var elementLine in notMatchedLineHorizontal)
 			{
-				var count = position.ContentText.Count(e => e.PosY > elementLine.PosY);
+				var count = position.ContentText.Count(e => e.PosY > elementLine.PosY)
+					+ position.ContentHtml.Count(e => e.PosY > elementLine.PosY);
+
 				if (count > 0)
 				{
 					horizontalLineToRemove.Add(elementLine);
@@ -115,7 +118,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			positions.Add(position);
 
 			// If there are still elements left after the new page, create positions until there are no more elements
-			while (noMatch2nd.ContentText.Count > 0)
+			while (noMatch2nd.ContentText.Count > 0 || noMatch2nd.ContentHtml.Count > 0)
 			{
 				currentHeight = 0;
 				noMatch = noMatch2nd;
@@ -281,7 +284,15 @@ namespace Eshava.Report.Pdf.Core.Models
 			{
 				foreach (var text in current.ContentText)
 				{
-					AddElementToList(graphics, text, position.ContentText, noMatch.ContentText, ref currentHeight, maxElementHeightOnPage, true);
+					AddElementTextToList(graphics, text, position.ContentText, noMatch.ContentText, ref currentHeight, maxElementHeightOnPage, true);
+				}
+			}
+
+			if (current.ContentHtml.Count > 0)
+			{
+				foreach (var text in current.ContentHtml)
+				{
+					AddElementHtmlToList(graphics, text, position.ContentHtml, noMatch.ContentHtml, ref currentHeight, maxElementHeightOnPage, true);
 				}
 			}
 		}
@@ -292,25 +303,66 @@ namespace Eshava.Report.Pdf.Core.Models
 			{
 				foreach (var text in current.ContentText)
 				{
-					AddElementToList(graphics, text, position.ContentText, noMatch.ContentText, ref currentHeight, maxElementHeightOnPage, false);
+					AddElementTextToList(graphics, text, position.ContentText, noMatch.ContentText, ref currentHeight, maxElementHeightOnPage, false);
+				}
+			}
+
+			if (current.ContentHtml.Count > 0)
+			{
+				foreach (var text in current.ContentHtml)
+				{
+					AddElementHtmlToList(graphics, text, position.ContentHtml, noMatch.ContentHtml, ref currentHeight, maxElementHeightOnPage, false);
 				}
 			}
 		}
 
-		private void AddElementToList<T>(IGraphics graphics, T text, List<T> elementList, List<T> noMatchList, ref double currentHeight, double maxElementHeightOnPage, bool invertAnalyse) where T : ElementText, new()
+		private void AddElementTextToList<T>(IGraphics graphics, T text, List<T> elementList, List<T> noMatchList, ref double currentHeight, double maxElementHeightOnPage, bool invertAnalyse) where T : ElementText, new()
 		{
 			var size = text.GetSize(graphics);
 			// Text does not fit completely on the current page
 			if (maxElementHeightOnPage < size.Height + text.PosY)
 			{
 				// Split text until it fits on the rest of the current page
-				var textparts = text.SplittByNewLine();
+				var textparts = text.SplittBySpaces();
 				var eText = CheckTextparts(graphics, textparts, text, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
 				if (eText == null)
 				{
 					// Nothing could be split
-					textparts = text.SplittOnEndOfSentences();
-					eText = CheckTextparts(graphics, textparts, text, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
+
+					// IF eText == null -> Add complete text to the list of elements for the next page 
+					// ELSE -> otherwise add remaining text to the list of elements for the next page
+					noMatchList.Add(eText ?? text);
+				}
+				else
+				{
+					// Add remaining text to the list of elements for the next page
+					noMatchList.Add(eText);
+				}
+			}
+			else
+			{
+				// Set current maximum height
+				if (currentHeight < size.Height + text.PosY)
+				{
+					currentHeight = size.Height + text.PosY;
+				}
+
+				elementList.Add(text);
+			}
+		}
+
+		private void AddElementHtmlToList<T>(IGraphics graphics, T text, List<T> elementList, List<T> noMatchList, ref double currentHeight, double maxElementHeightOnPage, bool invertAnalyse) where T : ElementHtml, new()
+		{
+			var size = text.GetSize(graphics);
+			// Text does not fit completely on the current page
+			if (maxElementHeightOnPage < size.Height + text.PosY)
+			{
+				// Split text until it fits on the rest of the current page
+				var textparts = text.SplittBySpaces();
+				var eText = CheckTextparts(graphics, textparts, text, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
+				if (eText == null)
+				{
+					//// Nothing could be split
 
 					// IF eText == null -> Add complete text to the list of elements for the next page 
 					// ELSE -> otherwise add remaining text to the list of elements for the next page
@@ -359,18 +411,20 @@ namespace Eshava.Report.Pdf.Core.Models
 				// The entire text must be scrolled backwards
 				for (var i = textparts.Count - 1; i >= 0; i--)
 				{
-					textSize = currentText.GetTextSize(graphics, textparts[i] + tempText);
+					var endWidthLineBreak = textparts[i].EndsWith("\n");
+
+					textSize = currentText.GetTextSize(graphics, textparts[i] + tempText + (endWidthLineBreak ? "" : " "));
 
 					// Check how many text parts fit on the current page
 					if (textSize.Height < maxElementHeightOnPage && !newPage)
 					{
-						tempText = textparts[i] + tempText;
+						tempText = textparts[i] + (endWidthLineBreak ? "" : " ") + tempText;
 						tempHeight = textSize.Height;
 					}
 					else
 					{
 						newPage = true;
-						textNewPage = textparts[i] + textNewPage;
+						textNewPage = textparts[i] + (endWidthLineBreak ? "" : " ") + textNewPage;
 					}
 				}
 			}
@@ -378,18 +432,20 @@ namespace Eshava.Report.Pdf.Core.Models
 			{
 				foreach (var part in textparts)
 				{
+					var endWidthLineBreak = part.EndsWith("\n");
+
 					textSize = currentText.GetTextSize(graphics, tempText + part);
 
 					// Check how many text parts fit on the current page
 					if (textSize.Height + currentText.PosY < maxElementHeightOnPage && !newPage)
 					{
-						tempText += part;
+						tempText += part + (endWidthLineBreak ? "" : " ");
 						tempHeight = textSize.Height;
 					}
 					else
 					{
 						newPage = true;
-						textNewPage += part;
+						textNewPage += part + (endWidthLineBreak ? "" : " ");
 					}
 				}
 			}
@@ -429,6 +485,102 @@ namespace Eshava.Report.Pdf.Core.Models
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="graphics"></param>
+		/// <param name="textSegments"></param>
+		/// <param name="currentHtml"></param>
+		/// <param name="position"></param>
+		/// <param name="currentHeight"></param>
+		/// <param name="maxElementHeightOnPage"></param>
+		/// <param name="invertAnalyse"></param>
+		/// <returns>Remaining text that did not fit on the current page</returns>
+		private T CheckTextparts<T>(IGraphics graphics, List<TextSegment> textSegments, T currentHtml, List<T> elementList, ref double currentHeight, double maxElementHeightOnPage, bool invertAnalyse) where T : ElementHtml, new()
+		{
+			double tempHeight = 0;
+			var tempSegments = new List<TextSegment>();
+			var textSegmentsNewPage = new List<TextSegment>();
+			T eHtml;
+			var newPage = false;
+			Size textSize;
+
+			if (invertAnalyse)
+			{
+				// The entire text must be scrolled backwards
+				for (var i = textSegments.Count - 1; i >= 0; i--)
+				{
+					var tempTextSegments = tempSegments.ToList();
+					tempTextSegments.Add(textSegments[i]);
+
+					textSize = currentHtml.GetTextSize(graphics, tempTextSegments);
+
+					// Check how many text parts fit on the current page
+					if (textSize.Height < maxElementHeightOnPage && !newPage)
+					{
+						tempSegments.Insert(0, textSegments[i]);
+						tempHeight = Math.Max(tempHeight, textSize.Height);
+					}
+					else
+					{
+						newPage = true;
+						textSegmentsNewPage.Insert(0, textSegments[i]);
+					}
+				}
+			}
+			else
+			{
+				foreach (var textSegment in textSegments)
+				{
+					var tempTextSegments = tempSegments.ToList();
+					tempTextSegments.Add(textSegment);
+
+					textSize = currentHtml.GetTextSize(graphics, tempTextSegments);
+
+					// Check how many text parts fit on the current page
+					if (textSize.Height + currentHtml.PosY < maxElementHeightOnPage && !newPage)
+					{
+						tempSegments.Add(textSegment);
+						tempHeight = Math.Max(tempHeight, textSize.Height);
+					}
+					else
+					{
+						newPage = true;
+						textSegmentsNewPage.Add(textSegment);
+					}
+				}
+			}
+
+			if (Math.Abs(tempHeight) < 0.001)
+			{
+				// Nothing could be distributed to the current page
+				eHtml = null;
+			}
+			else
+			{
+				// Set current maximum height
+				if (tempHeight + currentHtml.PosY > currentHeight)
+				{
+					currentHeight = tempHeight + currentHtml.PosY;
+				}
+
+				// Remember remaining text for the next page
+				eHtml = ElementHtml.Clone(currentHtml);
+				eHtml.TextSegments = textSegmentsNewPage;
+				if (!invertAnalyse)
+				{
+					eHtml.PosY = 0;
+				}
+
+				// Assign text that still fits on the page to the position
+				currentHtml.TextSegments = tempSegments;
+				elementList.Add(currentHtml);
+			}
+
+
+			return eHtml;
+		}
+
+		/// <summary>
 		/// Sets the option in the position that it is the first on the current page
 		/// Attention: This operation cannot be undone
 		/// </summary>
@@ -458,6 +610,7 @@ namespace Eshava.Report.Pdf.Core.Models
 				ContentRectangle.Where(e => e.MaxHeight).ToList().ForEach(e => { e.Height += heightDifference; });
 				ContentRectangleFill.Where(e => e.MaxHeight).ToList().ForEach(e => { e.Height += heightDifference; });
 				ContentText.ToList().ForEach(e => { e.PosY += heightDifference; });
+				ContentHtml.ToList().ForEach(e => { e.PosY += heightDifference; });
 				ContentPageNo.ToList().ForEach(e => { e.PosY += heightDifference; });
 			}
 		}

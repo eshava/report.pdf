@@ -28,6 +28,12 @@ namespace Eshava.Report.Pdf.Core.Models
 			get { return _collection.GetElements<ElementText>(); }
 		}
 
+		[XmlElement(ElementTypes.HTML)]
+		public List<ElementHtml> ContentHtml
+		{
+			get { return _collection.GetElements<ElementHtml>(); }
+		}
+
 		[XmlElement(ElementTypes.LINE)]
 		public List<ElementLine> ContentLine
 		{
@@ -77,6 +83,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			elements.AddRange(_collection.GetElements<ElementRectangleFill>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementImage>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementText>().Select(e => (ElementBase)e));
+			elements.AddRange(_collection.GetElements<ElementHtml>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementRectangle>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementPageNo>().Select(e => (ElementBase)e));
 
@@ -88,6 +95,11 @@ namespace Eshava.Report.Pdf.Core.Models
 		}
 
 		public void RemoveElementText(ElementText element)
+		{
+			_collection.RemoveElement(element);
+		}
+
+		public void RemoveElementHtml(ElementHtml element)
 		{
 			_collection.RemoveElement(element);
 		}

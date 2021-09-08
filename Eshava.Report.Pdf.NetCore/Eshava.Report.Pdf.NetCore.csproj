@@ -22,10 +22,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="PdfSharpCore" Version="1.2.4" />
+		<PackageReference Include="PdfSharpCore" Version="1.2.19" />
 		<PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta0013" />
-		<PackageReference Include="SixLabors.ImageSharp" Version="1.0.0" />
-		<PackageReference Include="System.Runtime.Caching" Version="4.7.0" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
+		<PackageReference Include="System.Runtime.Caching" Version="5.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
