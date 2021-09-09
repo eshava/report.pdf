@@ -65,15 +65,12 @@ namespace Eshava.Report.Pdf.Core
 		{
 			if (segment.Text == Environment.NewLine)
 			{
-				var lastSegment = textSegments.LastOrDefault();
-				if (lastSegment != default && lastSegment.Text != Environment.NewLine)
+				textSegments.Add(new TextSegment
 				{
-					textSegments.Add(new TextSegment
-					{
-						Font = segment.Font,
-						Text = segment.Text
-					});
-				}
+					Font = segment.Font,
+					Text = segment.Text
+				});
+
 
 				return;
 			}
@@ -133,6 +130,7 @@ namespace Eshava.Report.Pdf.Core
 						Bold = parentSegment.Font.Bold,
 						Italic = parentSegment.Font.Italic,
 						Underline = parentSegment.Font.Underline,
+						Strikeout = parentSegment.Font.Strikeout,
 						Color = parentSegment.Font.Color,
 					},
 					Text = node.Value?
@@ -161,6 +159,7 @@ namespace Eshava.Report.Pdf.Core
 					Bold = parentSegment.Font.Bold,
 					Italic = parentSegment.Font.Italic,
 					Underline = parentSegment.Font.Underline,
+					Strikeout = parentSegment.Font.Strikeout,
 					Color = parentSegment.Font.Color,
 				}
 			};
@@ -191,17 +190,21 @@ namespace Eshava.Report.Pdf.Core
 					segment.LineIndent = 1.5;
 				}
 			}
-			else if (xmlElement.Name.ToLower() == "b")
+			else if (xmlElement.Name.ToLower() == "b" || xmlElement.Name.ToLower() == "strong")
 			{
 				segment.Font.Bold = true;
 			}
-			else if (xmlElement.Name.ToLower() == "i")
+			else if (xmlElement.Name.ToLower() == "i" || xmlElement.Name.ToLower() == "em")
 			{
 				segment.Font.Italic = true;
 			}
 			else if (xmlElement.Name.ToLower() == "u")
 			{
 				segment.Font.Underline = true;
+			}
+			else if (xmlElement.Name.ToLower() == "s" || xmlElement.Name.ToLower() == "del" || xmlElement.Name.ToLower() == "strike")
+			{
+				segment.Font.Strikeout = true;
 			}
 
 			CheckAttributes(xmlElement, segment);
@@ -213,7 +216,7 @@ namespace Eshava.Report.Pdf.Core
 				AnalyzeNode(item, segment);
 			}
 
-			if (xmlElement.Name.ToLower() == "p" || xmlElement.Name.ToLower() == "ul" || xmlElement.Name.ToLower() == "ol" || xmlElement.Name.ToLower() == "li")
+			if (xmlElement.Name.ToLower() == "p" || xmlElement.Name.ToLower() == "li")
 			{
 				parentSegment.Children.Add(new TextSegmentExtended
 				{

@@ -33,6 +33,9 @@ namespace Eshava.Report.Pdf.Core.Models
 		public bool Underline { get; set; }
 
 		[XmlAttribute]
+		public bool Strikeout { get; set; }
+
+		[XmlAttribute]
 		public Alignment Alignment { get; set; }
 
 		[XmlAttribute]
@@ -195,6 +198,7 @@ namespace Eshava.Report.Pdf.Core.Models
 					Bold = Bold,
 					Italic = Italic,
 					Underline = Underline,
+					Strikeout = Strikeout,
 					Color = Color.ConvertHexColorToDecimalColor()
 				};
 			}
