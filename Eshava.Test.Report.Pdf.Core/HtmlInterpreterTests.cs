@@ -223,11 +223,13 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 
 			var result = _classUnderTest.AnalyzeText(font, html).ToList();
 
-			result.Should().HaveCount(3);
+			result.Should().HaveCount(5);
 
-			result[0].Text.Should().Be("very you get up speedily if Off supposing moment");
-			result[1].Text.Should().Be(Environment.NewLine);
-			result[2].Text.Should().Be("directly part mirth");
+			result[0].Text.Should().Be(Environment.NewLine);
+			result[1].Text.Should().Be("very you get up speedily if Off supposing moment");
+			result[2].Text.Should().Be(Environment.NewLine);
+			result[3].Text.Should().Be(Environment.NewLine);
+			result[4].Text.Should().Be("directly part mirth");
 		}
 
 		[TestMethod]
@@ -325,21 +327,21 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 
 			var result = _classUnderTest.AnalyzeText(font, html).ToList();
 
-			result.Should().HaveCount(5);
+			result.Should().HaveCount(6);
 
-			result[0].Text.Should().Be("-");
+			result[0].Text.Should().Be(Environment.NewLine);
 			result[0].Font.Fontfamily.Should().Be("Arial");
 			result[0].Font.Size.Should().Be(12.0);
 			result[0].Font.Bold.Should().BeFalse();
 			result[0].Font.Italic.Should().BeFalse();
 			result[0].Font.Underline.Should().BeFalse();
 			result[0].Font.Color.Should().Be("255 0 0 0");
-			result[0].LineIndent.Should().Be(28.3465 / 2.0);
-			result[0].SkipParagraphAlignment.Should().BeTrue();
-			result[0].ReduceLineIndent.Should().BeTrue();
-			result[0].ReduceLineIndentByText.Should().Be("- ");
+			result[0].LineIndent.Should().Be(0);
+			result[0].SkipParagraphAlignment.Should().BeFalse();
+			result[0].ReduceLineIndent.Should().BeFalse();
+			result[0].ReduceLineIndentByText.Should().BeNull();
 
-			result[1].Text.Should().Be("very you get up speedily");
+			result[1].Text.Should().Be("-");
 			result[1].Font.Fontfamily.Should().Be("Arial");
 			result[1].Font.Size.Should().Be(12.0);
 			result[1].Font.Bold.Should().BeFalse();
@@ -347,29 +349,29 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[1].Font.Underline.Should().BeFalse();
 			result[1].Font.Color.Should().Be("255 0 0 0");
 			result[1].LineIndent.Should().Be(28.3465 / 2.0);
+			result[1].SkipParagraphAlignment.Should().BeTrue();
+			result[1].ReduceLineIndent.Should().BeTrue();
+			result[1].ReduceLineIndentByText.Should().Be("- ");
 
-			result[2].Text.Should().Be(Environment.NewLine);
+			result[2].Text.Should().Be("very you get up speedily");
 			result[2].Font.Fontfamily.Should().Be("Arial");
 			result[2].Font.Size.Should().Be(12.0);
 			result[2].Font.Bold.Should().BeFalse();
 			result[2].Font.Italic.Should().BeFalse();
 			result[2].Font.Underline.Should().BeFalse();
 			result[2].Font.Color.Should().Be("255 0 0 0");
-			result[2].LineIndent.Should().Be(0);
+			result[2].LineIndent.Should().Be(28.3465 / 2.0);
 
-			result[3].Text.Should().Be("-");
+			result[3].Text.Should().Be(Environment.NewLine);
 			result[3].Font.Fontfamily.Should().Be("Arial");
 			result[3].Font.Size.Should().Be(12.0);
 			result[3].Font.Bold.Should().BeFalse();
 			result[3].Font.Italic.Should().BeFalse();
 			result[3].Font.Underline.Should().BeFalse();
 			result[3].Font.Color.Should().Be("255 0 0 0");
-			result[3].LineIndent.Should().Be(28.3465 / 2.0);
-			result[3].SkipParagraphAlignment.Should().BeTrue();
-			result[3].ReduceLineIndent.Should().BeTrue();
-			result[3].ReduceLineIndentByText.Should().Be("- ");
+			result[3].LineIndent.Should().Be(0);
 
-			result[4].Text.Should().Be("if Off supposing moment");
+			result[4].Text.Should().Be("-");
 			result[4].Font.Fontfamily.Should().Be("Arial");
 			result[4].Font.Size.Should().Be(12.0);
 			result[4].Font.Bold.Should().BeFalse();
@@ -377,6 +379,18 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[4].Font.Underline.Should().BeFalse();
 			result[4].Font.Color.Should().Be("255 0 0 0");
 			result[4].LineIndent.Should().Be(28.3465 / 2.0);
+			result[4].SkipParagraphAlignment.Should().BeTrue();
+			result[4].ReduceLineIndent.Should().BeTrue();
+			result[4].ReduceLineIndentByText.Should().Be("- ");
+
+			result[5].Text.Should().Be("if Off supposing moment");
+			result[5].Font.Fontfamily.Should().Be("Arial");
+			result[5].Font.Size.Should().Be(12.0);
+			result[5].Font.Bold.Should().BeFalse();
+			result[5].Font.Italic.Should().BeFalse();
+			result[5].Font.Underline.Should().BeFalse();
+			result[5].Font.Color.Should().Be("255 0 0 0");
+			result[5].LineIndent.Should().Be(28.3465 / 2.0);
 		}
 
 		[TestMethod]
@@ -399,21 +413,17 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 
 			var result = _classUnderTest.AnalyzeText(font, html).ToList();
 
-			result.Should().HaveCount(5);
+			result.Should().HaveCount(6);
 
-			result[0].Text.Should().Be("1.");
+			result[0].Text.Should().Be(Environment.NewLine);
 			result[0].Font.Fontfamily.Should().Be("Arial");
 			result[0].Font.Size.Should().Be(12.0);
 			result[0].Font.Bold.Should().BeFalse();
 			result[0].Font.Italic.Should().BeFalse();
 			result[0].Font.Underline.Should().BeFalse();
 			result[0].Font.Color.Should().Be("255 0 0 0");
-			result[0].LineIndent.Should().Be(10);
-			result[0].SkipParagraphAlignment.Should().BeTrue();
-			result[0].ReduceLineIndent.Should().BeTrue();
-			result[0].ReduceLineIndentByText.Should().Be("2. ");
 
-			result[1].Text.Should().Be("very you get up speedily");
+			result[1].Text.Should().Be("1.");
 			result[1].Font.Fontfamily.Should().Be("Arial");
 			result[1].Font.Size.Should().Be(12.0);
 			result[1].Font.Bold.Should().BeFalse();
@@ -421,29 +431,29 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[1].Font.Underline.Should().BeFalse();
 			result[1].Font.Color.Should().Be("255 0 0 0");
 			result[1].LineIndent.Should().Be(10);
+			result[1].SkipParagraphAlignment.Should().BeTrue();
+			result[1].ReduceLineIndent.Should().BeTrue();
+			result[1].ReduceLineIndentByText.Should().Be("2. ");
 
-			result[2].Text.Should().Be(Environment.NewLine);
+			result[2].Text.Should().Be("very you get up speedily");
 			result[2].Font.Fontfamily.Should().Be("Arial");
 			result[2].Font.Size.Should().Be(12.0);
 			result[2].Font.Bold.Should().BeFalse();
 			result[2].Font.Italic.Should().BeFalse();
 			result[2].Font.Underline.Should().BeFalse();
 			result[2].Font.Color.Should().Be("255 0 0 0");
-			result[2].LineIndent.Should().Be(0);
+			result[2].LineIndent.Should().Be(10);
 
-			result[3].Text.Should().Be("2.");
+			result[3].Text.Should().Be(Environment.NewLine);
 			result[3].Font.Fontfamily.Should().Be("Arial");
 			result[3].Font.Size.Should().Be(12.0);
 			result[3].Font.Bold.Should().BeFalse();
 			result[3].Font.Italic.Should().BeFalse();
 			result[3].Font.Underline.Should().BeFalse();
 			result[3].Font.Color.Should().Be("255 0 0 0");
-			result[3].LineIndent.Should().Be(28.3465 / 1.5);
-			result[3].SkipParagraphAlignment.Should().BeTrue();
-			result[3].ReduceLineIndent.Should().BeTrue();
-			result[3].ReduceLineIndentByText.Should().Be("2. ");
+			result[3].LineIndent.Should().Be(0);
 
-			result[4].Text.Should().Be("if Off supposing moment");
+			result[4].Text.Should().Be("2.");
 			result[4].Font.Fontfamily.Should().Be("Arial");
 			result[4].Font.Size.Should().Be(12.0);
 			result[4].Font.Bold.Should().BeFalse();
@@ -451,6 +461,18 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[4].Font.Underline.Should().BeFalse();
 			result[4].Font.Color.Should().Be("255 0 0 0");
 			result[4].LineIndent.Should().Be(28.3465 / 1.5);
+			result[4].SkipParagraphAlignment.Should().BeTrue();
+			result[4].ReduceLineIndent.Should().BeTrue();
+			result[4].ReduceLineIndentByText.Should().Be("2. ");
+
+			result[5].Text.Should().Be("if Off supposing moment");
+			result[5].Font.Fontfamily.Should().Be("Arial");
+			result[5].Font.Size.Should().Be(12.0);
+			result[5].Font.Bold.Should().BeFalse();
+			result[5].Font.Italic.Should().BeFalse();
+			result[5].Font.Underline.Should().BeFalse();
+			result[5].Font.Color.Should().Be("255 0 0 0");
+			result[5].LineIndent.Should().Be(28.3465 / 1.5);
 		}
 
 		[TestMethod]
@@ -466,17 +488,17 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 				Fontfamily = "Arial"
 			};
 			var html = $@"
-very you get up speedily if Off supposing moment
+very you get up speedily if Off supposing moment<br>
 <ul>
 <li>very you <b>get</b> up speedily</li>
 <li>if Off supposing moment</li>
-</ul>
+</ul><br>
 wish where we held steepest True he questions eat Thoughts";
 
 
 			var result = _classUnderTest.AnalyzeText(font, html).ToList();
 
-			result.Should().HaveCount(11);
+			result.Should().HaveCount(13);
 
 			result[0].Text.Should().Be("very you get up speedily if Off supposing moment");
 			result[0].Font.Fontfamily.Should().Be("Arial");
@@ -496,19 +518,16 @@ wish where we held steepest True he questions eat Thoughts";
 			result[1].Font.Color.Should().Be("255 0 0 0");
 			result[1].LineIndent.Should().Be(0);
 
-			result[2].Text.Should().Be("-");
+			result[2].Text.Should().Be(Environment.NewLine);
 			result[2].Font.Fontfamily.Should().Be("Arial");
 			result[2].Font.Size.Should().Be(12.0);
 			result[2].Font.Bold.Should().BeFalse();
 			result[2].Font.Italic.Should().BeFalse();
 			result[2].Font.Underline.Should().BeFalse();
 			result[2].Font.Color.Should().Be("255 0 0 0");
-			result[2].LineIndent.Should().Be(28.3465 / 2.0);
-			result[2].SkipParagraphAlignment.Should().BeTrue();
-			result[2].ReduceLineIndent.Should().BeTrue();
-			result[2].ReduceLineIndentByText.Should().Be("- ");
+			result[2].LineIndent.Should().Be(0);
 
-			result[3].Text.Should().Be("very you");
+			result[3].Text.Should().Be("-");
 			result[3].Font.Fontfamily.Should().Be("Arial");
 			result[3].Font.Size.Should().Be(12.0);
 			result[3].Font.Bold.Should().BeFalse();
@@ -516,47 +535,47 @@ wish where we held steepest True he questions eat Thoughts";
 			result[3].Font.Underline.Should().BeFalse();
 			result[3].Font.Color.Should().Be("255 0 0 0");
 			result[3].LineIndent.Should().Be(28.3465 / 2.0);
+			result[3].SkipParagraphAlignment.Should().BeTrue();
+			result[3].ReduceLineIndent.Should().BeTrue();
+			result[3].ReduceLineIndentByText.Should().Be("- ");
 
-			result[4].Text.Should().Be("get");
+			result[4].Text.Should().Be("very you");
 			result[4].Font.Fontfamily.Should().Be("Arial");
 			result[4].Font.Size.Should().Be(12.0);
-			result[4].Font.Bold.Should().BeTrue();
+			result[4].Font.Bold.Should().BeFalse();
 			result[4].Font.Italic.Should().BeFalse();
 			result[4].Font.Underline.Should().BeFalse();
 			result[4].Font.Color.Should().Be("255 0 0 0");
 			result[4].LineIndent.Should().Be(28.3465 / 2.0);
 
-			result[5].Text.Should().Be("up speedily");
+			result[5].Text.Should().Be("get");
 			result[5].Font.Fontfamily.Should().Be("Arial");
 			result[5].Font.Size.Should().Be(12.0);
-			result[5].Font.Bold.Should().BeFalse();
+			result[5].Font.Bold.Should().BeTrue();
 			result[5].Font.Italic.Should().BeFalse();
 			result[5].Font.Underline.Should().BeFalse();
 			result[5].Font.Color.Should().Be("255 0 0 0");
 			result[5].LineIndent.Should().Be(28.3465 / 2.0);
 
-			result[6].Text.Should().Be(Environment.NewLine);
+			result[6].Text.Should().Be("up speedily");
 			result[6].Font.Fontfamily.Should().Be("Arial");
 			result[6].Font.Size.Should().Be(12.0);
 			result[6].Font.Bold.Should().BeFalse();
 			result[6].Font.Italic.Should().BeFalse();
 			result[6].Font.Underline.Should().BeFalse();
 			result[6].Font.Color.Should().Be("255 0 0 0");
-			result[6].LineIndent.Should().Be(0);
+			result[6].LineIndent.Should().Be(28.3465 / 2.0);
 
-			result[7].Text.Should().Be("-");
+			result[7].Text.Should().Be(Environment.NewLine);
 			result[7].Font.Fontfamily.Should().Be("Arial");
 			result[7].Font.Size.Should().Be(12.0);
 			result[7].Font.Bold.Should().BeFalse();
 			result[7].Font.Italic.Should().BeFalse();
 			result[7].Font.Underline.Should().BeFalse();
 			result[7].Font.Color.Should().Be("255 0 0 0");
-			result[7].LineIndent.Should().Be(28.3465 / 2.0);
-			result[7].SkipParagraphAlignment.Should().BeTrue();
-			result[7].ReduceLineIndent.Should().BeTrue();
-			result[7].ReduceLineIndentByText.Should().Be("- ");
+			result[7].LineIndent.Should().Be(0);
 
-			result[8].Text.Should().Be("if Off supposing moment");
+			result[8].Text.Should().Be("-");
 			result[8].Font.Fontfamily.Should().Be("Arial");
 			result[8].Font.Size.Should().Be(12.0);
 			result[8].Font.Bold.Should().BeFalse();
@@ -564,17 +583,20 @@ wish where we held steepest True he questions eat Thoughts";
 			result[8].Font.Underline.Should().BeFalse();
 			result[8].Font.Color.Should().Be("255 0 0 0");
 			result[8].LineIndent.Should().Be(28.3465 / 2.0);
+			result[8].SkipParagraphAlignment.Should().BeTrue();
+			result[8].ReduceLineIndent.Should().BeTrue();
+			result[8].ReduceLineIndentByText.Should().Be("- ");
 
-			result[9].Text.Should().Be(Environment.NewLine);
+			result[9].Text.Should().Be("if Off supposing moment");
 			result[9].Font.Fontfamily.Should().Be("Arial");
 			result[9].Font.Size.Should().Be(12.0);
 			result[9].Font.Bold.Should().BeFalse();
 			result[9].Font.Italic.Should().BeFalse();
 			result[9].Font.Underline.Should().BeFalse();
 			result[9].Font.Color.Should().Be("255 0 0 0");
-			result[9].LineIndent.Should().Be(0);
+			result[9].LineIndent.Should().Be(28.3465 / 2.0);
 
-			result[10].Text.Should().Be("wish where we held steepest True he questions eat Thoughts");
+			result[10].Text.Should().Be(Environment.NewLine);
 			result[10].Font.Fontfamily.Should().Be("Arial");
 			result[10].Font.Size.Should().Be(12.0);
 			result[10].Font.Bold.Should().BeFalse();
@@ -582,6 +604,24 @@ wish where we held steepest True he questions eat Thoughts";
 			result[10].Font.Underline.Should().BeFalse();
 			result[10].Font.Color.Should().Be("255 0 0 0");
 			result[10].LineIndent.Should().Be(0);
+
+			result[11].Text.Should().Be(Environment.NewLine);
+			result[11].Font.Fontfamily.Should().Be("Arial");
+			result[11].Font.Size.Should().Be(12.0);
+			result[11].Font.Bold.Should().BeFalse();
+			result[11].Font.Italic.Should().BeFalse();
+			result[11].Font.Underline.Should().BeFalse();
+			result[11].Font.Color.Should().Be("255 0 0 0");
+			result[11].LineIndent.Should().Be(0);
+
+			result[12].Text.Should().Be("wish where we held steepest True he questions eat Thoughts");
+			result[12].Font.Fontfamily.Should().Be("Arial");
+			result[12].Font.Size.Should().Be(12.0);
+			result[12].Font.Bold.Should().BeFalse();
+			result[12].Font.Italic.Should().BeFalse();
+			result[12].Font.Underline.Should().BeFalse();
+			result[12].Font.Color.Should().Be("255 0 0 0");
+			result[12].LineIndent.Should().Be(0);
 		}
 	}
 }

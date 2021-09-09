@@ -56,6 +56,7 @@ Platform independent core to calculate and generate pdf documents
 | FontFamily | string | yes | yes | | | | | yes |
 | Size | Point | yes | yes | | | | | yes |
 | Bold | Boolean (1,0) | yes | yes | | | | | yes |
+| Strikeout | Boolean (1,0) | yes | yes | | | | | yes |
 | Italic | Boolean (1,0) | yes | yes | | | | | yes |
 | Underline | Boolean (1,0) | yes | yes | | | | | yes |
 | Alignment | Alignment | yes | yes | yes | | | | yes |

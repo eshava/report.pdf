@@ -39,11 +39,11 @@ namespace Eshava.Report.Pdf
 		public double GetTextWidth(Font font, string text)
 		{
 			var options = new XPdfFontOptions(PdfFontEncoding.Unicode);
-			var xFont = new XFont(font.Fontfamily, font.Size, GetXFontstyle(font.Bold, font.Italic, font.Underline), options);
+			var xFont = new XFont(font.Fontfamily, font.Size, GetXFontstyle(font.Bold, font.Italic, font.Underline, font.Strikeout), options);
 			var format = XStringFormats.Default;
 			format.Alignment = XStringAlignment.Near;
 			format.LineAlignment = XLineAlignment.Near;
-			
+
 			return _xGraphics.MeasureString(text, xFont, format).Width;
 		}
 
@@ -65,7 +65,7 @@ namespace Eshava.Report.Pdf
 				.Select(ts => new PdfSharpCore.Drawing.Layout.TextSegment
 				{
 					Text = ts.Text,
-					Font = new XFont(ts.Font.Fontfamily, ts.Font.Size, GetXFontstyle(ts.Font.Bold, ts.Font.Italic, ts.Font.Underline), options),
+					Font = new XFont(ts.Font.Fontfamily, ts.Font.Size, GetXFontstyle(ts.Font.Bold, ts.Font.Italic, ts.Font.Underline, ts.Font.Strikeout), options),
 					Brush = new XSolidBrush(TranslateColor(ts.Font.Color)),
 					LineIndent = ts.LineIndent,
 					SkipParagraphAlignment = ts.SkipParagraphAlignment
@@ -181,7 +181,7 @@ namespace Eshava.Report.Pdf
 				.Select(ts => new PdfSharpCore.Drawing.Layout.TextSegment
 				{
 					Text = ts.Text,
-					Font = new XFont(ts.Font.Fontfamily, ts.Font.Size, GetXFontstyle(ts.Font.Bold, ts.Font.Italic, ts.Font.Underline), options),
+					Font = new XFont(ts.Font.Fontfamily, ts.Font.Size, GetXFontstyle(ts.Font.Bold, ts.Font.Italic, ts.Font.Underline, ts.Font.Strikeout), options),
 					Brush = new XSolidBrush(TranslateColor(ts.Font.Color)),
 					LineIndent = ts.LineIndent,
 					SkipParagraphAlignment = ts.SkipParagraphAlignment
@@ -229,40 +229,25 @@ namespace Eshava.Report.Pdf
 			return this;
 		}
 
-		public XFontStyle GetXFontstyle(bool bold, bool italic, bool underline)
+		public XFontStyle GetXFontstyle(bool bold, bool italic, bool underline, bool strikeout)
 		{
-			XFontStyle style;
-			if (bold && italic && underline)
+
+			var style = XFontStyle.Regular;
+			if (bold)
 			{
-				style = XFontStyle.Bold & XFontStyle.Italic & XFontStyle.Underline; //B, I, U
+				style |= XFontStyle.Bold;
 			}
-			else if (bold && italic)
+			if (italic)
 			{
-				style = XFontStyle.Bold & XFontStyle.Italic;                        //B, I
+				style |= XFontStyle.Italic;
 			}
-			else if (bold && underline)
+			if (underline)
 			{
-				style = XFontStyle.Bold & XFontStyle.Underline;                     //B, U
+				style |= XFontStyle.Underline;
 			}
-			else if (bold)
+			if (strikeout)
 			{
-				style = XFontStyle.Bold;                                            //B
-			}
-			else if (italic && underline)
-			{
-				style = XFontStyle.Italic & XFontStyle.Underline;                   //I, U
-			}
-			else if (!italic && underline)
-			{
-				style = XFontStyle.Underline;                                       //U
-			}
-			else if (italic)
-			{
-				style = XFontStyle.Italic;                                          //I
-			}
-			else
-			{
-				style = XFontStyle.Regular;                                         //R
+				style |= XFontStyle.Strikeout;
 			}
 
 			return style;
