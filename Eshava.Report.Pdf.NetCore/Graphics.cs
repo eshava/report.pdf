@@ -60,18 +60,7 @@ namespace Eshava.Report.Pdf
 
 		public Size GetTextSize(IEnumerable<Core.Models.TextSegment> textSegments, double width)
 		{
-			var options = new XPdfFontOptions(PdfFontEncoding.Unicode);
-			var pdfSharpTextSegments = textSegments
-				.Select(ts => new PdfSharpCore.Drawing.Layout.TextSegment
-				{
-					Text = ts.Text,
-					Font = new XFont(ts.Font.Fontfamily, ts.Font.Size, GetXFontstyle(ts.Font.Bold, ts.Font.Italic, ts.Font.Underline, ts.Font.Strikeout), options),
-					Brush = new XSolidBrush(TranslateColor(ts.Font.Color)),
-					LineIndent = ts.LineIndent,
-					SkipParagraphAlignment = ts.SkipParagraphAlignment
-				})
-				.ToList();
-
+			var pdfSharpTextSegments = ConvertTextSegemnts(textSegments);
 			var format = XStringFormats.Default;
 			format.Alignment = XStringAlignment.Near;
 			format.LineAlignment = XLineAlignment.Near;
@@ -176,18 +165,7 @@ namespace Eshava.Report.Pdf
 				return this;
 			}
 
-			var options = new XPdfFontOptions(PdfFontEncoding.Unicode);
-			var pdfSharpTextSegments = textSegments
-				.Select(ts => new PdfSharpCore.Drawing.Layout.TextSegment
-				{
-					Text = ts.Text,
-					Font = new XFont(ts.Font.Fontfamily, ts.Font.Size, GetXFontstyle(ts.Font.Bold, ts.Font.Italic, ts.Font.Underline, ts.Font.Strikeout), options),
-					Brush = new XSolidBrush(TranslateColor(ts.Font.Color)),
-					LineIndent = ts.LineIndent,
-					SkipParagraphAlignment = ts.SkipParagraphAlignment
-				})
-				.ToList();
-
+			var pdfSharpTextSegments = ConvertTextSegemnts(textSegments);
 			var format = XStringFormats.Default;
 			var xSize = new XSize(textSize.Width, textSize.Height);
 			var topLeftTotal = new XPoint(topLeftPage.X + topLeftText.X, topLeftPage.Y + topLeftText.Y);
@@ -214,6 +192,22 @@ namespace Eshava.Report.Pdf
 			return this;
 		}
 
+		private IEnumerable<PdfSharpCore.Drawing.Layout.TextSegment> ConvertTextSegemnts(IEnumerable<Core.Models.TextSegment> textSegments)
+		{
+			var options = new XPdfFontOptions(PdfFontEncoding.Unicode);
+
+			return textSegments
+				.Select(ts => new PdfSharpCore.Drawing.Layout.TextSegment
+				{
+					Text = ts.Text,
+					Font = new XFont(ts.Font.Fontfamily, ts.Font.Size, GetXFontstyle(ts.Font.Bold, ts.Font.Italic, ts.Font.Underline, ts.Font.Strikeout), options),
+					Brush = new XSolidBrush(TranslateColor(ts.Font.Color)),
+					LineIndent = ts.LineIndent,
+					SkipParagraphAlignment = ts.SkipParagraphAlignment
+				})
+				.ToList();
+		}
+
 		public IGraphics SetStationery(byte[] stationery)
 		{
 			if (stationery == null)
@@ -231,7 +225,6 @@ namespace Eshava.Report.Pdf
 
 		public XFontStyle GetXFontstyle(bool bold, bool italic, bool underline, bool strikeout)
 		{
-
 			var style = XFontStyle.Regular;
 			if (bold)
 			{

@@ -223,9 +223,12 @@ namespace Eshava.Report.Pdf.Core
 			var prePositionHeight = positionContainer.PreMainPositionHeight.CheckDictionary(state.CurrentSequenceNumber);
 			var postPositionHeight = positionContainer.PostMainPositionHeight.CheckDictionary(state.CurrentSequenceNumber);
 
+			// if current position is the first position on this page then consider pre position height
+			var optionalPrePositionHeight = page.Positions.Count(p => p.Type == PositonType.Default) == 0 ? prePositionHeight : 0.0;
+
 			// Check whether the new position incl. post position still fits on the current page
 			PositionState positionState;
-			if (state.PositionToRepeatHeight + state.PositionPartHeight + currentPosHeight + postPositionHeight > page.MaxPositionPartHeight || IsPageBreak(position) || IsForceNewPage(position))
+			if (state.PositionToRepeatHeight + state.PositionPartHeight + currentPosHeight + postPositionHeight + optionalPrePositionHeight > page.MaxPositionPartHeight || IsPageBreak(position) || IsForceNewPage(position))
 			{
 				// The current position no longer fits on the current page when the post position is taken into account.
 				// Fits the current position as a whole on the next page (including pre- and post-position)

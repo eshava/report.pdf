@@ -31,7 +31,8 @@ namespace Eshava.Report.Pdf.Core
 			{
 				var html = $"<div>{text.Replace("<br>", "<br/>")}</div>";
 				var xmlDocument = new XmlDocument();
-				xmlDocument.LoadXml(html);
+				// When loading the html as xml, spaces between tags are sometimes removed
+				xmlDocument.LoadXml(html.Replace("> <", "><span>&amp;nbsp;</span><"));
 
 				var segment = new TextSegmentExtended
 				{
@@ -47,7 +48,17 @@ namespace Eshava.Report.Pdf.Core
 					textSegments.RemoveAt(textSegments.Count - 1);
 				}
 
-				return textSegments;
+				// Hack: Separate the content of an list entry from the leading "bullet points"
+				for (var index = 0; index < textSegments.Count - 1; index++)
+				{
+					if (textSegments[index].ReduceLineIndent)
+					{
+						textSegments[index + 1].Text = " " + textSegments[index + 1].Text;
+					}
+				}
+
+				// Remove empty text segments
+				return textSegments.Where(ts => ts.Text != "").ToList();
 			}
 			catch
 			{
@@ -85,19 +96,34 @@ namespace Eshava.Report.Pdf.Core
 					|| lastSegment.ReduceLineIndentByText != segment.ReduceLineIndentByText
 					)
 				{
-					textSegments.Add(new TextSegment
+					if (lastSegment != default)
 					{
-						Font = segment.Font,
-						Text = segment.Text,
-						LineIndent = segment.LineIndent,
-						ReduceLineIndent = segment.ReduceLineIndent,
-						ReduceLineIndentByText = segment.ReduceLineIndentByText,
-						SkipParagraphAlignment = segment.SkipParagraphAlignment
-					});
+						if (lastSegment.Text.EndsWith(" ") && segment.Text.StartsWith(" "))
+						{
+							// Reduce number of spaces between text segments to one
+							lastSegment.Text = lastSegment.Text.TrimEnd();
+						}
+						else if (lastSegment.Text.EndsWith(" ") && !segment.Text.StartsWith(" "))
+						{
+							// PdfSharp behaviour: Trailing space is always removed or ignored
+							// so move trailing space to the next text segment
+							lastSegment.Text = lastSegment.Text.TrimEnd();
+							segment.Text = " " + segment.Text;
+						}
+					}
+
+					textSegments.Add(segment.Clone());
 				}
 				else
 				{
-					lastSegment.Text += " " + segment.Text;
+					if (lastSegment.Text.EndsWith(" ") || segment.Text.StartsWith(" "))
+					{
+						lastSegment.Text += segment.Text;
+					}
+					else
+					{
+						lastSegment.Text += " " + segment.Text;
+					}
 				}
 			}
 
@@ -121,6 +147,19 @@ namespace Eshava.Report.Pdf.Core
 		{
 			if (node.NodeType == XmlNodeType.Text)
 			{
+				var text = node.Value?
+								.Replace("\r", "")
+								.Replace("\n", "")
+								.Replace("  ", " ")
+								.Replace("&nbsp;", " ")
+								?? "";
+
+				// Ignore leading spaces after a line break
+				if (node.PreviousSibling?.Name.ToLower() == "br")
+				{
+					text = text.TrimStart();
+				}
+
 				parentSegment.Children.Add(new TextSegmentExtended
 				{
 					Font = new Font
@@ -133,12 +172,7 @@ namespace Eshava.Report.Pdf.Core
 						Strikeout = parentSegment.Font.Strikeout,
 						Color = parentSegment.Font.Color,
 					},
-					Text = node.Value?
-								.Replace("\r", "")
-								.Replace("\n", " ")
-								.Replace("  ", " ")
-								.Trim()
-								?? ""
+					Text = text
 				});
 
 				return;

@@ -71,7 +71,7 @@ namespace Eshava.Report.Pdf.Core.Models
 
 		public Size GetTextSize(IGraphics graphics, IEnumerable<TextSegment> textSegments)
 		{
-			return graphics.GetTextSize(textSegments, Width);
+			return graphics.GetTextSize(SummerizeTextSegments(textSegments), Width);
 		}
 
 		/// <summary>
@@ -100,7 +100,7 @@ namespace Eshava.Report.Pdf.Core.Models
 				textSegment.ReduceLineIndentByText = null;
 			}
 
-			var textSize = GetTextSize(graphics, TextSegments);
+			var textSize = graphics.GetTextSize(TextSegments, Width);
 			double height;
 			HeightDifference = 0;
 
@@ -147,27 +147,24 @@ namespace Eshava.Report.Pdf.Core.Models
 			{
 				if (textSegment.Text == Environment.NewLine)
 				{
-					textSegments.Add(new TextSegment
-					{
-						Text = textSegment.Text,
-						Font = textSegment.Font,
-						LineIndent = textSegment.LineIndent,
-						SkipParagraphAlignment = textSegment.SkipParagraphAlignment
-					});
+					textSegments.Add(textSegment.Clone());
 
 					continue;
 				}
 
-				var words = textSegment.Text.Split(' ');
-				foreach (var word in words)
+				var words = textSegment.Text.Trim().Split(' ');
+				for (var index = 0; index < words.Length; index++)
 				{
-					textSegments.Add(new TextSegment
+					var word = words[index];
+					if (index > 0 || textSegment.Text.StartsWith(" "))
 					{
-						Text = word,
-						Font = textSegment.Font,
-						LineIndent = textSegment.LineIndent,
-						SkipParagraphAlignment = textSegment.SkipParagraphAlignment
-					});
+						word = " " + word;
+					}
+
+					var textSegmentWord = textSegment.Clone();
+					textSegmentWord.Text = word;
+
+					textSegments.Add(textSegmentWord);
 				}
 			}
 
@@ -213,12 +210,12 @@ namespace Eshava.Report.Pdf.Core.Models
 			var lastTextSegment = default(TextSegment);
 			foreach (var textSegment in textSegments)
 			{
-				if (textSegment.Text != Environment.NewLine
-					&& lastTextSegment != default
+				if (lastTextSegment != default
+					&& (textSegment.Text != Environment.NewLine && lastTextSegment.Text != Environment.NewLine)
 					&& lastTextSegment.Font.GetHashCode() == textSegment.Font.GetHashCode()
 					&& lastTextSegment.LineIndent == textSegment.LineIndent)
 				{
-					lastTextSegment.Text += " " + textSegment.Text;
+					lastTextSegment.Text += textSegment.Text;
 				}
 				else
 				{
@@ -227,13 +224,7 @@ namespace Eshava.Report.Pdf.Core.Models
 
 				if (lastTextSegment == default)
 				{
-					lastTextSegment = new TextSegment
-					{
-						Text = textSegment.Text,
-						Font = textSegment.Font,
-						LineIndent = textSegment.LineIndent,
-						SkipParagraphAlignment = textSegment.SkipParagraphAlignment
-					};
+					lastTextSegment = textSegment.Clone();
 					summerizedTextSegments.Add(lastTextSegment);
 				}
 			}
