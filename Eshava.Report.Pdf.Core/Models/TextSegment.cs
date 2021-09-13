@@ -10,5 +10,18 @@
 		public bool ReduceLineIndent { get; set; }
 		public string ReduceLineIndentByText { get; set; }
 		public bool SkipParagraphAlignment { get; set; }
+
+		public TextSegment Clone()
+		{
+			return new TextSegment
+			{
+				Text = Text,
+				Font = Font,
+				LineIndent = LineIndent,
+				ReduceLineIndent = ReduceLineIndent,
+				ReduceLineIndentByText = ReduceLineIndentByText,
+				SkipParagraphAlignment = SkipParagraphAlignment
+			};
+		}
 	}
 }

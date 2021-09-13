@@ -30,7 +30,7 @@ namespace Eshava.Test.Report.Pdf.Core
 				Italic = false,
 				Fontfamily = "Arial"
 			};
-			var html = $@"very you get up speedily if Off supposing moment <b>directly part mirth <i>newspaper own come as its </i></b>who greatest but 
+			var html = $@"very you get up speedily if Off supposing moment <b>directly part mirth <i>newspaper own come as its </i> </b> who greatest but 
 Dashwood great children <u>message</u> are you perceived <p>indeed they entreaties disposed announcing views On come On or as early 
 suitable Entered questions middletons warmth</p> true be drawings Melancholy on can mr because an thus 
 at dwelling weeks its though pleasure may <b>good <span style=""font-family: Verdana, Helvetica; font-size: 14; color: #202020;"">within up</span> bed</b> 
@@ -52,7 +52,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[0].Font.Underline.Should().BeFalse();
 			result[0].Font.Color.Should().Be("255 0 0 0");
 
-			result[1].Text.Should().Be("directly part mirth");
+			result[1].Text.Should().Be(" directly part mirth");
 			result[1].Font.Fontfamily.Should().Be("Arial");
 			result[1].Font.Size.Should().Be(12.0);
 			result[1].Font.Bold.Should().BeTrue();
@@ -60,7 +60,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[1].Font.Underline.Should().BeFalse();
 			result[1].Font.Color.Should().Be("255 0 0 0");
 
-			result[2].Text.Should().Be("newspaper own come as its");
+			result[2].Text.Should().Be(" newspaper own come as its");
 			result[2].Font.Fontfamily.Should().Be("Arial");
 			result[2].Font.Size.Should().Be(12.0);
 			result[2].Font.Bold.Should().BeTrue();
@@ -68,7 +68,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[2].Font.Underline.Should().BeFalse();
 			result[2].Font.Color.Should().Be("255 0 0 0");
 
-			result[3].Text.Should().Be("who greatest but Dashwood great children");
+			result[3].Text.Should().Be(" who greatest but Dashwood great children");
 			result[3].Font.Fontfamily.Should().Be("Arial");
 			result[3].Font.Size.Should().Be(12.0);
 			result[3].Font.Bold.Should().BeFalse();
@@ -76,7 +76,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[3].Font.Underline.Should().BeFalse();
 			result[3].Font.Color.Should().Be("255 0 0 0");
 
-			result[4].Text.Should().Be("message");
+			result[4].Text.Should().Be(" message");
 			result[4].Font.Fontfamily.Should().Be("Arial");
 			result[4].Font.Size.Should().Be(12.0);
 			result[4].Font.Bold.Should().BeFalse();
@@ -84,7 +84,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[4].Font.Underline.Should().BeTrue();
 			result[4].Font.Color.Should().Be("255 0 0 0");
 
-			result[5].Text.Should().Be("are you perceived");
+			result[5].Text.Should().Be(" are you perceived ");
 			result[5].Font.Fontfamily.Should().Be("Arial");
 			result[5].Font.Size.Should().Be(12.0);
 			result[5].Font.Bold.Should().BeFalse();
@@ -116,7 +116,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[8].Font.Underline.Should().BeFalse();
 			result[8].Font.Color.Should().Be("255 0 0 0");
 
-			result[9].Text.Should().Be("true be drawings Melancholy on can mr because an thus at dwelling weeks its though pleasure may");
+			result[9].Text.Should().Be(" true be drawings Melancholy on can mr because an thus at dwelling weeks its though pleasure may");
 			result[9].Font.Fontfamily.Should().Be("Arial");
 			result[9].Font.Size.Should().Be(12.0);
 			result[9].Font.Bold.Should().BeFalse();
@@ -124,7 +124,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[9].Font.Underline.Should().BeFalse();
 			result[9].Font.Color.Should().Be("255 0 0 0");
 
-			result[10].Text.Should().Be("good");
+			result[10].Text.Should().Be(" good");
 			result[10].Font.Fontfamily.Should().Be("Arial");
 			result[10].Font.Size.Should().Be(12.0);
 			result[10].Font.Bold.Should().BeTrue();
@@ -132,7 +132,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[10].Font.Underline.Should().BeFalse();
 			result[10].Font.Color.Should().Be("255 0 0 0");
 
-			result[11].Text.Should().Be("within up");
+			result[11].Text.Should().Be(" within up");
 			result[11].Font.Fontfamily.Should().Be("Verdana");
 			result[11].Font.Size.Should().Be(14.0);
 			result[11].Font.Bold.Should().BeTrue();
@@ -140,7 +140,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[11].Font.Underline.Should().BeFalse();
 			result[11].Font.Color.Should().Be("255 32 32 32");
 
-			result[12].Text.Should().Be("bed");
+			result[12].Text.Should().Be(" bed");
 			result[12].Font.Fontfamily.Should().Be("Arial");
 			result[12].Font.Size.Should().Be(12.0);
 			result[12].Font.Bold.Should().BeTrue();
@@ -148,7 +148,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[12].Font.Underline.Should().BeFalse();
 			result[12].Font.Color.Should().Be("255 0 0 0");
 
-			result[13].Text.Should().Be("Preferred leave bred since Written Visited");
+			result[13].Text.Should().Be(" Preferred leave bred since Written Visited");
 			result[13].Font.Fontfamily.Should().Be("Arial");
 			result[13].Font.Size.Should().Be(12.0);
 			result[13].Font.Bold.Should().BeFalse();
@@ -188,7 +188,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[17].Font.Underline.Should().BeFalse();
 			result[17].Font.Color.Should().Be("255 0 0 0");
 
-			result[18].Text.Should().Be("when");
+			result[18].Text.Should().Be(" when");
 			result[18].Font.Fontfamily.Should().Be("Arial");
 			result[18].Font.Size.Should().Be(12.0);
 			result[18].Font.Bold.Should().BeTrue();
@@ -196,7 +196,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[18].Font.Underline.Should().BeFalse();
 			result[18].Font.Color.Should().Be("255 255 0 0");
 
-			result[19].Text.Should().Be("wish where we held steepest True he questions eat Thoughts pure some apartments steepest such why");
+			result[19].Text.Should().Be(" wish where we held steepest True he questions eat Thoughts pure some apartments steepest such why");
 			result[19].Font.Fontfamily.Should().Be("Arial");
 			result[19].Font.Size.Should().Be(12.0);
 			result[19].Font.Bold.Should().BeFalse();
@@ -353,7 +353,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[1].ReduceLineIndent.Should().BeTrue();
 			result[1].ReduceLineIndentByText.Should().Be("- ");
 
-			result[2].Text.Should().Be("very you get up speedily");
+			result[2].Text.Should().Be(" very you get up speedily");
 			result[2].Font.Fontfamily.Should().Be("Arial");
 			result[2].Font.Size.Should().Be(12.0);
 			result[2].Font.Bold.Should().BeFalse();
@@ -383,7 +383,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[4].ReduceLineIndent.Should().BeTrue();
 			result[4].ReduceLineIndentByText.Should().Be("- ");
 
-			result[5].Text.Should().Be("if Off supposing moment");
+			result[5].Text.Should().Be(" if Off supposing moment");
 			result[5].Font.Fontfamily.Should().Be("Arial");
 			result[5].Font.Size.Should().Be(12.0);
 			result[5].Font.Bold.Should().BeFalse();
@@ -435,7 +435,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[1].ReduceLineIndent.Should().BeTrue();
 			result[1].ReduceLineIndentByText.Should().Be("2. ");
 
-			result[2].Text.Should().Be("very you get up speedily");
+			result[2].Text.Should().Be(" very you get up speedily");
 			result[2].Font.Fontfamily.Should().Be("Arial");
 			result[2].Font.Size.Should().Be(12.0);
 			result[2].Font.Bold.Should().BeFalse();
@@ -465,7 +465,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 			result[4].ReduceLineIndent.Should().BeTrue();
 			result[4].ReduceLineIndentByText.Should().Be("2. ");
 
-			result[5].Text.Should().Be("if Off supposing moment");
+			result[5].Text.Should().Be(" if Off supposing moment");
 			result[5].Font.Fontfamily.Should().Be("Arial");
 			result[5].Font.Size.Should().Be(12.0);
 			result[5].Font.Bold.Should().BeFalse();
@@ -487,8 +487,7 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 				Italic = false,
 				Fontfamily = "Arial"
 			};
-			var html = $@"
-very you get up speedily if Off supposing moment<br>
+			var html = $@"very you get up speedily if Off supposing moment<br>
 <ul>
 <li>very you <b>get</b> up speedily</li>
 <li>if Off supposing moment</li>
@@ -539,7 +538,7 @@ wish where we held steepest True he questions eat Thoughts";
 			result[3].ReduceLineIndent.Should().BeTrue();
 			result[3].ReduceLineIndentByText.Should().Be("- ");
 
-			result[4].Text.Should().Be("very you");
+			result[4].Text.Should().Be(" very you");
 			result[4].Font.Fontfamily.Should().Be("Arial");
 			result[4].Font.Size.Should().Be(12.0);
 			result[4].Font.Bold.Should().BeFalse();
@@ -548,7 +547,7 @@ wish where we held steepest True he questions eat Thoughts";
 			result[4].Font.Color.Should().Be("255 0 0 0");
 			result[4].LineIndent.Should().Be(28.3465 / 2.0);
 
-			result[5].Text.Should().Be("get");
+			result[5].Text.Should().Be(" get");
 			result[5].Font.Fontfamily.Should().Be("Arial");
 			result[5].Font.Size.Should().Be(12.0);
 			result[5].Font.Bold.Should().BeTrue();
@@ -557,7 +556,7 @@ wish where we held steepest True he questions eat Thoughts";
 			result[5].Font.Color.Should().Be("255 0 0 0");
 			result[5].LineIndent.Should().Be(28.3465 / 2.0);
 
-			result[6].Text.Should().Be("up speedily");
+			result[6].Text.Should().Be(" up speedily");
 			result[6].Font.Fontfamily.Should().Be("Arial");
 			result[6].Font.Size.Should().Be(12.0);
 			result[6].Font.Bold.Should().BeFalse();
@@ -587,7 +586,7 @@ wish where we held steepest True he questions eat Thoughts";
 			result[8].ReduceLineIndent.Should().BeTrue();
 			result[8].ReduceLineIndentByText.Should().Be("- ");
 
-			result[9].Text.Should().Be("if Off supposing moment");
+			result[9].Text.Should().Be(" if Off supposing moment");
 			result[9].Font.Fontfamily.Should().Be("Arial");
 			result[9].Font.Size.Should().Be(12.0);
 			result[9].Font.Bold.Should().BeFalse();

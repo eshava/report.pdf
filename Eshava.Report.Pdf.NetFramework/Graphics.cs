@@ -39,7 +39,7 @@ namespace Eshava.Report.Pdf
 		{
 			// Pdf Sharp 1.50 -> without gdi
 			//var options = new XPdfFontOptions(PdfFontEncoding.Unicode);
-			//var xFont = new XFont(font.Fontfamily, font.Size, GetXFontstyle(font.Bold, font.Italic, font.Underline), options);
+			//var xFont = new XFont(font.Fontfamily, font.Size, GetXFontstyle(font.Bold, font.Italic, font.Underline, font.Strikeout), options);
 			//var format = XStringFormats.Default;
 			//format.Alignment = XStringAlignment.Near;
 			//format.LineAlignment = XLineAlignment.Near;
@@ -47,7 +47,7 @@ namespace Eshava.Report.Pdf
 			//return _xGraphics.MeasureString(text, xFont, format).Width;
 
 			//Pdf Sharp 1.32 -> use gdi
-			var frameworkFont = new System.Drawing.Font(font.Fontfamily, (float)font.Size, GetFontstyle(font.Bold, font.Italic, font.Underline));
+			var frameworkFont = new System.Drawing.Font(font.Fontfamily, (float)font.Size, GetFontstyle(font.Bold, font.Italic, font.Underline, font.Strikeout));
 			var xSize = XSize.FromSizeF(_xGraphics.Graphics.MeasureString(text, frameworkFont));
 			xSize = new XSize(xSize.Width * 72 / _xGraphics.Graphics.DpiX, (xSize.Height * 72 / _xGraphics.Graphics.DpiY)); //Pixel to Point
 
@@ -72,7 +72,7 @@ namespace Eshava.Report.Pdf
 			//}
 
 			//var options = new XPdfFontOptions(PdfFontEncoding.Unicode);
-			//var xFont = new XFont(font.Fontfamily, font.Size, GetXFontstyle(font.Bold, font.Italic, font.Underline), options);
+			//var xFont = new XFont(font.Fontfamily, font.Size, GetXFontstyle(font.Bold, font.Italic, font.Underline, font.Strikeout), options);
 			//var format = XStringFormats.Default;
 			//format.Alignment = XStringAlignment.Near;
 			//format.LineAlignment = XLineAlignment.Near;
@@ -85,7 +85,7 @@ namespace Eshava.Report.Pdf
 
 			//Pdf Sharp 1.32 -> use gdi
 			var width = Convert.ToInt32(elementWidth * _xGraphics.Graphics.DpiX / 72); //Point to Pixel
-			var frameworkFont = new System.Drawing.Font(font.Fontfamily, (float)font.Size, GetFontstyle(font.Bold, font.Italic, font.Underline));
+			var frameworkFont = new System.Drawing.Font(font.Fontfamily, (float)font.Size, GetFontstyle(font.Bold, font.Italic, font.Underline, font.Strikeout));
 			var xSize = XSize.FromSizeF(_xGraphics.Graphics.MeasureString(text, frameworkFont, width, System.Drawing.StringFormat.GenericDefault));
 			xSize = new XSize(xSize.Width * 72 / _xGraphics.Graphics.DpiX, (xSize.Height * 72 / _xGraphics.Graphics.DpiY)); //Pixel to Point
 
@@ -188,7 +188,7 @@ namespace Eshava.Report.Pdf
 			}
 
 			var options = new XPdfFontOptions(PdfFontEncoding.Unicode);
-			var xFont = new XFont(font.Fontfamily, font.Size, GetXFontstyle(font.Bold, font.Italic, font.Underline), options);
+			var xFont = new XFont(font.Fontfamily, font.Size, GetXFontstyle(font.Bold, font.Italic, font.Underline, font.Strikeout), options);
 			var format = XStringFormats.Default;
 			var brush = new XSolidBrush(TranslateColor(font.Color));
 			var xSize = new XSize(textSize.Width, textSize.Height);
@@ -231,79 +231,47 @@ namespace Eshava.Report.Pdf
 			return this;
 		}
 
-		private System.Drawing.FontStyle GetFontstyle(bool bold, bool italic, bool underline)
+		private System.Drawing.FontStyle GetFontstyle(bool bold, bool italic, bool underline, bool strikeout)
 		{
-			System.Drawing.FontStyle style;
-			if (bold && italic && underline)
+			var style = System.Drawing.FontStyle.Regular;
+			if (bold)
 			{
-				style = System.Drawing.FontStyle.Bold & System.Drawing.FontStyle.Italic & System.Drawing.FontStyle.Underline; //B, I, U
+				style |=  System.Drawing.FontStyle.Bold;
 			}
-			else if (bold && italic)
+			if (italic)
 			{
-				style = System.Drawing.FontStyle.Bold & System.Drawing.FontStyle.Italic;                        //B, I
+				style |=  System.Drawing.FontStyle.Italic;
 			}
-			else if (bold && underline)
+			if (underline)
 			{
-				style = System.Drawing.FontStyle.Bold & System.Drawing.FontStyle.Underline;                     //B, U
+				style |=  System.Drawing.FontStyle.Underline;
 			}
-			else if (bold)
+			if (strikeout)
 			{
-				style = System.Drawing.FontStyle.Bold;                                            //B
-			}
-			else if (italic && underline)
-			{
-				style = System.Drawing.FontStyle.Italic & System.Drawing.FontStyle.Underline;                   //I, U
-			}
-			else if (!italic && underline)
-			{
-				style = System.Drawing.FontStyle.Underline;                                       //U
-			}
-			else if (italic)
-			{
-				style = System.Drawing.FontStyle.Italic;                                          //I
-			}
-			else
-			{
-				style = System.Drawing.FontStyle.Regular;                                         //R
+				style |=  System.Drawing.FontStyle.Strikeout;
 			}
 
 			return style;
 		}
 
-		public XFontStyle GetXFontstyle(bool bold, bool italic, bool underline)
+		public XFontStyle GetXFontstyle(bool bold, bool italic, bool underline, bool strikeout)
 		{
-			XFontStyle style;
-			if (bold && italic && underline)
+			var style = XFontStyle.Regular;
+			if (bold)
 			{
-				style = XFontStyle.Bold & XFontStyle.Italic & XFontStyle.Underline; //B, I, U
+				style |= XFontStyle.Bold;
 			}
-			else if (bold && italic)
+			if (italic)
 			{
-				style = XFontStyle.Bold & XFontStyle.Italic;                        //B, I
+				style |= XFontStyle.Italic;
 			}
-			else if (bold && underline)
+			if (underline)
 			{
-				style = XFontStyle.Bold & XFontStyle.Underline;                     //B, U
+				style |= XFontStyle.Underline;
 			}
-			else if (bold)
+			if (strikeout)
 			{
-				style = XFontStyle.Bold;                                            //B
-			}
-			else if (italic && underline)
-			{
-				style = XFontStyle.Italic & XFontStyle.Underline;                   //I, U
-			}
-			else if (!italic && underline)
-			{
-				style = XFontStyle.Underline;                                       //U
-			}
-			else if (italic)
-			{
-				style = XFontStyle.Italic;                                          //I
-			}
-			else
-			{
-				style = XFontStyle.Regular;                                         //R
+				style |= XFontStyle.Strikeout;
 			}
 
 			return style;
