@@ -136,6 +136,26 @@ public enum Scale
 | SequenceNo | Groups positions to an unit (important for page height calculation |
 | Type | Type of the position, see enum PositonType |
 | PreventLastOnPage | Specifies whether a page break is forced when the position is the last position on the page |
+| Cohesion | Specifies whether the content of a position should be displayed as a whole if possible |
+| CohesionPercentage | Only for Cohesion = SplittByPercent, Integer value between 0 and 100 |
+
+```csharp
+public enum PositionCohesion
+{
+	/// <summary>
+	/// The content of an item is split only if the item does not fit in its entirety on the current page or on a new page.
+	/// </summary>
+	KeepTogether = 0,
+	/// <summary>
+	/// The content of a position is always split if it does not fit on the current page as a whole.
+	/// </summary>
+	SplittAlways = 1,
+	/// <summary>
+	/// The content of a position is split if the available area of the current page is at least equal to the percentage
+	/// </summary>
+	SplittByPercent = 2
+}
+```
 
 
 ### Xml Frame
