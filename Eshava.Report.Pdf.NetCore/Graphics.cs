@@ -47,7 +47,7 @@ namespace Eshava.Report.Pdf
 			return _xGraphics.MeasureString(text, xFont, format).Width;
 		}
 
-		public Size GetTextSize(Font font, double elementWidth, string text)
+		public Size GetTextSize(Font font, double elementWidth, string text, Alignment alignment)
 		{
 			var textSegment = new Core.Models.TextSegment
 			{
@@ -55,17 +55,20 @@ namespace Eshava.Report.Pdf
 				Font = font
 			};
 
-			return GetTextSize(new[] { textSegment }, elementWidth);
+			return GetTextSize(new[] { textSegment }, elementWidth, alignment);
 		}
 
-		public Size GetTextSize(IEnumerable<Core.Models.TextSegment> textSegments, double width)
+		public Size GetTextSize(IEnumerable<Core.Models.TextSegment> textSegments, double width, Alignment alignment)
 		{
 			var pdfSharpTextSegments = ConvertTextSegemnts(textSegments);
 			var format = XStringFormats.Default;
 			format.Alignment = XStringAlignment.Near;
 			format.LineAlignment = XLineAlignment.Near;
 
-			var tf = new XTextSegmentFormatter(_xGraphics);
+			var tf = new XTextSegmentFormatter(_xGraphics)
+			{
+				Alignment = alignment == Alignment.Justify ? XParagraphAlignment.Justify : XParagraphAlignment.Left
+			};
 			var size = tf.CalculateTextSize(pdfSharpTextSegments, width, format);
 
 			return new Size(size.Width, size.Height);
