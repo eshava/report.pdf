@@ -80,6 +80,12 @@ namespace Eshava.Report.Pdf.Core.Models
 		private List<ElementBase> GetAllStandardElements(bool includeNonStandard)
 		{
 			var elements = new List<ElementBase>();
+
+			if (includeNonStandard)
+			{
+				elements.AddRange(_collection.GetElements<ElementLine>().Select(e => (ElementBase)e));
+			}
+
 			elements.AddRange(_collection.GetElements<ElementRectangleFill>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementImage>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementText>().Select(e => (ElementBase)e));
@@ -87,10 +93,6 @@ namespace Eshava.Report.Pdf.Core.Models
 			elements.AddRange(_collection.GetElements<ElementRectangle>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementPageNo>().Select(e => (ElementBase)e));
 
-			if (includeNonStandard)
-			{
-				elements.AddRange(_collection.GetElements<ElementLine>().Select(e => (ElementBase)e));
-			}
 			return elements;
 		}
 
