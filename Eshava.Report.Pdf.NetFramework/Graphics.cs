@@ -54,16 +54,16 @@ namespace Eshava.Report.Pdf
 			return xSize.Width;
 		}
 
-		public Size GetTextSize(IEnumerable<TextSegment> textSegments, double width)
+		public Size GetTextSize(IEnumerable<TextSegment> textSegments, double width, Alignment alignment)
 		{
 			//Fallback
 			var text = String.Join(" ", textSegments.Select(ts => ts.Text));
 			var font = textSegments.First().Font;
 
-			return GetTextSize(font, width, text);
+			return GetTextSize(font, width, text, alignment);
 		}
 
-		public Size GetTextSize(Font font, double elementWidth, string text)
+		public Size GetTextSize(Font font, double elementWidth, string text, Alignment alignment)
 		{
 			// Pdf Sharp 1.50 -> without gdi
 			//if (text.IsNullOrEmpty())

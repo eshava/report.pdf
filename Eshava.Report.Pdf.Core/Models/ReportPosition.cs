@@ -19,6 +19,12 @@ namespace Eshava.Report.Pdf.Core.Models
 		public PositonType Type { get; set; }
 
 		[XmlAttribute]
+		public PositionCohesion Cohesion { get; set; }
+
+		[XmlAttribute]
+		public int CohesionPercentage { get; set; }
+
+		[XmlAttribute]
 		public int SequenceNo { get; set; }
 
 		[XmlAttribute]

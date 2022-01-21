@@ -120,6 +120,7 @@ namespace Eshava.Report.Pdf.Core.Models
 				}
 
 				CalculateDynamicLineHeight(graphics, position);
+				CheckPositionCohesion(position);
 			}
 		}
 
@@ -173,6 +174,18 @@ namespace Eshava.Report.Pdf.Core.Models
 					p.Height = size.Height;
 				}
 			});
+		}
+
+		private void CheckPositionCohesion(ReportPosition pos)
+		{
+			if (pos.CohesionPercentage < 0)
+			{
+				pos.CohesionPercentage = 0;
+			}
+			else if (pos.CohesionPercentage > 100)
+			{
+				pos.CohesionPercentage = 100;
+			}
 		}
 	}
 }

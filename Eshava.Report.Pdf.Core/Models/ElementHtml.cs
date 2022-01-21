@@ -24,6 +24,12 @@ namespace Eshava.Report.Pdf.Core.Models
 		public string Color { get; set; }
 
 		[XmlAttribute]
+		public string BackgroundColor { get; set; }
+
+		[XmlAttribute]
+		public int BackgroundSpacing { get; set; }
+
+		[XmlAttribute]
 		public bool Bold { get; set; }
 
 		[XmlAttribute]
@@ -71,7 +77,7 @@ namespace Eshava.Report.Pdf.Core.Models
 
 		public Size GetTextSize(IGraphics graphics, IEnumerable<TextSegment> textSegments)
 		{
-			return graphics.GetTextSize(SummerizeTextSegments(textSegments), Width);
+			return graphics.GetTextSize(SummerizeTextSegments(textSegments), Width, Alignment);
 		}
 
 		/// <summary>
@@ -81,56 +87,43 @@ namespace Eshava.Report.Pdf.Core.Models
 		/// <returns>Field size</returns>
 		public override Size GetSize(IGraphics graphics)
 		{
-			if (!TextSegments.Any() || TextSegments.All(ts => ts.Text.IsNullOrEmpty()))
-			{
-				return new Size(0, 0);
-			}
+			var textSize = GetSizeWithAdjustments(graphics);
 
-			// calculate line indent reduction
-			var lineIndentReductions = TextSegments.Where(ts => ts.ReduceLineIndent).ToList();
-			foreach (var textSegment in lineIndentReductions)
-			{
-				var textWidth = graphics.GetTextWidth(GetFont(), textSegment.ReduceLineIndentByText);
-				if (textSegment.LineIndent > textWidth)
-				{
-					textSegment.LineIndent -= textWidth;
-				}
-
-				textSegment.ReduceLineIndent = false;
-				textSegment.ReduceLineIndentByText = null;
-			}
-
-			var textSize = graphics.GetTextSize(TextSegments, Width);
-			double height;
-			HeightDifference = 0;
-
-			// Height == 0: Can have an infinite height
-			if (Math.Abs(textSize.Height) < 0.001)
-			{
-				height = 0.0;
-			}
-			else if (ExpandAndShift && textSize.Height > Height)
-			{
-				var referenceSize = graphics.GetTextSize(TextSegments.OrderByDescending(ts => ts.Font.Size).First().Font, Width, "a");
-
-				height = textSize.Height;
-				HeightDifference = height - referenceSize.Height;
-			}
-			else if (Math.Abs(Height) < 0.001 || (Height > textSize.Height && !ExpandAndShift))
-			{
-				height = textSize.Height;
-			}
-			else
-			{
-				height = Height;
-			}
-
-			return new Size(Width, height);
+			return textSize.Adjusted;
 		}
 
 		public override void Draw(IGraphics graphics, Point topLeftPage, Size sizePage)
 		{
-			graphics.DrawText(TextSegments, Alignment, topLeftPage, sizePage, new Point(PosX, PosY), GetSize(graphics));
+			var textSize = GetSizeWithAdjustments(graphics);
+
+			if (!BackgroundColor.IsNullOrEmpty())
+			{
+				var spaceWidth = (BackgroundSpacing * textSize.SpaceWidth) / 2;
+				Point topLeft;
+				Point bottomRight;
+				switch (Alignment)
+				{
+					case Alignment.Center:
+						var remainingSpace = (Width - textSize.Real.Width) / 2;
+						topLeft = new Point(topLeftPage.X + PosX + remainingSpace - spaceWidth, topLeftPage.Y + PosY);
+						bottomRight = new Point(textSize.Real.Width + (2 * spaceWidth), textSize.Real.Height);
+						break;
+					case Alignment.Right:
+						topLeft = new Point(topLeftPage.X + PosX + (Width - textSize.Real.Width) - spaceWidth, topLeftPage.Y + PosY);
+						bottomRight = new Point(textSize.Real.Width + (2 * spaceWidth), textSize.Real.Height);
+
+						break;
+					default:
+						topLeft = new Point(topLeftPage.X + PosX - spaceWidth, topLeftPage.Y + PosY);
+						bottomRight = new Point(textSize.Real.Width + (2 * spaceWidth), textSize.Real.Height);
+
+						break;
+				}
+
+				graphics.DrawRectangle(BackgroundColor, 1, DashStyle.Solid, topLeft, bottomRight, true);
+			}
+
+			graphics.DrawText(TextSegments, Alignment, topLeftPage, sizePage, new Point(PosX, PosY), textSize.Adjusted);
 		}
 
 		public List<TextSegment> SplittBySpaces()
@@ -230,6 +223,57 @@ namespace Eshava.Report.Pdf.Core.Models
 			}
 
 			return summerizedTextSegments;
+		}
+
+		private (Size Real, Size Adjusted, double SpaceWidth) GetSizeWithAdjustments(IGraphics graphics)
+		{
+			if (!TextSegments.Any() || TextSegments.All(ts => ts.Text.IsNullOrEmpty()))
+			{
+				return (new Size(0, 0), new Size(0, 0), 0);
+			}
+
+			// calculate line indent reduction
+			var lineIndentReductions = TextSegments.Where(ts => ts.ReduceLineIndent).ToList();
+			foreach (var textSegment in lineIndentReductions)
+			{
+				var textWidth = graphics.GetTextWidth(GetFont(), textSegment.ReduceLineIndentByText);
+				if (textSegment.LineIndent > textWidth)
+				{
+					textSegment.LineIndent -= textWidth;
+				}
+
+				textSegment.ReduceLineIndent = false;
+				textSegment.ReduceLineIndentByText = null;
+			}
+
+			var textSize = graphics.GetTextSize(TextSegments, Width, Alignment);
+			var referenceSize = graphics.GetTextSize(TextSegments.OrderByDescending(ts => ts.Font.Size).First().Font, Width, "a", Alignment.Left);
+			var referenceSize2 = graphics.GetTextSize(TextSegments.OrderByDescending(ts => ts.Font.Size).First().Font, Width, "a a", Alignment.Left);
+
+			double height;
+			HeightDifference = 0;
+
+			// Height == 0: Can have an infinite height
+			if (Math.Abs(textSize.Height) < 0.001)
+			{
+				height = 0.0;
+			}
+			else if (ExpandAndShift && textSize.Height > Height)
+			{
+
+				height = textSize.Height;
+				HeightDifference = height - referenceSize.Height;
+			}
+			else if (Math.Abs(Height) < 0.001 || (Height > textSize.Height && !ExpandAndShift))
+			{
+				height = textSize.Height;
+			}
+			else
+			{
+				height = Height;
+			}
+
+			return (new Size(textSize.Width, textSize.Height), new Size(Width, height), referenceSize2.Width - (2 * referenceSize.Width));
 		}
 	}
 }

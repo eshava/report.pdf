@@ -7,8 +7,8 @@ namespace Eshava.Report.Pdf.Core.Interfaces
 	public interface IGraphics
 	{
 		double GetTextWidth(Font font, string text);
-		Size GetTextSize(IEnumerable<TextSegment> textSegments, double width);
-		Size GetTextSize(Font font, double width, string text);
+		Size GetTextSize(IEnumerable<TextSegment> textSegments, double width, Alignment alignment);
+		Size GetTextSize(Font font, double width, string text, Alignment alignment);
 		IGraphics SetStationery(byte[] stationery);
 		IImage LoadImage(string imageName);
 		IGraphics DrawImage(IImage image, Point location, Size size);

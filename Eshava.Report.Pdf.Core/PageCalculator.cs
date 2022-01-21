@@ -238,7 +238,16 @@ namespace Eshava.Report.Pdf.Core
 
 				state.NewPageHeight = CreatePage(state.CurrentPageNumber, state.IsFirstPage).MaxPositionPartHeight;
 
-				if (state.PositionToRepeatHeight + currentPosHeight + prePositionHeight + postPositionHeight <= state.NewPageHeight || IsPageBreak(position) || IsForceNewPage(position))
+				var calculatedPageHeight = state.PositionToRepeatHeight + prePositionHeight + postPositionHeight + currentPosHeight;
+				var availablePositionPartHeight = page.MaxPositionPartHeight - state.PositionToRepeatHeight - state.PositionPartHeight - postPositionHeight - optionalPrePositionHeight;
+				var availablePositionPartHeightPercentage = page.MaxPositionPartHeight > 0 ? availablePositionPartHeight / page.MaxPositionPartHeight : 0;
+				availablePositionPartHeightPercentage *= 100;
+
+				var shouldStartNewPage = (position.Cohesion == PositionCohesion.KeepTogether && calculatedPageHeight <= state.NewPageHeight)
+					|| (position.Cohesion == PositionCohesion.SplittByPercent && availablePositionPartHeightPercentage < position.CohesionPercentage)
+					;
+
+				if (shouldStartNewPage || IsPageBreak(position) || IsForceNewPage(position))
 				{
 					// Check if the preview position is set to "PreventLastOnPage"
 					if ((page.Positions.LastOrDefault(p => p.Type == PositonType.Default)?.PreventLastOnPage ?? false) && page.Positions.Count(p => p.Type == PositonType.Default) > 1)
