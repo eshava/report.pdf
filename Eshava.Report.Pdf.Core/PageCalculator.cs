@@ -21,7 +21,7 @@ namespace Eshava.Report.Pdf.Core
 			/// <summary>
 			/// Position does not fit completely on a new page including pre and post position
 			/// </summary>
-			SplittetOnCurrentPage = 2,
+			SplitOnCurrentPage = 2,
 
 			/// <summary>
 			/// Position fits completely on a new page including pre and post position
@@ -98,7 +98,7 @@ namespace Eshava.Report.Pdf.Core
 					state.IsFirstPage = false;
 					state.NewPageHeight = CreatePage(state.CurrentPageNumber, false).MaxPositionPartHeight;
 
-					page = AddPositionsToBeSplitt(graphics, page, position, positionContainer, state, state.NewPageHeight, (page.MaxPositionPartHeight - state.PositionPartHeight));
+					page = AddPositionsToBeSplit(graphics, page, position, positionContainer, state, state.NewPageHeight, (page.MaxPositionPartHeight - state.PositionPartHeight));
 				}
 				else
 				{
@@ -122,7 +122,7 @@ namespace Eshava.Report.Pdf.Core
 			state.PositionPartHeight += state.PositionToRepeatHeight;
 			state.NewPageHeight = CreatePage(state.CurrentPageNumber, state.IsFirstPage).MaxPositionPartHeight;
 
-			// Check whether all post positions still fits on one page or whether they have to be splitted
+			// Check whether all post positions still fits on one page or whether they have to be split
 			if (_postPositionHeight <= state.NewPageHeight)
 			{
 				// Check whether all post positions still fits on the current page
@@ -156,7 +156,7 @@ namespace Eshava.Report.Pdf.Core
 			}
 			else
 			{
-				// Post positions have to be splitted
+				// Post positions have to be split
 				// Post positions must now be split backwards
 				var postPage = new Dictionary<int, List<ReportPosition>>();
 				var postPageSize = new Dictionary<int, double>();
@@ -244,7 +244,7 @@ namespace Eshava.Report.Pdf.Core
 				availablePositionPartHeightPercentage *= 100;
 
 				var shouldStartNewPage = (position.Cohesion == PositionCohesion.KeepTogether && calculatedPageHeight <= state.NewPageHeight)
-					|| (position.Cohesion == PositionCohesion.SplittByPercent && availablePositionPartHeightPercentage < position.CohesionPercentage)
+					|| (position.Cohesion == PositionCohesion.SplitByPercent && availablePositionPartHeightPercentage < position.CohesionPercentage)
 					;
 
 				if (shouldStartNewPage || IsPageBreak(position) || IsForceNewPage(position))
@@ -270,7 +270,7 @@ namespace Eshava.Report.Pdf.Core
 				else
 				{
 					// The current position has to be split, because this incl. pre- and post-position does not fit completely on a new page
-					positionState = PositionState.SplittetOnCurrentPage;
+					positionState = PositionState.SplitOnCurrentPage;
 				}
 			}
 			else
@@ -302,14 +302,14 @@ namespace Eshava.Report.Pdf.Core
 						state.PositionPartHeight += currentPosHeight;
 						state.IsNewPage = false;
 						break;
-					case PositionState.SplittetOnCurrentPage:
+					case PositionState.SplitOnCurrentPage:
 						prePositionHeight = positionContainer.PreMainPositionHeight.ContainsKey(state.CurrentSequenceNumber) ? positionContainer.PreMainPositionHeight[state.CurrentSequenceNumber] : 0;
 						postPositionHeight = positionContainer.PostMainPositionHeight.ContainsKey(state.CurrentSequenceNumber) ? positionContainer.PostMainPositionHeight[state.CurrentSequenceNumber] : 0;
 						position.GetSize(graphics);
 						state.NewPageHeight = CreatePage(state.CurrentPageNumber, false).MaxPositionPartHeight;
 						var maxElementHeight = state.NewPageHeight - state.PositionToRepeatHeight - prePositionHeight - postPositionHeight;
 						var maxElementHeightOnCurrentPage = page.MaxPositionPartHeight - state.PositionToRepeatHeight - state.PositionPartHeight - postPositionHeight;
-						page = AddPositionsToBeSplitt(graphics, page, position, positionContainer, state, maxElementHeight, maxElementHeightOnCurrentPage);
+						page = AddPositionsToBeSplit(graphics, page, position, positionContainer, state, maxElementHeight, maxElementHeightOnCurrentPage);
 						break;
 					case PositionState.UseNewCurrentPage:
 						// A new page has already been created, which is now to be used
@@ -496,17 +496,17 @@ namespace Eshava.Report.Pdf.Core
 					// The position must now be split backwards
 
 					// Position is now tried to split, to the current page and to the following pages (backwards)
-					var splittPositions = post[positionIndex].SplitPositionInvert(graphics, newPageHeight, newPageHeight - pageHeight);
+					var splitPositions = post[positionIndex].SplitPositionInvert(graphics, newPageHeight, newPageHeight - pageHeight);
 
-					for (var splittPositionIndex = 0; splittPositionIndex < splittPositions.Count; splittPositionIndex++)
+					for (var splitPositionIndex = 0; splitPositionIndex < splitPositions.Count; splitPositionIndex++)
 					{
-						if (splittPositionIndex != 0)
+						if (splitPositionIndex != 0)
 						{
 							pageIndex++;
 							pageHeight = 0;
 						}
-						positionSize = splittPositions[splittPositionIndex].GetSize(graphics);
-						AddPostPositionToList(postPage, postPageSize, splittPositions[splittPositionIndex], ref pageHeight, pageIndex, positionSize.Height);
+						positionSize = splitPositions[splitPositionIndex].GetSize(graphics);
+						AddPostPositionToList(postPage, postPageSize, splitPositions[splitPositionIndex], ref pageHeight, pageIndex, positionSize.Height);
 					}
 				}
 			}
@@ -737,16 +737,16 @@ namespace Eshava.Report.Pdf.Core
 		/// </summary>
 		/// <param name="graphics">Graphics element</param>
 		/// <param name="page">Current page</param>
-		/// <param name="position">Positions to be splitt</param>
+		/// <param name="position">Positions to be split</param>
 		/// <param name="positionContainer"></param>
 		/// <param name="state">Calculation state</param>
 		/// <param name="maxElementHeight">Maximum height of the next page</param>
 		/// <param name="maxElementHeightOnCurrentPage">Remaining height of the current page</param>
 		/// <returns>Last created page</returns>
-		private ReportPage AddPositionsToBeSplitt(IGraphics graphics, ReportPage page, ReportPosition position, ReportPositionContainer positionContainer, CalulationState state, double maxElementHeight, double maxElementHeightOnCurrentPage)
+		private ReportPage AddPositionsToBeSplit(IGraphics graphics, ReportPage page, ReportPosition position, ReportPositionContainer positionContainer, CalulationState state, double maxElementHeight, double maxElementHeightOnCurrentPage)
 		{
 			// Position is now tried to split, to the current page and to the following pages
-			var splittPositions = position.SplitPosition(graphics, maxElementHeight, maxElementHeightOnCurrentPage);
+			var splitPositions = position.SplitPosition(graphics, maxElementHeight, maxElementHeightOnCurrentPage);
 
 			var postMainPositionHeight = 0.0;
 			if (positionContainer.PostMainPositionHeight.ContainsKey(position.SequenceNo))
@@ -754,10 +754,10 @@ namespace Eshava.Report.Pdf.Core
 				postMainPositionHeight = positionContainer.PostMainPositionHeight[position.SequenceNo];
 			}
 
-			if (splittPositions[0].IsEmpty)
+			if (splitPositions[0].IsEmpty)
 			{
 				// Continue use exising page
-				// Don't add first empty splitt position
+				// Don't add first empty split position
 				// Add post position to the previous page
 
 				AddPostMainPosition(page, positionContainer, position.SequenceNo - 1, maxElementHeightOnCurrentPage + postMainPositionHeight, 0);
@@ -765,16 +765,16 @@ namespace Eshava.Report.Pdf.Core
 			else
 			{
 				// Continue use exising page
-				page.Positions.Add(splittPositions[0]);
+				page.Positions.Add(splitPositions[0]);
 				// Add post position to the current page
-				AddPostMainPosition(page, positionContainer, position.SequenceNo, maxElementHeightOnCurrentPage + postMainPositionHeight, splittPositions[0].GetSize(graphics).Height);
+				AddPostMainPosition(page, positionContainer, position.SequenceNo, maxElementHeightOnCurrentPage + postMainPositionHeight, splitPositions[0].GetSize(graphics).Height);
 			}
 
 			// Complete existing page, because current position fits on the next page
 			page = CloseAndCreateNewPage(page, state);
 
 			// Go through all split positions (the position at index 0 must be skipped as it has already been added
-			for (var positionIndex = 1; positionIndex < splittPositions.Count; positionIndex++)
+			for (var positionIndex = 1; positionIndex < splitPositions.Count; positionIndex++)
 			{
 				// Each position in the list represents a new page
 
@@ -786,14 +786,14 @@ namespace Eshava.Report.Pdf.Core
 					state.PositionPartHeight = positionContainer.PreMainPositionHeight[position.SequenceNo + 1];
 				}
 
-				page.Positions.Add(splittPositions[positionIndex]);
+				page.Positions.Add(splitPositions[positionIndex]);
 				// Note the height of the current position, if there are still positions following
-				state.PositionPartHeight += splittPositions[positionIndex].GetSize(graphics).Height;
+				state.PositionPartHeight += splitPositions[positionIndex].GetSize(graphics).Height;
 				state.IsNewPage = false;
-				// If the last page of the splitt positions is reached, do not create a new page, as the following positions may still fit on this page
-				if (positionIndex + 1 < splittPositions.Count)
+				// If the last page of the split positions is reached, do not create a new page, as the following positions may still fit on this page
+				if (positionIndex + 1 < splitPositions.Count)
 				{
-					AddPostMainPosition(page, positionContainer, position.SequenceNo, maxElementHeight, splittPositions[positionIndex].GetSize(graphics).Height);
+					AddPostMainPosition(page, positionContainer, position.SequenceNo, maxElementHeight, splitPositions[positionIndex].GetSize(graphics).Height);
 
 					// Complete existing page, because current position fits on the next page
 					page = CloseAndCreateNewPage(page, state);

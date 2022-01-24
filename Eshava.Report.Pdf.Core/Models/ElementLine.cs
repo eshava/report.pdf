@@ -23,7 +23,7 @@ namespace Eshava.Report.Pdf.Core.Models
 		public bool EndsDiffHeight { get; set; }
 
 		[XmlAttribute]
-		public double SplittExtraMargin { get; set; }
+		public double SplitExtraMargin { get; set; }
 		
 		public override void Draw(IGraphics graphics, Point topLeftPage, Size sizePage)
 		{

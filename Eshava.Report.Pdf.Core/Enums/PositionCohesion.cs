@@ -9,10 +9,10 @@
 		/// <summary>
 		/// The content of a position is always split if it does not fit on the current page as a whole.
 		/// </summary>
-		SplittAlways = 1,
+		SplitAlways = 1,
 		/// <summary>
 		/// The content of a position is split if the available area of the current page is at least equal to the percentage
 		/// </summary>
-		SplittByPercent = 2
+		SplitByPercent = 2
 	}
 }

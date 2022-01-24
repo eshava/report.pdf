@@ -126,7 +126,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			graphics.DrawText(TextSegments, Alignment, topLeftPage, sizePage, new Point(PosX, PosY), textSize.Adjusted);
 		}
 
-		public List<TextSegment> SplittBySpaces()
+		public List<TextSegment> SplitBySpaces()
 		{
 			var textSegments = new List<TextSegment>();
 			var text = new StringBuilder();
