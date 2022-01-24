@@ -76,7 +76,7 @@ namespace Eshava.Report.Pdf.Core.Models
 
 			var notMatchedLineVertical = noMatch.ContentLine.Where(l => l.PosX == l.Width).ToList();
 			var notMatchedLineHorizontal = noMatch.ContentLine.Where(l => l.PosX != l.Width).ToList();
-			var extraHeight = notMatchedLineHorizontal.Any() ? notMatchedLineHorizontal.Max(line => line.SplittExtraMargin) : 0.0;
+			var extraHeight = notMatchedLineHorizontal.Any() ? notMatchedLineHorizontal.Max(line => line.SplitExtraMargin) : 0.0;
 
 			if (invertAnalyse)
 			{
@@ -328,7 +328,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			if (maxElementHeightOnPage < size.Height + text.PosY)
 			{
 				// Split text until it fits on the rest of the current page
-				var textparts = text.SplittBySpaces();
+				var textparts = text.SplitBySpaces();
 				var eText = CheckTextParts(graphics, textparts, text, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
 				if (eText == null)
 				{
@@ -363,7 +363,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			if (maxElementHeightOnPage < size.Height + text.PosY)
 			{
 				// Split text until it fits on the rest of the current page
-				var textparts = text.SplittBySpaces();
+				var textparts = text.SplitBySpaces();
 				var eText = CheckTextSegmentParts(graphics, textparts, text, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
 				if (eText == null)
 				{

@@ -109,7 +109,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			graphics.DrawText(GetFont(), Content, Alignment, topLeftPage, sizePage, new Point(PosX, PosY), textSize.Adjusted);
 		}
 
-		public List<string> SplittBySpaces()
+		public List<string> SplitBySpaces()
 		{
 			var textLines = new List<string>();
 			if (Content.IsNullOrEmpty())
