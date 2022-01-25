@@ -670,6 +670,48 @@ wish where we held steepest True he questions eat Thoughts";
 		}
 
 		[TestMethod]
+		public void ConvertToHtmlWithMultipleListingsTest()
+		{
+			// Arrange
+			var plainText = @"very you get up speedily if Off supposing moment
+- very you get up speedily
+- if Off supposing moment
+
+wish where we held steepest True he questions eat Thoughts
+
+- very you get up speedily
+
+very you get up speedily if Off supposing moment
+- very you get up speedily
+- if Off supposing moment";
+
+			// Act
+			var htmlText = _classUnderTest.ConvertToHtml(plainText);
+
+			// Arrange
+			var expectedResult = new StringBuilder();
+			expectedResult.Append("<span>very you get up speedily if Off supposing moment</span>");
+			expectedResult.Append("<ul>");
+			expectedResult.Append("<li>very you get up speedily</li>");
+			expectedResult.Append("<li>if Off supposing moment</li>");
+			expectedResult.Append("</ul>");
+			expectedResult.Append("<br>");
+			expectedResult.Append("<span>wish where we held steepest True he questions eat Thoughts</span>");
+			expectedResult.Append("<br>");
+			expectedResult.Append("<ul>");
+			expectedResult.Append("<li>very you get up speedily</li>");
+			expectedResult.Append("</ul>");
+			expectedResult.Append("<br>");
+			expectedResult.Append("<span>very you get up speedily if Off supposing moment</span>");
+			expectedResult.Append("<ul>");
+			expectedResult.Append("<li>very you get up speedily</li>");
+			expectedResult.Append("<li>if Off supposing moment</li>");
+			expectedResult.Append("</ul>");
+
+			htmlText.Should().Be(expectedResult.ToString());
+		}
+
+		[TestMethod]
 		public void ConvertToHtmlOnlyWithSingleListingItemTest()
 		{
 			// Arrange

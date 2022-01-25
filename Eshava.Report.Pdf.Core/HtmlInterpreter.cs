@@ -20,21 +20,9 @@ namespace Eshava.Report.Pdf.Core
 			var hasOpenListing = false;
 			for (var index = 0; index < contentParts.Length; index++)
 			{
-				if (index > 0 && index < (contentParts.Length - 1))
-				{
-					if (contentParts[index + 1].StartsWith("-"))
-					{
-						if (!hasOpenListing)
-						{
-							hasOpenListing = true;
-							htmlContent.Append("<ul>");
-						}
-					}
-				}
-
 				if (contentParts[index].StartsWith("-"))
 				{
-					if (index == 0)
+					if (!hasOpenListing)
 					{
 						hasOpenListing = true;
 						htmlContent.Append("<ul>");
@@ -48,9 +36,20 @@ namespace Eshava.Report.Pdf.Core
 				{
 					hasOpenListing = false;
 					htmlContent.Append("</ul>");
-					htmlContent.Append("<span>");
-					htmlContent.Append(contentParts[index]);
-					htmlContent.Append("</span>");
+					if (contentParts[index].IsNullOrEmpty())
+					{
+						htmlContent.Append("<br>");
+					}
+					else
+					{
+						htmlContent.Append("<span>");
+						htmlContent.Append(contentParts[index]);
+						htmlContent.Append("</span>");
+					}
+				}
+				else if (contentParts[index].IsNullOrEmpty())
+				{
+					htmlContent.Append("<br>");
 				}
 				else
 				{
