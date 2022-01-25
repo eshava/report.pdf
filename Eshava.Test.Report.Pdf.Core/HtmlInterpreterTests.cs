@@ -683,7 +683,9 @@ wish where we held steepest True he questions eat Thoughts
 
 very you get up speedily if Off supposing moment
 - very you get up speedily
-- if Off supposing moment";
+
+- if Off supposing moment
+wish where we held steepest True he questions eat Thoughts";
 
 			// Act
 			var htmlText = _classUnderTest.ConvertToHtml(plainText);
@@ -705,8 +707,11 @@ very you get up speedily if Off supposing moment
 			expectedResult.Append("<span>very you get up speedily if Off supposing moment</span>");
 			expectedResult.Append("<ul>");
 			expectedResult.Append("<li>very you get up speedily</li>");
+			expectedResult.Append("</ul>");
+			expectedResult.Append("<ul>");
 			expectedResult.Append("<li>if Off supposing moment</li>");
 			expectedResult.Append("</ul>");
+			expectedResult.Append("<span>wish where we held steepest True he questions eat Thoughts</span>");
 
 			htmlText.Should().Be(expectedResult.ToString());
 		}
