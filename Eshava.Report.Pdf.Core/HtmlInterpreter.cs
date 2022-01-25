@@ -38,7 +38,10 @@ namespace Eshava.Report.Pdf.Core
 					htmlContent.Append("</ul>");
 					if (contentParts[index].IsNullOrEmpty())
 					{
-						htmlContent.Append("<br>");
+						if (index < contentParts.Length - 1 && !contentParts[index + 1].StartsWith("- "))
+						{
+							htmlContent.Append("<br>");
+						}
 					}
 					else
 					{
