@@ -55,6 +55,7 @@ Platform independent core to calculate and generate pdf documents
 | Color | Alpha RGB, string | yes | yes | | yes | yes | yes | yes |
 | BackgroundColor | Alpha RGB, string | yes | yes | | | | | yes |
 | BackgroundSpacing | Integer | yes | yes | | | | | yes |
+| EnableHtmlAutoConvert | Boolean (1,0) | yes | | | | | | |
 | FontFamily | string | yes | yes | | | | | yes |
 | Size | Point | yes | yes | | | | | yes |
 | Bold | Boolean (1,0) | yes | yes | | | | | yes |

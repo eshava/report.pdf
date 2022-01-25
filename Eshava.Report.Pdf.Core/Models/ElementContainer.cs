@@ -101,6 +101,11 @@ namespace Eshava.Report.Pdf.Core.Models
 			_collection.RemoveElement(element);
 		}
 
+		public void AddElementHtml(ElementHtml element)
+		{
+			_collection.AddElement(element);
+		}
+
 		public void RemoveElementHtml(ElementHtml element)
 		{
 			_collection.RemoveElement(element);

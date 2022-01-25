@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Models;
@@ -10,6 +11,62 @@ namespace Eshava.Report.Pdf.Core
 	public class HtmlInterpreter
 	{
 		private const double CENTIMETERTOPOINTFACTOR = 28.3465;
+
+		public string ConvertToHtml(string text)
+		{
+			var htmlContent = new StringBuilder();
+			var contentParts = text.Replace("\r", "").Split('\n');
+
+			var hasOpenListing = false;
+			for (var index = 0; index < contentParts.Length; index++)
+			{
+				if (index > 0 && index < (contentParts.Length - 1))
+				{
+					if (contentParts[index + 1].StartsWith("-"))
+					{
+						if (!hasOpenListing)
+						{
+							hasOpenListing = true;
+							htmlContent.Append("<ul>");
+						}
+					}
+				}
+
+				if (contentParts[index].StartsWith("-"))
+				{
+					if (index == 0)
+					{
+						hasOpenListing = true;
+						htmlContent.Append("<ul>");
+					}
+
+					htmlContent.Append("<li>");
+					htmlContent.Append(contentParts[index].Substring(1).Trim());
+					htmlContent.Append("</li>");
+				}
+				else if (hasOpenListing)
+				{
+					hasOpenListing = false;
+					htmlContent.Append("</ul>");
+					htmlContent.Append("<span>");
+					htmlContent.Append(contentParts[index]);
+					htmlContent.Append("</span>");
+				}
+				else
+				{
+					htmlContent.Append("<span>");
+					htmlContent.Append(contentParts[index]);
+					htmlContent.Append("</span>");
+				}
+			}
+
+			if (hasOpenListing)
+			{
+				htmlContent.Append("</ul>");
+			}
+
+			return htmlContent.ToString();
+		}
 
 		public IEnumerable<TextSegment> AnalyzeText(Font font, string text)
 		{
@@ -58,7 +115,14 @@ namespace Eshava.Report.Pdf.Core
 				}
 
 				// Remove empty text segments
-				return textSegments.Where(ts => ts.Text != "").ToList();
+				textSegments = textSegments.Where(ts => ts.Text != "").ToList();
+
+				if (textSegments.Count > 0 && textSegments[0].Text == Environment.NewLine)
+				{
+					textSegments.RemoveAt(0);
+				}
+
+				return textSegments;
 			}
 			catch
 			{

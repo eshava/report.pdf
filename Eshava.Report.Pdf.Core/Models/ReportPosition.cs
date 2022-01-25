@@ -328,7 +328,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			if (maxElementHeightOnPage < size.Height + text.PosY)
 			{
 				// Split text until it fits on the rest of the current page
-				var textparts = text.SplitBySpaces();
+				var textparts = text.SplitBySpacesAndLineBreaks();
 				var eText = CheckTextParts(graphics, textparts, text, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
 				if (eText == null)
 				{
@@ -356,22 +356,22 @@ namespace Eshava.Report.Pdf.Core.Models
 			}
 		}
 
-		private void AddElementHtmlToList<T>(IGraphics graphics, T text, List<T> elementList, List<T> noMatchList, ref double currentHeight, double maxElementHeightOnPage, bool invertAnalyse) where T : ElementHtml, new()
+		private void AddElementHtmlToList<T>(IGraphics graphics, T html, List<T> elementList, List<T> noMatchList, ref double currentHeight, double maxElementHeightOnPage, bool invertAnalyse) where T : ElementHtml, new()
 		{
-			var size = text.GetSize(graphics);
+			var size = html.GetSize(graphics);
 			// Text does not fit completely on the current page
-			if (maxElementHeightOnPage < size.Height + text.PosY)
+			if (maxElementHeightOnPage < size.Height + html.PosY)
 			{
 				// Split text until it fits on the rest of the current page
-				var textparts = text.SplitBySpaces();
-				var eText = CheckTextSegmentParts(graphics, textparts, text, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
+				var textparts = html.SplitBySpaces();
+				var eText = CheckTextSegmentParts(graphics, textparts, html, elementList, ref currentHeight, maxElementHeightOnPage, invertAnalyse);
 				if (eText == null)
 				{
 					//// Nothing could be split
 
 					// IF eText == null -> Add complete text to the list of elements for the next page 
 					// ELSE -> otherwise add remaining text to the list of elements for the next page
-					noMatchList.Add(eText ?? text);
+					noMatchList.Add(eText ?? html);
 				}
 				else
 				{
@@ -382,12 +382,12 @@ namespace Eshava.Report.Pdf.Core.Models
 			else
 			{
 				// Set current maximum height
-				if (currentHeight < size.Height + text.PosY)
+				if (currentHeight < size.Height + html.PosY)
 				{
-					currentHeight = size.Height + text.PosY;
+					currentHeight = size.Height + html.PosY;
 				}
 
-				elementList.Add(text);
+				elementList.Add(html);
 			}
 		}
 
