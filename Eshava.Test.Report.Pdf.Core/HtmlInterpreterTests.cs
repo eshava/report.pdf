@@ -668,5 +668,23 @@ wish where we held steepest True he questions eat Thoughts";
 
 			htmlText.Should().Be(expectedResult.ToString());
 		}
+
+		[TestMethod]
+		public void ConvertToHtmlOnlyWithSingleListingItemTest()
+		{
+			// Arrange
+			var plainText = @"- very you get up speedily";
+
+			// Act
+			var htmlText = _classUnderTest.ConvertToHtml(plainText);
+
+			// Arrange
+			var expectedResult = new StringBuilder();
+			expectedResult.Append("<ul>");
+			expectedResult.Append("<li>very you get up speedily</li>");
+			expectedResult.Append("</ul>");
+
+			htmlText.Should().Be(expectedResult.ToString());
+		}
 	}
 }

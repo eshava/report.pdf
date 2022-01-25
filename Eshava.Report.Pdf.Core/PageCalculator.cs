@@ -88,7 +88,7 @@ namespace Eshava.Report.Pdf.Core
 				var elementsToConvert = new List<ElementText>();
 				foreach (var elementText in position.ContentText)
 				{
-					if (elementText.EnableHtmlAutoConvert && (elementText.Content?.Contains("\n- ") ?? false))
+					if (elementText.EnableHtmlAutoConvert && ((elementText.Content?.Contains("\n- ") ?? false) || (elementText.Content?.StartsWith("- ") ?? false)))
 					{
 						elementsToConvert.Add(elementText);
 					}
