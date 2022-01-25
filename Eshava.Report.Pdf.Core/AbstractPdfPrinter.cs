@@ -59,6 +59,8 @@ namespace Eshava.Report.Pdf.Core
 			SetPageSettings(preparePage, report.Information);
 			var pageCalculator = new PageCalculator(report, new Size(preparePage.Width, preparePage.Height));
 			var graphics = GetGraphicsFromPdfPage(preparePage);
+			
+			pageCalculator.AutoConvertTextToHtmlElements();
 
 			if (report.Header != null && report.Header.FirstPage != null)
 			{

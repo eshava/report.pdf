@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Serialization;
 using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
@@ -30,6 +29,9 @@ namespace Eshava.Report.Pdf.Core.Models
 
 		[XmlAttribute]
 		public bool Bold { get; set; }
+
+		[XmlAttribute]
+		public bool EnableHtmlAutoConvert { get; set; }
 
 		[XmlAttribute]
 		public bool Italic { get; set; }

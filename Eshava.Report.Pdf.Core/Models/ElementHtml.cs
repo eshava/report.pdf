@@ -75,6 +75,12 @@ namespace Eshava.Report.Pdf.Core.Models
 			}
 		}
 
+		public void ConvertContentToHtml()
+		{
+			var interpreter = new HtmlInterpreter();
+			Content = interpreter.ConvertToHtml(Content);
+		}
+
 		public Size GetTextSize(IGraphics graphics, IEnumerable<TextSegment> textSegments)
 		{
 			return graphics.GetTextSize(SummerizeTextSegments(textSegments), Width, Alignment);

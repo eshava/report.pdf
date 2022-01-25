@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Eshava.Report.Pdf.Core.Enums;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
@@ -62,6 +63,198 @@ namespace Eshava.Report.Pdf.Core
 		private bool HasPostPositions
 		{
 			get { return _report != null && ContainerHasPositions(_report.PostPositionContainer); }
+		}
+
+		public void AutoConvertTextToHtmlElements()
+		{
+			if (_report.PositionContainer?.Positions != null)
+			{
+				AutoConvertTextToHtmlElements(_report.PositionContainer.Positions);
+			}
+			if (_report.PrePositionContainer?.Positions != null)
+			{
+				AutoConvertTextToHtmlElements(_report.PrePositionContainer.Positions);
+			}
+			if (_report.PostPositionContainer?.Positions != null)
+			{
+				AutoConvertTextToHtmlElements(_report.PostPositionContainer.Positions);
+			}
+		}
+
+		private void AutoConvertTextToHtmlElements(IEnumerable<ReportPosition> reportPositions)
+		{
+			foreach (var position in reportPositions)
+			{
+				var elementsToConvert = new List<ElementText>();
+				foreach (var elementText in position.ContentText)
+				{
+					if (elementText.EnableHtmlAutoConvert && (elementText.Content?.Contains("\n- ") ?? false))
+					{
+						elementsToConvert.Add(elementText);
+					}
+				}
+
+				foreach (var element in elementsToConvert)
+				{
+					position.RemoveElementText(element);
+
+					var html = new ElementHtml
+					{
+						Alignment = element.Alignment,
+						BackgroundColor = element.BackgroundColor,
+						BackgroundSpacing = element.BackgroundSpacing,
+						Bold = element.Bold,
+						Color = element.Color,
+						Content = element.Content,
+						ExpandAndShift = element.ExpandAndShift,
+						Fontfamily = element.Fontfamily,
+						Height = element.Height,
+						Italic = element.Italic,
+						NoShift = element.NoShift,
+						PosX = element.PosX,
+						PosY = element.PosY,
+						ShiftUpHeight = element.ShiftUpHeight,
+						Size = element.Size,
+						Strikeout = element.Strikeout,
+						Underline = element.Underline,
+						Width = element.Width,
+					};
+
+					html.ConvertContentToHtml();
+
+					position.AddElementHtml(html);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Creates the pages from the passed report object which are printed in the Pdf.
+		/// </summary>
+		/// <param name="graphics">Graphics element</param>
+		/// <returns>List of all report pages</returns>
+		public List<ReportPage> CalculatePages(IGraphics graphics)
+		{
+			var state = new CalulationState();
+
+			if (_report != null)
+			{
+				// Prepare first page
+				var page = CreatePage(state.CurrentPageNumber, true);
+
+				// Calculate how large the area is that appears before and after the positions on the page
+				SetPreAndPostPositionHeight(graphics);
+
+				// Contains the report positions
+				if (!HasPositions && !HasPrePositions && !HasPostPositions)
+				{
+					// No positions available, so print only the header and footer of the first page
+					state.Pages.Add(page);
+				}
+				else
+				{
+					var minPositionHeight = Math.Min(page.MaxPositionPartHeight, CreatePage(state.CurrentPageNumber, false).MaxPositionPartHeight);
+
+					// Add pre position elements (These are to be inserted on the first page between header and first position)
+					page = AddPrePositions(graphics, page, state);
+
+					if (HasPositions)
+					{
+						// Start analysis of the position list, determines the actual positions and the corresponding pre and post positons
+						_report.PositionContainer.AnalyzePositions(graphics);
+
+						// First determine all positions to be repeated
+						if (GetPositionsToRepeatOnTop(graphics, state, minPositionHeight))
+						{
+							// All positions to be repeated at the beginning of the page are already larger than the position area (measured at the smallest position area first or following page)
+							// Normal position can no longer be printed
+							page.Positions.AddRange(state.PositionsToRepeat);
+							state.Pages.Add(page);
+
+							return state.Pages;
+						}
+
+						// Do the positions to be repeated still fit on the current page? 
+						// Check by the pre position area required
+						if (page.MaxPositionPartHeight - state.PositionPartHeight <= state.PositionToRepeatHeight)
+						{
+							// Positions to be repeated do not fit as a whole on the current page
+							page = CloseAndCreateNewPage(page, state, 0, null, false);
+						}
+
+						// Add all positions to be repeated at the beginning of the position
+						page.Positions.AddRange(state.PositionsToRepeat);
+
+						// Remember current container
+						var positionContainer = _report.PositionContainer;
+
+						var positionIndex = 0;
+						do
+						{
+							var position = positionContainer.MainPositions[positionIndex];
+							var result = AddPosition(graphics, page, state, position, positionContainer);
+							page = result.Page;
+
+							if (result.Result == PositionResult.Cancel)
+							{
+								break;
+							}
+
+							if (result.Result == PositionResult.MovePreviewPositonToNextPage)
+							{
+								var previousSequenceNumber = position.SequenceNo - 1;
+								var tempPositionIndex = positionIndex;
+								while (true)
+								{
+									tempPositionIndex--;
+									position = positionContainer.MainPositions[tempPositionIndex];
+									if (position.SequenceNo == previousSequenceNumber)
+									{
+										var indexPositonRemove = page.Positions.IndexOf(position);
+										for (var i = page.Positions.Count - 1; i >= indexPositonRemove; i--)
+										{
+											page.Positions.RemoveAt(i);
+										}
+									}
+
+									if (position.Type == PositonType.Default || position.SequenceNo < previousSequenceNumber)
+									{
+										break;
+									}
+								}
+
+								if (position.SequenceNo == previousSequenceNumber)
+								{
+									position.Type = PositonType.ForceNewPage;
+									position.PreventLastOnPage = false;
+
+									result = AddPosition(graphics, page, state, position, positionContainer);
+									position.Type = PositonType.Default;
+									page = result.Page;
+									positionIndex = tempPositionIndex;
+								}
+							}
+
+							positionIndex++;
+						} while (positionIndex < positionContainer.MainPositions.Count);
+					}
+
+					// Add post position elements (these are to be inserted on the last page between the last position and footer)
+					// These elements must be calculated foot-oriented
+					page = AddPostPositions(graphics, page, state);
+				}
+
+				if (page != null)
+				{
+					state.Pages.Add(page);
+				}
+			}
+
+			SetTotalPageCount(graphics, state.Pages);
+
+			// At the end the graphics element must be disposed so that a new one can be created
+			graphics.Dispose();
+
+			return state.Pages;
 		}
 
 		private bool IsPageBreak(ReportPosition position)
@@ -323,136 +516,6 @@ namespace Eshava.Report.Pdf.Core
 			}
 
 			return (page, PositionResult.Next);
-		}
-
-		/// <summary>
-		/// Creates the pages from the passed report object which are printed in the Pdf.
-		/// </summary>
-		/// <param name="graphics">Graphics element</param>
-		/// <returns>List of all report pages</returns>
-		public List<ReportPage> CalculatePages(IGraphics graphics)
-		{
-			var state = new CalulationState();
-
-			if (_report != null)
-			{
-				// Prepare first page
-				var page = CreatePage(state.CurrentPageNumber, true);
-
-				// Calculate how large the area is that appears before and after the positions on the page
-				SetPreAndPostPositionHeight(graphics);
-
-				// Contains the report positions
-				if (!HasPositions && !HasPrePositions && !HasPostPositions)
-				{
-					// No positions available, so print only the header and footer of the first page
-					state.Pages.Add(page);
-				}
-				else
-				{
-					var minPositionHeight = Math.Min(page.MaxPositionPartHeight, CreatePage(state.CurrentPageNumber, false).MaxPositionPartHeight);
-
-					// Add pre position elements (These are to be inserted on the first page between header and first position)
-					page = AddPrePositions(graphics, page, state);
-
-					if (HasPositions)
-					{
-						// Start analysis of the position list, determines the actual positions and the corresponding pre and post positons
-						_report.PositionContainer.AnalyzePositions(graphics);
-
-						// First determine all positions to be repeated
-						if (GetPositionsToRepeatOnTop(graphics, state, minPositionHeight))
-						{
-							// All positions to be repeated at the beginning of the page are already larger than the position area (measured at the smallest position area first or following page)
-							// Normal position can no longer be printed
-							page.Positions.AddRange(state.PositionsToRepeat);
-							state.Pages.Add(page);
-
-							return state.Pages;
-						}
-
-						// Do the positions to be repeated still fit on the current page? 
-						// Check by the pre position area required
-						if (page.MaxPositionPartHeight - state.PositionPartHeight <= state.PositionToRepeatHeight)
-						{
-							// Positions to be repeated do not fit as a whole on the current page
-							page = CloseAndCreateNewPage(page, state, 0, null, false);
-						}
-
-						// Add all positions to be repeated at the beginning of the position
-						page.Positions.AddRange(state.PositionsToRepeat);
-
-						// Remember current container
-						var positionContainer = _report.PositionContainer;
-
-						var positionIndex = 0;
-						do
-						{
-							var position = positionContainer.MainPositions[positionIndex];
-							var result = AddPosition(graphics, page, state, position, positionContainer);
-							page = result.Page;
-
-							if (result.Result == PositionResult.Cancel)
-							{
-								break;
-							}
-
-							if (result.Result == PositionResult.MovePreviewPositonToNextPage)
-							{
-								var previousSequenceNumber = position.SequenceNo - 1;
-								var tempPositionIndex = positionIndex;
-								while (true)
-								{
-									tempPositionIndex--;
-									position = positionContainer.MainPositions[tempPositionIndex];
-									if (position.SequenceNo == previousSequenceNumber)
-									{
-										var indexPositonRemove = page.Positions.IndexOf(position);
-										for (var i = page.Positions.Count - 1; i >= indexPositonRemove; i--)
-										{
-											page.Positions.RemoveAt(i);
-										}
-									}
-
-									if (position.Type == PositonType.Default || position.SequenceNo < previousSequenceNumber)
-									{
-										break;
-									}
-								}
-
-								if (position.SequenceNo == previousSequenceNumber)
-								{
-									position.Type = PositonType.ForceNewPage;
-									position.PreventLastOnPage = false;
-
-									result = AddPosition(graphics, page, state, position, positionContainer);
-									position.Type = PositonType.Default;
-									page = result.Page;
-									positionIndex = tempPositionIndex;
-								}
-							}
-
-							positionIndex++;
-						} while (positionIndex < positionContainer.MainPositions.Count);
-					}
-
-					// Add post position elements (these are to be inserted on the last page between the last position and footer)
-					// These elements must be calculated foot-oriented
-					page = AddPostPositions(graphics, page, state);
-				}
-
-				if (page != null)
-				{
-					state.Pages.Add(page);
-				}
-			}
-
-			SetTotalPageCount(graphics, state.Pages);
-
-			// At the end the graphics element must be disposed so that a new one can be created
-			graphics.Dispose();
-
-			return state.Pages;
 		}
 
 		private int CalculatePageSplittingForPostPositions(IGraphics graphics, double newPageHeight, Dictionary<int, List<ReportPosition>> postPage, Dictionary<int, double> postPageSize)
