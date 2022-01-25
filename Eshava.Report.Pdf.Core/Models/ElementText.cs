@@ -109,7 +109,7 @@ namespace Eshava.Report.Pdf.Core.Models
 			graphics.DrawText(GetFont(), Content, Alignment, topLeftPage, sizePage, new Point(PosX, PosY), textSize.Adjusted);
 		}
 
-		public List<string> SplitBySpaces()
+		public List<string> SplitBySpacesAndLineBreaks()
 		{
 			var textLines = new List<string>();
 			if (Content.IsNullOrEmpty())
@@ -117,8 +117,44 @@ namespace Eshava.Report.Pdf.Core.Models
 				return textLines;
 			}
 
+			foreach (var textPart in Content.Split(' '))
+			{
+				if (textPart.Contains("\n"))
+				{
+					var currentText = "";
+					for (var index = 0; index < textPart.Length; index++)
+					{
+						if (textPart[index] == '\r' && index < (textPart.Length - 2))
+						{
+							textLines.Add(currentText);
+							textLines.Add("\r\n");
+							currentText = "";
+							index++;
+						}
+						else if (textPart[index] == '\n' && index < (textPart.Length - 1))
+						{
+							textLines.Add(currentText);
+							textLines.Add("\n");
+							currentText = "";
+						}
+						else
+						{
+							currentText += textPart[index];
+						}
+					}
 
-			return Content.Split(' ').ToList();
+					if (!currentText.IsNullOrEmpty())
+					{
+						textLines.Add(currentText);
+					}
+				}
+				else
+				{
+					textLines.Add(textPart);
+				}
+			}
+
+			return textLines;
 		}
 
 		public (Point Start, Size Size) GetHyperlinkPosition(IGraphics graphics, Point topLeftPage)
