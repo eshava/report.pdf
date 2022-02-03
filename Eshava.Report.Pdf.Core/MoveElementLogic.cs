@@ -194,8 +194,8 @@ namespace Eshava.Report.Pdf.Core
 				var eText = elements[inx] as ElementText;
 				var eHtml = elements[inx] as ElementHtml;
 				CalculateElement(graphics, elements[inx], pointsStart, pointsEnd, sizes);
-				var start = pointsStart[eText.Id];
-				var end = pointsEnd[eText.Id];
+				var start = pointsStart[eText == null ? eHtml.Id : eText.Id];
+				var end = pointsEnd[eText == null ? eHtml.Id : eText.Id];
 
 				var heightDifference = eText != default ? eText.HeightDifference : eHtml.HeightDifference;
 
