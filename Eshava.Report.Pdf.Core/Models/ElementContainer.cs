@@ -93,6 +93,26 @@ namespace Eshava.Report.Pdf.Core.Models
 			elements.AddRange(_collection.GetElements<ElementRectangle>().Select(e => (ElementBase)e));
 			elements.AddRange(_collection.GetElements<ElementPageNo>().Select(e => (ElementBase)e));
 
+			elements.Sort((ElementBase a, ElementBase b) =>
+			{
+				if (a.PosY < b.PosY)
+				{
+					return -1;
+				}
+
+				if (a.PosY > b.PosY)
+				{
+					return 1;
+				}
+
+				if (a.PosX == b.PosX)
+				{
+					return 0;
+				}
+
+				return a.PosX > b.PosX ? 1 : -1;
+			});
+
 			return elements;
 		}
 
