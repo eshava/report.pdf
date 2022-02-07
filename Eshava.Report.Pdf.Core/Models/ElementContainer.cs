@@ -77,23 +77,25 @@ namespace Eshava.Report.Pdf.Core.Models
 			return new Size(Math.Max(size.Width, lines.Width), Math.Max(size.Height, lines.Height));
 		}
 
-		private List<ElementBase> GetAllStandardElements(bool includeNonStandard)
+		private List<ElementBase> GetAllStandardElements(bool includeNoneStandard)
 		{
-			var elements = new List<ElementBase>();
+			var elementsNoneTexts = new List<ElementBase>();
+			var elementsText = new List<ElementBase>();
 
-			if (includeNonStandard)
+			if (includeNoneStandard)
 			{
-				elements.AddRange(_collection.GetElements<ElementLine>().Select(e => (ElementBase)e));
+				elementsNoneTexts.AddRange(_collection.GetElements<ElementLine>().Select(e => (ElementBase)e));
 			}
 
-			elements.AddRange(_collection.GetElements<ElementRectangleFill>().Select(e => (ElementBase)e));
-			elements.AddRange(_collection.GetElements<ElementImage>().Select(e => (ElementBase)e));
-			elements.AddRange(_collection.GetElements<ElementText>().Select(e => (ElementBase)e));
-			elements.AddRange(_collection.GetElements<ElementHtml>().Select(e => (ElementBase)e));
-			elements.AddRange(_collection.GetElements<ElementRectangle>().Select(e => (ElementBase)e));
-			elements.AddRange(_collection.GetElements<ElementPageNo>().Select(e => (ElementBase)e));
+			elementsNoneTexts.AddRange(_collection.GetElements<ElementRectangleFill>().Select(e => (ElementBase)e));
+			elementsNoneTexts.AddRange(_collection.GetElements<ElementRectangle>().Select(e => (ElementBase)e));
+			elementsNoneTexts.AddRange(_collection.GetElements<ElementImage>().Select(e => (ElementBase)e));
 
-			elements.Sort((ElementBase a, ElementBase b) =>
+			elementsText.AddRange(_collection.GetElements<ElementText>().Select(e => (ElementBase)e));
+			elementsText.AddRange(_collection.GetElements<ElementHtml>().Select(e => (ElementBase)e));
+			elementsText.AddRange(_collection.GetElements<ElementPageNo>().Select(e => (ElementBase)e));
+
+			elementsText.Sort((ElementBase a, ElementBase b) =>
 			{
 				if (a.PosY < b.PosY)
 				{
@@ -113,7 +115,9 @@ namespace Eshava.Report.Pdf.Core.Models
 				return a.PosX > b.PosX ? 1 : -1;
 			});
 
-			return elements;
+			return elementsNoneTexts
+				.Concat(elementsText)
+				.ToList();
 		}
 
 		public void RemoveElementText(ElementText element)
