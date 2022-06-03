@@ -6,6 +6,5 @@
 		public double PosX { get; set; }
 		public double PosY { get; set; }
 		public string Value { get; set; }
-		public string Font { get; set; }
 	}
 }
