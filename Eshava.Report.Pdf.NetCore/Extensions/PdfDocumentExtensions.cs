@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Eshava.Report.Pdf.Models;
+using Eshava.Report.Pdf.PdfFonts;
 using PdfSharpCore.Pdf.Content.Objects;
 
 namespace Eshava.Report.Pdf.Extensions
 {
 	/// <summary>
-	/// Origin of the Code
+	/// Origin of the code
 	/// https://github.com/DavidS/PdfTextract/blob/master/PdfTextract/PdfTextExtractor.cs
 	/// </summary>
 	public static class PdfDocumentExtensions
@@ -30,8 +31,10 @@ namespace Eshava.Report.Pdf.Extensions
 			{
 				var page = document.Pages[pageIndex];
 				var content = PdfSharpCore.Pdf.Content.ContentReader.ReadContent(page);
-				
-				ExtractText(content, pdfContent, pageIndex);
+
+				var fonts = page.ParseFonts();
+
+				ExtractText(content, pdfContent, pageIndex, fonts);
 			}
 
 			pdfContent = pdfContent
@@ -43,11 +46,11 @@ namespace Eshava.Report.Pdf.Extensions
 			return pdfContent;
 		}
 
-		private static void ExtractText(CObject @object, IList<TextContent> pdfContent, int pageIndex)
+		private static void ExtractText(CObject @object, IList<TextContent> pdfContent, int pageIndex, Dictionary<string, FontResource> fonts)
 		{
 			if (@object is CArray array)
 			{
-				ExtractText(array, pdfContent, pageIndex);
+				ExtractText(array, pdfContent, pageIndex, fonts);
 			}
 			else if (@object is CComment comment)
 			{
@@ -67,7 +70,7 @@ namespace Eshava.Report.Pdf.Extensions
 			}
 			else if (@object is COperator @operator)
 			{
-				ExtractText(@operator, pdfContent, pageIndex);
+				ExtractText(@operator, pdfContent, pageIndex, fonts);
 			}
 			else if (@object is CReal real)
 			{
@@ -75,11 +78,11 @@ namespace Eshava.Report.Pdf.Extensions
 			}
 			else if (@object is CSequence sequence)
 			{
-				ExtractText(sequence, pdfContent, pageIndex);
+				ExtractText(sequence, pdfContent, pageIndex, fonts);
 			}
 			else if (@object is CString @string)
 			{
-				ExtractText(@string, pdfContent, pageIndex);
+				ExtractText(@string, pdfContent, pageIndex, fonts);
 			}
 			else
 			{
@@ -87,53 +90,113 @@ namespace Eshava.Report.Pdf.Extensions
 			}
 		}
 
-		private static void ExtractText(CArray array, IList<TextContent> pdfContent, int pageIndex)
+		private static void ExtractText(CArray array, IList<TextContent> pdfContent, int pageIndex, Dictionary<string, FontResource> fonts)
 		{
 			foreach (var element in array)
 			{
-				ExtractText(element, pdfContent, pageIndex);
+				ExtractText(element, pdfContent, pageIndex, fonts);
 			}
 		}
 
-		private static void ExtractText(COperator @operator, IList<TextContent> pdfContent, int pageIndex)
+		private static void ExtractText(COperator @operator, IList<TextContent> pdfContent, int pageIndex, Dictionary<string, FontResource> fonts)
 		{
+			if (@operator.OpCode.OpCodeName == OpCodeName.Tf)
+			{
+				var lastContent = pdfContent.LastOrDefault();
+				if (lastContent == null || !String.IsNullOrEmpty(lastContent.Font))
+				{
+					pdfContent.Add(new TextContent
+					{
+						PageIndex = pageIndex,
+						Font = @operator.Operands.OfType<CName>().FirstOrDefault()?.Name,
+					});
+				}
+				else
+				{
+					lastContent.Font = @operator.Operands.OfType<CName>().FirstOrDefault()?.Name;
+				}
+			}
+
 			if (@operator.OpCode.OpCodeName == OpCodeName.Tm)
 			{
-				pdfContent.Add(new TextContent
-				{
-					PageIndex = pageIndex,
-					PosX = ((CReal)@operator.Operands[4]).Value,
-					PosY = ((CReal)@operator.Operands[5]).Value
-				});
+				SetPosition(@operator, pdfContent, 4, 5);
+			}
+			else if (@operator.OpCode.OpCodeName == OpCodeName.Td)
+			{
+				SetPosition(@operator, pdfContent, 0, 1);
 			}
 
 			if (@operator.OpCode.OpCodeName == OpCodeName.Tj || @operator.OpCode.OpCodeName == OpCodeName.TJ)
 			{
 				foreach (var element in @operator.Operands)
 				{
-					ExtractText(element, pdfContent, pageIndex);
+					ExtractText(element, pdfContent, pageIndex, fonts);
 				}
 			}
 		}
-		
-		private static void ExtractText(CSequence sequence, IList<TextContent> pdfContent, int pageIndex)
-		{
-			foreach (var element in sequence)
-			{
-				ExtractText(element, pdfContent, pageIndex);
-			}
-		}
 
-		private static void ExtractText(CString @string, IList<TextContent> pdfContent, int pageIndex)
+		private static void SetPosition(COperator @operator, IList<TextContent> pdfContent, int indexPosX, int indexPosY)
 		{
-			var part = pdfContent.Last();
-			if (part.Value == null)
+			var lastContent = pdfContent.LastOrDefault();
+			var posX = GetPosition(@operator, indexPosX);
+			var posY = GetPosition(@operator, indexPosY);
+
+			if (HasPositionValues(lastContent.PosX, lastContent.PosY))
 			{
-				part.Value = @string.Value;
+				pdfContent.Add(new TextContent
+				{
+					PageIndex = lastContent.PageIndex,
+					Font = lastContent.Font,
+					PosX = posX,
+					PosY = posY
+				});
 			}
 			else
 			{
-				part.Value += @string.Value;
+				lastContent.PosX = posX;
+				lastContent.PosY = posY;
+			}
+		}
+
+		private static bool HasPositionValues(double posX, double posY)
+		{
+			return Math.Round(posX, 4) != Math.Round(0.0, 4) || Math.Round(posY, 4) != Math.Round(0.0, 4);
+		}
+
+		private static double GetPosition(COperator @operator, int index)
+		{
+			return @operator.Operands[index] is CInteger
+				? ((CInteger)@operator.Operands[index]).Value
+				: ((CReal)@operator.Operands[index]).Value
+				;
+		}
+
+		private static void ExtractText(CSequence sequence, IList<TextContent> pdfContent, int pageIndex, Dictionary<string, FontResource> fonts)
+		{
+			foreach (var element in sequence)
+			{
+				ExtractText(element, pdfContent, pageIndex, fonts);
+			}
+		}
+
+		private static void ExtractText(CString @string, IList<TextContent> pdfContent, int pageIndex, Dictionary<string, FontResource> fonts)
+		{
+			var part = pdfContent.Last();
+
+			var text = @string.Value;
+			if (!String.IsNullOrEmpty(part.Font) && fonts.ContainsKey(part.Font))
+			{
+				var font = fonts[part.Font];
+				text = font.Encode(text);
+			}
+
+			if (part.Value == null)
+			{
+				part.Value = text;
+			}
+			else
+			{
+				part.Value += text;
 			}
 		}
 
