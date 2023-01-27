@@ -10,17 +10,16 @@ using Eshava.Report.Pdf.Models;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Drawing.Layout;
 using PdfSharpCore.Pdf;
-using SixLabors.ImageSharp.Formats.Png;
 
 namespace Eshava.Report.Pdf
 {
 	public class Graphics : IGraphics
 	{
 		private XGraphics _xGraphics;
-		private readonly Dictionary<string, SixLabors.ImageSharp.Image> _pictures;
+		private readonly Dictionary<string, SkiaSharp.SKBitmap> _pictures;
 		private bool _isDisposed = false;
 
-		public Graphics(XGraphics xGraphics, Dictionary<string, SixLabors.ImageSharp.Image> pictures)
+		public Graphics(XGraphics xGraphics, Dictionary<string, SkiaSharp.SKBitmap> pictures)
 		{
 			_xGraphics = xGraphics;
 			_pictures = pictures;
@@ -90,8 +89,9 @@ namespace Eshava.Report.Pdf
 					var localImage = _pictures[imageName];
 					if (localImage != null)
 					{
+						var data = localImage.Encode(SkiaSharp.SKEncodedImageFormat.Png, 100);
 						var imageStream = new MemoryStream();
-						localImage.Save(imageStream, new PngEncoder { CompressionLevel = PngCompressionLevel.BestSpeed, ColorType = PngColorType.RgbWithAlpha });
+						data.SaveTo(imageStream);
 						imageStream.Position = 0;
 						image = XImage.FromStream(() => imageStream);
 					}

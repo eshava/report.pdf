@@ -43,15 +43,15 @@ namespace Eshava.Test.Report.Pdf.NetCore
 			}
 			fileStationeryFollowingPage.Close();
 
-			var imageBlue = SixLabors.ImageSharp.Image.Load(Path.Combine("Input", "image_blue.png"));
-			var imageGreen = SixLabors.ImageSharp.Image.Load(Path.Combine("Input", "image_green.png"));
-			var imageRed = SixLabors.ImageSharp.Image.Load(Path.Combine("Input", "image_red.png"));
+			var imageBlue = SkiaSharp.SKBitmap.Decode(Path.Combine("Input", "image_blue.png"));
+			var imageGreen = SkiaSharp.SKBitmap.Decode(Path.Combine("Input", "image_green.png"));
+			var imageRed = SkiaSharp.SKBitmap.Decode(Path.Combine("Input", "image_red.png"));
 
 			try
 			{
-				var cacheItem = new CacheItem<SixLabors.ImageSharp.Image>
+				var cacheItem = new CacheItem<SkiaSharp.SKBitmap>
 				{
-					Images = new System.Collections.Generic.Dictionary<string, SixLabors.ImageSharp.Image>
+					Images = new System.Collections.Generic.Dictionary<string, SkiaSharp.SKBitmap>
 					{
 						{ "image_blue", imageBlue },
 						{ "image_green", imageGreen },
@@ -89,13 +89,13 @@ namespace Eshava.Test.Report.Pdf.NetCore
 				xmlString = doc.OuterXml;
 			}
 
-			var imageBlue = SixLabors.ImageSharp.Image.Load(Path.Combine("Input", "image_blue.png"));
+			var imageBlue = SkiaSharp.SKBitmap.Decode(Path.Combine("Input", "image_blue.png"));
 
 			try
 			{
-				var cacheItem = new CacheItem<SixLabors.ImageSharp.Image>
+				var cacheItem = new CacheItem<SkiaSharp.SKBitmap>
 				{
-					Images = new System.Collections.Generic.Dictionary<string, SixLabors.ImageSharp.Image>
+					Images = new System.Collections.Generic.Dictionary<string, SkiaSharp.SKBitmap>
 					{
 						{ "image_blue", imageBlue }
 					}

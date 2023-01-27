@@ -20,11 +20,11 @@ namespace Eshava.Report.Pdf
 			_itemCache = MemoryCache.Default;
 		}
 
-		public PdfSharpCore.Pdf.PdfDocument CreatePDF(string xml, CacheItem<SixLabors.ImageSharp.Image> cacheItem = null)
+		public PdfSharpCore.Pdf.PdfDocument CreatePDF(string xml, CacheItem<SkiaSharp.SKBitmap> cacheItem = null)
 		{
 			if (cacheItem == null)
 			{
-				cacheItem = new CacheItem<SixLabors.ImageSharp.Image>();
+				cacheItem = new CacheItem<SkiaSharp.SKBitmap>();
 			}
 
 			var cacheItemPolicy = new CacheItemPolicy();
@@ -47,7 +47,7 @@ namespace Eshava.Report.Pdf
 		protected override IGraphics GetGraphicsFromPdfPage(PdfPage pdfPage)
 		{
 			var xGraphics = PdfSharpCore.Drawing.XGraphics.FromPdfPage(pdfPage.Page);
-			var cacheItem = _itemCache.Get(pdfPage.InternalDocumentId) as CacheItem<SixLabors.ImageSharp.Image>;
+			var cacheItem = _itemCache.Get(pdfPage.InternalDocumentId) as CacheItem<SkiaSharp.SKBitmap>;
 
 			return new Graphics(xGraphics, cacheItem.Images);
 		}
@@ -59,14 +59,14 @@ namespace Eshava.Report.Pdf
 
 		protected override byte[] GetStationary(string internalDocumentId, string stationaryName)
 		{
-			var cacheItem = _itemCache.Get(internalDocumentId) as CacheItem<SixLabors.ImageSharp.Image>;
+			var cacheItem = _itemCache.Get(internalDocumentId) as CacheItem<SkiaSharp.SKBitmap>;
 
 			return cacheItem.Stationaries.CheckDictionary(stationaryName);
 		}
 
 		protected override void PrependPdfs(PdfDocument document)
 		{
-			var cacheItem = _itemCache.Get(document.InternalId) as CacheItem<SixLabors.ImageSharp.Image>;
+			var cacheItem = _itemCache.Get(document.InternalId) as CacheItem<SkiaSharp.SKBitmap>;
 
 			foreach (var pdfDocument in cacheItem.PrependPdfs.OrderBy(t => t.SequenceNumber))
 			{
@@ -75,7 +75,7 @@ namespace Eshava.Report.Pdf
 		}
 		protected override void AppendPdfs(PdfDocument document)
 		{
-			var cacheItem = _itemCache.Get(document.InternalId) as CacheItem<SixLabors.ImageSharp.Image>;
+			var cacheItem = _itemCache.Get(document.InternalId) as CacheItem<SkiaSharp.SKBitmap>;
 
 			foreach (var pdfDocument in cacheItem.AppendPdfs.OrderBy(t => t.SequenceNumber))
 			{
