@@ -218,7 +218,7 @@ namespace Eshava.Report.Pdf
 				return this;
 			}
 
-			var pdf = XPdfForm.FromStream(new MemoryStream(stationery));
+			var pdf = XPdfForm.FromStream(new MemoryStream(stationery), PdfSharpCore.Pdf.IO.enums.PdfReadAccuracy.Moderate);
 			var point = new XPoint(0, 0);
 
 			_xGraphics.DrawImage(pdf, point);
