@@ -77,8 +77,10 @@ namespace Eshava.Report.Pdf.Core.Models
 
 		public void ConvertContentToHtml()
 		{
+			var content = ReplaceAmpersand(Content);
 			var interpreter = new HtmlInterpreter();
-			Content = interpreter.ConvertToHtml(Content);
+
+			Content = interpreter.ConvertToHtml(content);
 		}
 
 		public Size GetTextSize(IGraphics graphics, IEnumerable<TextSegment> textSegments)
@@ -280,6 +282,42 @@ namespace Eshava.Report.Pdf.Core.Models
 			}
 
 			return (new Size(textSize.Width, textSize.Height), new Size(Width, height), referenceSize2.Width - (2 * referenceSize.Width));
+		}
+
+		private string ReplaceAmpersand(string text)
+		{
+			var startIndex = 0;
+			while (true)
+			{
+				var indexOf = text.IndexOf("&", startIndex);
+				if (indexOf < 0)
+				{
+					break;
+				}
+
+				startIndex = indexOf + 1;
+
+				var indexOfEnd = indexOf + 4;
+				if (indexOfEnd < text.Length)
+				{
+					if (text[indexOfEnd] != ';')
+					{
+						var before = text.Substring(0, indexOf);
+						var after = text.Substring(indexOf + 1);
+
+						text = before + "&amp;" + after;
+					}
+				}
+				else
+				{
+					var before = text.Substring(0, indexOf);
+					var after = text.Substring(indexOf + 1);
+
+					text = before + "&amp;" + after;
+				}
+			}
+
+			return text;
 		}
 	}
 }
