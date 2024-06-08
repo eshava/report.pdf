@@ -2,7 +2,7 @@
 
   <PropertyGroup>
 		<OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Description>A library to create pdf from xml. Based on PdfSharp</Description>
     <Authors>Eshava</Authors>
     <Company>Eshava</Company>
@@ -29,7 +29,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.4.3" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<Authors>Eshava</Authors>
 		<Company>Eshava</Company>
 		<Product>Eshava.Report.Pdf</Product>
@@ -27,10 +27,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="PdfSharpCore" Version="1.3.30" />
-		<PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta17" />
+		<PackageReference Include="PdfSharpCore" Version="1.3.63" />
+		<PackageReference Include="SixLabors.Fonts" Version="1.0.1" />
 		<PackageReference Include="SixLabors.ImageSharp" Version="2.1.8" />
-		<PackageReference Include="System.Runtime.Caching" Version="6.0.0" />
+		<PackageReference Include="System.Runtime.Caching" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
