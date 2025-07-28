@@ -28,7 +28,7 @@ Platform independent core to calculate and generate pdf documents
 ## Documentation
 
 * Generate Pdf from Xml
-* Add stationary to generated Pdf
+* Add stationery to generated Pdf
 * Prepend and append Pdfs
 
 
@@ -168,19 +168,19 @@ public enum PositionCohesion
 	<Information>
 		<Watermark></Watermark>
 		<!-- start old version -->
-		<Stationery>{name_of_stationary}</Stationery>
-		<Stationery2nd>{name_of_stationary}</Stationery2nd>
+		<Stationery>{name_of_stationery}</Stationery>
+		<Stationery2nd>{name_of_stationery}</Stationery2nd>
 		<StationeryOnlyFirstPage>1 or 0</StationeryOnlyFirstPage>
 		<!-- end old version -->
 		<!-- start new version -->
 		<StationeryInformation>
 			<StationeryEntry>
-				<Stationery>{name_of_stationary}</Stationery>
+				<Stationery>{name_of_stationery}</Stationery>
 				<NumberOfAllowedUsage>1</NumberOfAllowedUsage>
 				<SortIndex>0</SortIndex>
 			</StationeryEntry>
 			<StationeryEntry>
-				<Stationery>{name_of_stationary}</Stationery>
+				<Stationery>{name_of_stationery}</Stationery>
 				<NumberOfAllowedUsage>0</NumberOfAllowedUsage>
 				<SortIndex>1</SortIndex>
 			</StationeryEntry>
@@ -264,7 +264,7 @@ In case a dynamic text block has to be spread over several pages, a distance to 
 ## Examples
 * Document in portait format 
     * document_portrait.xml 
-    * use images, stationary
+    * use images, stationery
 * Document in landscape formart
     * document_landscape.xml
     * use images  
