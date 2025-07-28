@@ -2,9 +2,21 @@
 <Report>
 	<Information>
 		<Watermark></Watermark>
-		<Stationery>stationery_first_page</Stationery>
+		<!--<Stationery>stationery_first_page</Stationery>
 		<Stationery2nd>stationery_following_page</Stationery2nd>
-		<StationeryOnlyFirstPage>0</StationeryOnlyFirstPage>
+		<StationeryOnlyFirstPage>0</StationeryOnlyFirstPage>-->
+		<StationeryInformation>
+			<StationeryEntry>
+				<Stationery>stationery_first_page</Stationery>
+				<NumberOfAllowedUsage>2</NumberOfAllowedUsage>
+				<SortIndex>0</SortIndex>
+			</StationeryEntry>
+			<StationeryEntry>
+				<Stationery>stationery_following_page</Stationery>
+				<NumberOfAllowedUsage>2</NumberOfAllowedUsage>
+				<SortIndex>1</SortIndex>
+			</StationeryEntry>
+		</StationeryInformation>
 		<Orientation>Portrait</Orientation>
 		<Reportauthor>Eshava.Report.Pdf</Reportauthor>
 		<Reporttitle>Document Portrait</Reporttitle>
@@ -225,7 +237,7 @@ consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
 			<ElementText Width="22.68" Height="7.09" PosX="0" PosY="10.09" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Center" >6</ElementText>
 			<ElementText Width="56.7" Height="7.09" PosX="28.35" PosY="10.09" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Left" >12H000006</ElementText>
 			<ElementText Width="198.41" Height="7.09" PosX="85.05" PosY="10.09" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Bold="1" Alignment="Left" >Shipping &amp;  Packaging</ElementText>
-			<ElementText Width="198.41" Height="0" PosX="85.05" PosY="38.44" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Justify" >Lorem ipsum dolor sit amet, consetetur sadipscing elitr. Sed diam nonumy eirmod tempor invidunt.</ElementText>
+			<ElementText Width="198.41" Height="0" PosX="85.05" PosY="38.44" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Justify" EnableHtmlAutoConvert="1">- Lorem ipsum &amp; dolor sit amet, consetetur sadipscing elitr. Sed diam nonumy eirmod tempor invidunt.</ElementText>
 			<ElementText Width="56.7" Height="7.09" PosX="85.05" PosY="24.27" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Left" ShiftUpHeight="14.18" ></ElementText>
 			<ElementText Width="56.7" Height="7.09" PosX="155.92" PosY="24.27" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Left" ShiftUpHeight="14.18"></ElementText>
 			<ElementText Width="70.87" Height="7.09" PosX="354.33" PosY="24.27" Fontfamily="Arial" Size="8.5" Color="255 0 0 0" Alignment="Right" >25%</ElementText>

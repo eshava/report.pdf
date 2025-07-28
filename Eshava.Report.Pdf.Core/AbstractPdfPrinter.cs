@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Interfaces;
 using Eshava.Report.Pdf.Core.Models;
@@ -59,7 +60,7 @@ namespace Eshava.Report.Pdf.Core
 			SetPageSettings(preparePage, report.Information);
 			var pageCalculator = new PageCalculator(report, new Size(preparePage.Width, preparePage.Height));
 			var graphics = GetGraphicsFromPdfPage(preparePage);
-			
+
 			pageCalculator.AutoConvertTextToHtmlElements();
 
 			if (report.Header != null && report.Header.FirstPage != null)
@@ -85,22 +86,17 @@ namespace Eshava.Report.Pdf.Core
 			var pages = pageCalculator.CalculatePages(graphics);
 			document.RemovePage(preparePage);
 
-			var stationery = GetStationary(document.InternalId, report.Information.Stationery);
-			var stationery2nd = GetStationary(document.InternalId, report.Information.Stationery2nd) ?? stationery;
-
+			var stationaryInformation = GetStationeryInformation(report, document.InternalId, pages.Count);
+			
 			foreach (var page in pages)
 			{
 				var currentPage = document.AddPage();
 				SetPageSettings(currentPage, report.Information);
 				graphics = GetGraphicsFromPdfPage(currentPage);
 
-				if (stationery != null && page.PageNumber == 1)
+				if (stationaryInformation.TryGetValue(page.PageNumber, out var stationery))
 				{
 					graphics.SetStationery(stationery);
-				}
-				else if (stationery2nd != null && !report.Information.StationeryOnlyFirstPage && page.PageNumber > 1)
-				{
-					graphics.SetStationery(stationery2nd);
 				}
 
 				var headerHeight = page.Header?.Height ?? 0;
@@ -225,6 +221,74 @@ namespace Eshava.Report.Pdf.Core
 		{
 			page.Size = information.DocumentSize;
 			page.Orientation = information.Orientation;
+		}
+
+		private Dictionary<int, byte[]> GetStationeryInformation(Models.Report report, string documentInternalId, int pageCount)
+		{
+			var stationaryByPage = new Dictionary<int, byte[]>();
+
+			var stationeryInformation = report.Information.StationeryInformation ?? new List<ReportInformationStationery>();
+			if (stationeryInformation.Count == 0)
+			{
+				if (!report.Information.Stationery.IsNullOrEmpty())
+				{
+					stationeryInformation.Add(new ReportInformationStationery
+					{
+						Stationery = report.Information.Stationery,
+						SortIndex = 0,
+						NumberOfAllowedUsage = report.Information.StationeryOnlyFirstPage ? 1 : 0
+					});
+				}
+
+				if (!report.Information.StationeryOnlyFirstPage && !report.Information.Stationery2nd.IsNullOrEmpty())
+				{
+					stationeryInformation[0].NumberOfAllowedUsage = 1;
+					stationeryInformation.Add(new ReportInformationStationery
+					{
+						Stationery = report.Information.Stationery2nd,
+						SortIndex = 1,
+						NumberOfAllowedUsage = 0
+					});
+				}
+			}
+
+			stationeryInformation = stationeryInformation
+				.OrderBy(s => s.SortIndex)
+				.ToList();
+
+			var pageCounter = 1;
+			foreach (var stationaryItem in stationeryInformation)
+			{
+				var data = GetStationary(documentInternalId, stationaryItem.Stationery);
+				if (data is null)
+				{
+					continue;
+				}
+
+				if (stationaryItem.NumberOfAllowedUsage <= 0)
+				{
+					do
+					{
+						stationaryByPage.Add(pageCounter, data);
+						pageCounter++;
+					} while (pageCounter <= pageCount);
+				}
+				else
+				{
+					for (var i = 1; i <= stationaryItem.NumberOfAllowedUsage; i++)
+					{
+						stationaryByPage.Add(pageCounter, data);
+						pageCounter++;
+					}
+				}
+
+				if (pageCounter > pageCount)
+				{
+					break;
+				}
+			}
+
+			return stationaryByPage;
 		}
 	}
 }

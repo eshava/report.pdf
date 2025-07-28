@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 using Eshava.Report.Pdf.Core.Enums;
 
 namespace Eshava.Report.Pdf.Core.Models
@@ -10,13 +11,25 @@ namespace Eshava.Report.Pdf.Core.Models
 			Orientation = PageOrientation.Portrait;
 			DocumentSize = PageSize.A4;
 		}
-		
+
+		/// <summary>
+		/// Keep for downward compatible
+		/// use <see cref="StationeryInformation"/> instead
+		/// </summary>
 		[XmlElement("Stationery")]
 		public string Stationery { get; set; }
 
+		/// <summary>
+		/// Keep for downward compatible
+		/// use <see cref="StationeryInformation"/> instead
+		/// </summary>
 		[XmlElement("Stationery2nd")]
 		public string Stationery2nd { get; set; }
 
+		/// <summary>
+		/// Keep for downward compatible
+		/// use <see cref="StationeryInformation"/> instead
+		/// </summary>
 		[XmlElement("StationeryOnlyFirstPage")]
 		public bool StationeryOnlyFirstPage { get; set; }
 
@@ -37,5 +50,9 @@ namespace Eshava.Report.Pdf.Core.Models
 
 		[XmlElement("PageMargins")]
 		public PageMargins PageMargins { get; set; }
+
+		[XmlArray("StationeryInformation")]
+		[XmlArrayItem("StationeryEntry")]
+		public List<ReportInformationStationery> StationeryInformation { get; set; }
 	}
 }

@@ -167,9 +167,25 @@ public enum PositionCohesion
 <Report>
 	<Information>
 		<Watermark></Watermark>
+		<!-- start old version -->
 		<Stationery>{name_of_stationary}</Stationery>
 		<Stationery2nd>{name_of_stationary}</Stationery2nd>
 		<StationeryOnlyFirstPage>1 or 0</StationeryOnlyFirstPage>
+		<!-- end old version -->
+		<!-- start new version -->
+		<StationeryInformation>
+			<StationeryEntry>
+				<Stationery>{name_of_stationary}</Stationery>
+				<NumberOfAllowedUsage>1</NumberOfAllowedUsage>
+				<SortIndex>0</SortIndex>
+			</StationeryEntry>
+			<StationeryEntry>
+				<Stationery>{name_of_stationary}</Stationery>
+				<NumberOfAllowedUsage>0</NumberOfAllowedUsage>
+				<SortIndex>1</SortIndex>
+			</StationeryEntry>
+		</StationeryInformation>
+		<!-- end new version -->
 		<Orientation>Portrait or Landscape</Orientation>
 		<Reportauthor>{name_of_author}</Reportauthor>
 		<Reporttitle>{report_title}</Reporttitle>
@@ -248,7 +264,7 @@ In case a dynamic text block has to be spread over several pages, a distance to 
 ## Examples
 * Document in portait format 
     * document_portrait.xml 
-    * use images, stantionary
+    * use images, stationary
 * Document in landscape formart
     * document_landscape.xml
     * use images  
