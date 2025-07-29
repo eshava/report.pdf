@@ -178,11 +178,13 @@ public enum PositionCohesion
 				<Stationery>{name_of_stationery}</Stationery>
 				<NumberOfAllowedUsage>1</NumberOfAllowedUsage>
 				<SortIndex>0</SortIndex>
+				<Offset>0</Offset>
 			</StationeryEntry>
 			<StationeryEntry>
 				<Stationery>{name_of_stationery}</Stationery>
 				<NumberOfAllowedUsage>0</NumberOfAllowedUsage>
 				<SortIndex>1</SortIndex>
+				<Offset>0</Offset>
 			</StationeryEntry>
 		</StationeryInformation>
 		<!-- end new version -->

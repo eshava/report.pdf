@@ -8,13 +8,15 @@
 		<StationeryInformation>
 			<StationeryEntry>
 				<Stationery>stationery_first_page</Stationery>
-				<NumberOfAllowedUsage>2</NumberOfAllowedUsage>
+				<NumberOfAllowedUsage>1</NumberOfAllowedUsage>
 				<SortIndex>0</SortIndex>
+				<Offset>1</Offset>
 			</StationeryEntry>
 			<StationeryEntry>
 				<Stationery>stationery_following_page</Stationery>
 				<NumberOfAllowedUsage>2</NumberOfAllowedUsage>
 				<SortIndex>1</SortIndex>
+				<Offset>0</Offset>
 			</StationeryEntry>
 		</StationeryInformation>
 		<Orientation>Portrait</Orientation>

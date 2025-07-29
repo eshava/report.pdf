@@ -12,5 +12,8 @@ namespace Eshava.Report.Pdf.Core.Models
 
 		[XmlElement("SortIndex")]
 		public int SortIndex { get; set; }
+
+		[XmlElement("Offset")]
+		public int Offset { get; set; }
 	}
 }

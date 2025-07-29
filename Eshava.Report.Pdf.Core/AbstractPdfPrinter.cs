@@ -236,7 +236,8 @@ namespace Eshava.Report.Pdf.Core
 					{
 						Stationery = report.Information.Stationery,
 						SortIndex = 0,
-						NumberOfAllowedUsage = report.Information.StationeryOnlyFirstPage ? 1 : 0
+						NumberOfAllowedUsage = report.Information.StationeryOnlyFirstPage ? 1 : 0,
+						Offset = 0
 					});
 				}
 
@@ -247,7 +248,8 @@ namespace Eshava.Report.Pdf.Core
 					{
 						Stationery = report.Information.Stationery2nd,
 						SortIndex = 1,
-						NumberOfAllowedUsage = 0
+						NumberOfAllowedUsage = 0,
+						Offset = 0
 					});
 				}
 			}
@@ -264,6 +266,8 @@ namespace Eshava.Report.Pdf.Core
 				{
 					continue;
 				}
+
+				pageCounter += stationaryItem.Offset;
 
 				if (stationaryItem.NumberOfAllowedUsage <= 0)
 				{
