@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Eshava.Report.Pdf.Core.Extensions;
 using Eshava.Report.Pdf.Core.Models;
@@ -72,7 +73,8 @@ namespace Eshava.Report.Pdf.Core
 
 		public IEnumerable<TextSegment> AnalyzeText(Font font, string text)
 		{
-			font.Color = font.Color.ConvertHexColorToDecimalColor();
+			font.Color = font.Color?.Trim().ConvertHexColorToDecimalColor();
+			font.Color = font.Color.ConvertRGBFunctionToDecimalColor();
 
 			var textSegments = new List<TextSegment>();
 
@@ -88,6 +90,9 @@ namespace Eshava.Report.Pdf.Core
 			}
 			try
 			{
+				// remove hr tags
+				text = Regex.Replace(text, @".<hr.*?>{1}", " ");
+
 				var html = $"<div>{text.Replace("<br>", "<br/>")}</div>";
 				var xmlDocument = new XmlDocument();
 				// When loading the html as xml, spaces between tags are sometimes removed
@@ -399,6 +404,7 @@ namespace Eshava.Report.Pdf.Core
 								break;
 							case "color":
 								textSegment.Font.Color = tuple[1].Trim().ConvertHexColorToDecimalColor();
+								textSegment.Font.Color = textSegment.Font.Color.ConvertRGBFunctionToDecimalColor();
 
 								break;
 							case "margin-left" when xmlElement.Name.ToLower() == "li":

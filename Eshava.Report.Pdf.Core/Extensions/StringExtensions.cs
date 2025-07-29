@@ -1,14 +1,55 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Eshava.Report.Pdf.Core.Extensions
 {
 	public static class StringExtensions
 	{
+		private static Regex _regExRGBFunction = new Regex(@"\brgb\b\s*\({1}\s*(?<red>\d{1,3})\s*,{1}\s*(?<green>\d{1,3})\s*,{1}\s*(?<blue>\d{1,3})\s*\){1}.*", RegexOptions.Compiled);
+		private static Regex _regExRGBAFunction = new Regex(@"\brgba\b\s*\({1}\s*(?<red>\d{1,3})\s*,{1}\s*(?<green>\d{1,3})\s*,{1}\s*(?<blue>\d{1,3})\s*,{1}\s*(?<alpha>\d{1,3})\s*\){1}.*", RegexOptions.Compiled);
+
 		public static bool IsNullOrEmpty(this string text)
 		{
 			return String.IsNullOrEmpty(text);
+		}
+
+		public static string ConvertRGBFunctionToDecimalColor(this string rgbFunction)
+		{
+			if (rgbFunction.IsNullOrEmpty())
+			{
+				return rgbFunction;
+			}
+
+			rgbFunction = rgbFunction.ToLowerInvariant();
+
+			Match match = null;
+			if (rgbFunction.StartsWith("rgba"))
+			{
+				match = _regExRGBAFunction.Match(rgbFunction);
+			}
+			else if (rgbFunction.StartsWith("rgb"))
+			{
+				match = _regExRGBFunction.Match(rgbFunction);
+			}
+
+			if (match is null)
+			{
+				return rgbFunction;
+			}
+
+			var alpha = match.Groups["alpha"].Value;
+			var red = match.Groups["red"].Value;
+			var green = match.Groups["green"].Value;
+			var blue = match.Groups["blue"].Value;
+
+			if (alpha.IsNullOrEmpty())
+			{
+				alpha = "255";
+			}
+
+			return $"{alpha} {red} {green} {blue}";
 		}
 
 		public static string ConvertHexColorToDecimalColor(this string hexColor)
