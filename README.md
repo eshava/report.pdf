@@ -67,6 +67,7 @@ Platform independent core to calculate and generate pdf documents
 | ExpandAndShift | Boolean (1,0) | yes | yes | | | | | yes |
 | ShiftUpHeight | Point | yes | yes | | | | | yes |
 | NoShift | Boolean (1,0) | yes | yes | | | | | yes |
+| ConsiderAsCollidedForShift | Boolean (1,0) | yes | yes | yes | yes | yes | yes | yes |
 | Style | DashStyle | | | | yes | yes | yes | |
 | Linewidth | Point | | | | yes | yes | yes | |
 | MaxHeight | Boolean (1,0) | | | | yes | yes | yes | |
@@ -167,12 +168,6 @@ public enum PositionCohesion
 <Report>
 	<Information>
 		<Watermark></Watermark>
-		<!-- start old version -->
-		<Stationery>{name_of_stationery}</Stationery>
-		<Stationery2nd>{name_of_stationery}</Stationery2nd>
-		<StationeryOnlyFirstPage>1 or 0</StationeryOnlyFirstPage>
-		<!-- end old version -->
-		<!-- start new version -->
 		<StationeryInformation>
 			<StationeryEntry>
 				<Stationery>{name_of_stationery}</Stationery>
@@ -187,7 +182,6 @@ public enum PositionCohesion
 				<Offset>0</Offset>
 			</StationeryEntry>
 		</StationeryInformation>
-		<!-- end new version -->
 		<Orientation>Portrait or Landscape</Orientation>
 		<Reportauthor>{name_of_author}</Reportauthor>
 		<Reporttitle>{report_title}</Reporttitle>
@@ -218,6 +212,20 @@ public enum PositionCohesion
 	</Footer>
 </Report>
 ```
+
+### Xml Frame (previous stationery version)
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Report>
+	<Information>
+		<Stationery>{name_of_stationery}</Stationery>
+		<Stationery2nd>{name_of_stationery}</Stationery2nd>
+		<StationeryOnlyFirstPage>1 or 0</StationeryOnlyFirstPage>
+	</Information>
+	...
+</Report>
+```
+
 ```csharp
 public enum PositonType
 {

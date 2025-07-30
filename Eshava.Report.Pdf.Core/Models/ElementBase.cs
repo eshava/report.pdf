@@ -29,6 +29,9 @@ namespace Eshava.Report.Pdf.Core.Models
 		[XmlAttribute]
 		public double PosY { get; set; }
 
+		[XmlAttribute]
+		public bool ConsiderAsCollidedForShift { get; set; }
+
 		[XmlText]
 		public string Content { get; set; }
 

@@ -86,8 +86,9 @@ namespace Eshava.Report.Pdf.Core
 			var elementCurrentHtml = elements[index] as ElementHtml;
 			var startCurrent = pointsStart[elementCurrentText != default ? elementCurrentText.Id : elementCurrentHtml.Id];
 			var endCurrent = pointsEnd[elementCurrentText != default ? elementCurrentText.Id : elementCurrentHtml.Id];
+			//var currentShiftUpHeight = elementCurrentText != default ? elementCurrentText.ShiftUpHeight : elementCurrentHtml.ShiftUpHeight;
 
-			var calculatedResult = CheckCollisions(graphics, elements, new List<int> { index }, pointsStart, pointsEnd, sizes, startCurrent, endCurrent);
+			var calculatedResult = CheckCollisions(graphics, elements, new List<int> { index }, pointsStart, pointsEnd, sizes, startCurrent, endCurrent /*, currentShiftUpHeight*/);
 
 			var borderLeft = 0.0;
 			var borderRight = Double.MaxValue;
@@ -118,8 +119,8 @@ namespace Eshava.Report.Pdf.Core
 
 			foreach (var below in calculatedResult.ElementIndexesBelow)
 			{
-				var ShiftUpHeight = elementCurrentText != default ? elementCurrentText.ShiftUpHeight : elementCurrentHtml.ShiftUpHeight;
-				ShiftElementsUp(graphics, elements, index, below, borderLeft, borderRight, ShiftUpHeight, pointsStart, pointsEnd, sizes);
+				var shiftUpHeight = elementCurrentText != default ? elementCurrentText.ShiftUpHeight : elementCurrentHtml.ShiftUpHeight;
+				ShiftElementsUp(graphics, elements, index, below, borderLeft, borderRight, shiftUpHeight, pointsStart, pointsEnd, sizes);
 			}
 
 			return true;
@@ -143,7 +144,7 @@ namespace Eshava.Report.Pdf.Core
 
 				// For lines and classes derived from them, the height is the Y-coordinate for the end of the element and must therefore also be moved
 				var line = element as ElementLine;
-				if (line != null && !line.MaxHeight)
+				if (line != null && line is not ElementRectangle && line is not ElementRectangleFill && !line.MaxHeight)
 				{
 					backupHeight = line.Height;
 					line.Height -= shiftUpHeight;
@@ -158,8 +159,13 @@ namespace Eshava.Report.Pdf.Core
 				pointsStart[element.Id] = new Point(start.X, Math.Round(start.Y - shiftUpHeight, 2));
 				pointsEnd[element.Id] = new Point(end.X, Math.Round(end.Y - shiftUpHeight, 2));
 
+
+				//var elementText = elements[indexBelow] as ElementText;
+				//var elementHtml = elements[indexBelow] as ElementHtml;
+				//var currentShiftUpHeight = elementText?.ShiftUpHeight ?? elementHtml?.ShiftUpHeight ?? 0.0;
+
 				// Check whether the shift has caused overlaps with other elements
-				var collisionItemResult = CheckCollisions(graphics, elements, new List<int> { indexCurrent, indexBelow }, pointsStart, pointsEnd, sizes, pointsStart[element.Id], pointsEnd[element.Id]);
+				var collisionItemResult = CheckCollisions(graphics, elements, new List<int> { indexCurrent, indexBelow }, pointsStart, pointsEnd, sizes, pointsStart[element.Id], pointsEnd[element.Id] /*, currentShiftUpHeight*/);
 				if (collisionItemResult.Collisions.Any(c => c.Vertical != Collision.None && c.Horizontal != Collision.None && !IsShiftUpElement(elements[c.ElementIndex])))
 				{
 					// There was at least one overlap with another element, so the shift must be reversed
@@ -174,6 +180,30 @@ namespace Eshava.Report.Pdf.Core
 					pointsEnd[element.Id] = end;
 				}
 			}
+		}
+
+		private ElementBase GetFirstElementWithShiftDownCollision(
+			int jnx,
+			Point start,
+			Point end,
+			List<ElementBase> elements,
+			Dictionary<Guid, Point> pointsStart,
+			Dictionary<Guid, Point> pointsEnd,
+			bool limitToFirstElement
+			)
+		{
+			// old => o; new => n
+			// (nsx < osx und nex > osx) oder (nsx >= osx und nsx <= aex)
+			var filteredElements = elements.Skip(jnx);
+			if (limitToFirstElement)
+			{
+				filteredElements = filteredElements.Take(1);
+			}
+
+			return filteredElements.FirstOrDefault(element =>
+				(pointsStart[element.Id].X < start.X && pointsEnd[element.Id].X > start.X)
+				|| (pointsStart[element.Id].X >= start.X && pointsStart[element.Id].X < end.X)
+			);
 		}
 
 		/// <summary>
@@ -205,16 +235,26 @@ namespace Eshava.Report.Pdf.Core
 					for (var jnx = inx + 1; jnx < elements.Count; jnx++)
 					{
 						CalculateElement(graphics, elements[jnx], pointsStart, pointsEnd, sizes);
+					}
 
-						// old => o; new => n
-						// (nsx < osx und nex > osx) oder (nsx >= osx und nsx <= aex)
-						if ((pointsStart[elements[jnx].Id].X < start.X && pointsEnd[elements[jnx].Id].X > start.X) || (pointsStart[elements[jnx].Id].X >= start.X && pointsStart[elements[jnx].Id].X < end.X))
+					var collisionReference = GetFirstElementWithShiftDownCollision(inx + 1, start, end, elements, pointsStart, pointsEnd, false)?.PosY;
+
+					for (var jnx = inx + 1; jnx < elements.Count; jnx++)
+					{
+						var collisionDetected = GetFirstElementWithShiftDownCollision(jnx, start, end, elements, pointsStart, pointsEnd, true) is not null;
+						if (!collisionDetected && elements[jnx].ConsiderAsCollidedForShift && (pointsStart[elements[jnx].Id].X >= end.X || pointsEnd[elements[jnx].Id].X < start.X))
+						{
+							//var originalPosYEnd = end.Y - heightDifference;
+							collisionDetected = collisionReference.HasValue && collisionReference.Value < pointsStart[elements[jnx].Id].Y;
+						}
+
+						if (collisionDetected)
 						{
 							// Move element below and note new position
 							elements[jnx].PosY += heightDifference;
 
 							// Also move the end point of the line 
-							if (elements[jnx] is ElementLine)
+							if (elements[jnx] is ElementLine && elements[jnx] is not ElementRectangle && elements[jnx] is not ElementRectangleFill)
 							{
 								elements[jnx].Height += heightDifference;
 							}
@@ -280,7 +320,7 @@ namespace Eshava.Report.Pdf.Core
 			return false;
 		}
 
-		private CollisionResult CheckCollisions(IGraphics graphics, List<ElementBase> elements, List<int> indexes, Dictionary<Guid, Point> pointsStart, Dictionary<Guid, Point> pointsEnd, Dictionary<Guid, Size> sizes, Point startCurrent, Point endCurrent)
+		private CollisionResult CheckCollisions(IGraphics graphics, List<ElementBase> elements, List<int> indexes, Dictionary<Guid, Point> pointsStart, Dictionary<Guid, Point> pointsEnd, Dictionary<Guid, Size> sizes, Point startCurrent, Point endCurrent /*, double currentShiftUpHeight*/)
 		{
 			var collisionList = new List<CollisionItem>();
 			var belowList = new List<int>();
@@ -298,6 +338,19 @@ namespace Eshava.Report.Pdf.Core
 
 					var collisionHorizontal = DetectCollision(startCurrent.X, endCurrent.X, start.X, end.X);
 					var collisionVertical = DetectCollision(startCurrent.Y, endCurrent.Y, start.Y, end.Y);
+
+					//if (collisionVertical == Collision.None && element.ConsiderAsCollidedForShift)
+					//{
+					//	var hasHeightCollision = startCurrent.Y < start.Y && (startCurrent.Y + currentShiftUpHeight) > start.Y;
+					//	if (startCurrent.X > end.X && hasHeightCollision)
+					//	{
+					//		collisionVertical = Collision.LeftOrTop;
+					//	}
+					//	else if (endCurrent.X < start.X && hasHeightCollision)
+					//	{
+					//		collisionVertical = Collision.RightOrBottom;
+					//	}
+					//}
 
 					// All elements that have an overlap with the current element either horizontally or vertically
 					if (collisionHorizontal != Collision.None || collisionVertical != Collision.None)
