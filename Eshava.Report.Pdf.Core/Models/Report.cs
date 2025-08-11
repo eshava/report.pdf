@@ -27,5 +27,12 @@ namespace Eshava.Report.Pdf.Core.Models
 
 		[XmlElement("PostPositions")]
 		public ReportPositionContainer PostPositionContainer { get; set; }
+
+		public void SortPositions()
+		{
+			PositionContainer?.SortPositions();
+			PrePositionContainer?.SortPositions();
+			PostPositionContainer?.SortPositions();
+		}
 	}
 }

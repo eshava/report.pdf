@@ -34,6 +34,7 @@ namespace Eshava.Report.Pdf.Core
 			}
 
 			var report = reportResult.Data;
+			report.SortPositions();
 
 			SetDocumentInformation(document, report.Information);
 			PrependPdfs(document);
@@ -87,7 +88,7 @@ namespace Eshava.Report.Pdf.Core
 			document.RemovePage(preparePage);
 
 			var stationaryInformation = GetStationeryInformation(report, document.InternalId, pages.Count);
-			
+
 			foreach (var page in pages)
 			{
 				var currentPage = document.AddPage();

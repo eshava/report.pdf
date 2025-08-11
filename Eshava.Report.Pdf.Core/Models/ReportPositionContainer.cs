@@ -83,6 +83,11 @@ namespace Eshava.Report.Pdf.Core.Models
 		[XmlIgnore]
 		public double PositionToRepeatHeight { get; private set; }
 
+		public void SortPositions()
+		{
+			Positions?.Sort(ReportPosition.Compare);
+		}
+
 		public void AnalyzePositions(IGraphics graphics)
 		{
 			var move = new MoveElementLogic();

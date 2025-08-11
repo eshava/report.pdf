@@ -35,6 +35,56 @@ namespace Eshava.Report.Pdf.Core.Models
 			get { return GetAllElements().Count == 0; }
 		}
 
+		public static int Compare(ReportPosition positionA, ReportPosition positionB)
+		{
+			if (positionA.SequenceNo < positionB.SequenceNo)
+			{
+				return -1;
+			}
+
+			if (positionA.SequenceNo > positionB.SequenceNo)
+			{
+				return 1;
+			}
+
+			if (positionA.Type == positionB.Type)
+			{
+				return 0;
+			}
+
+			if (positionA.Type == PositonType.RepeatOnTop)
+			{
+				return -1;
+			}
+
+			if (positionB.Type == PositonType.RepeatOnTop)
+			{
+				return 1;
+			}
+
+			if (positionA.Type == PositonType.OnlyOnNewPage)
+			{
+				return -1;
+			}
+
+			if (positionB.Type == PositonType.OnlyOnNewPage)
+			{
+				return 1;
+			}
+
+			if (positionA.Type == PositonType.OnlyAsLastOnPage)
+			{
+				return 1;
+			}
+
+			if (positionB.Type == PositonType.OnlyAsLastOnPage)
+			{
+				return -1;
+			}
+
+			return 0;
+		}
+
 		/// <summary>
 		/// Distributes the elements of the current position to several positions so that they fit into the page frame. 
 		/// The method should only be used if a new page has been started and the position still does not fit into the position range.
