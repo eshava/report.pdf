@@ -12,6 +12,11 @@ namespace Eshava.Report.Pdf.Core
 	public class HtmlInterpreter
 	{
 		private const double CENTIMETERTOPOINTFACTOR = 28.3465;
+		private const string P_TAG = "p";
+		private const string UL_TAG = "ul";
+		private const string OL_TAG = "ol";
+		private const string LI_TAG = "li";
+		private const string BR_TAG = "br";
 
 		public string ConvertToHtml(string text)
 		{
@@ -226,7 +231,7 @@ namespace Eshava.Report.Pdf.Core
 								?? "";
 
 				// Ignore leading spaces after a line break
-				if (node.PreviousSibling?.Name.ToLower() == "br")
+				if (node.PreviousSibling?.Name.ToLower() == BR_TAG)
 				{
 					text = text.TrimStart();
 				}
@@ -269,7 +274,7 @@ namespace Eshava.Report.Pdf.Core
 				}
 			};
 
-			if (xmlElement.Name.ToLower() == "br")
+			if (xmlElement.Name.ToLower() == BR_TAG)
 			{
 				segment.Text = Environment.NewLine;
 				parentSegment.Children.Add(segment);
@@ -277,35 +282,27 @@ namespace Eshava.Report.Pdf.Core
 				return;
 			}
 
-			if (xmlElement.Name.ToLower() == "ul" || xmlElement.Name.ToLower() == "ol")
+			if (xmlElement.Name.ToLower() == UL_TAG || xmlElement.Name.ToLower() == OL_TAG)
 			{
-				if (!CheckForListTagInPreviousElements(xmlElement))
+				if (!CheckForTagInPreviousElements(xmlElement, null, UL_TAG, OL_TAG))
 				{
 					// Add only a new line if the previous node is no list tag (<br> is be ignored)
-					parentSegment.Children.Add(new TextSegmentExtended
-					{
-						Font = segment.Font,
-						Text = Environment.NewLine
-					});
+					AddNewLineSegement(parentSegment, segment.Font);
 				}
 
 				// HACK
-				if (xmlElement.Name.ToLower() == "ul")
+				if (xmlElement.Name.ToLower() == UL_TAG)
 				{
 					segment.LineIndent = 2.0;
 				}
-				else if (xmlElement.Name.ToLower() == "ol")
+				else if (xmlElement.Name.ToLower() == OL_TAG)
 				{
 					segment.LineIndent = 1.5;
 				}
 			}
-			else if (xmlElement.Name.ToLower() == "p")
+			else if (xmlElement.Name.ToLower() == P_TAG && !CheckForTagInPreviousElements(xmlElement, P_TAG, UL_TAG, OL_TAG))
 			{
-				parentSegment.Children.Add(new TextSegmentExtended
-				{
-					Font = segment.Font,
-					Text = Environment.NewLine
-				});
+				AddNewLineSegement(parentSegment, segment.Font);
 			}
 			else if (xmlElement.Name.ToLower() == "b" || xmlElement.Name.ToLower() == "strong")
 			{
@@ -333,16 +330,16 @@ namespace Eshava.Report.Pdf.Core
 				AnalyzeNode(item, segment);
 			}
 
-			if (xmlElement.Name.ToLower() == "p" || xmlElement.Name.ToLower() == "li")
+			if (xmlElement.Name.ToLower() == P_TAG && !CheckForTagInNextElements(xmlElement, P_TAG))
 			{
-				parentSegment.Children.Add(new TextSegmentExtended
-				{
-					Font = segment.Font,
-					Text = Environment.NewLine
-				});
+				AddNewLineSegement(parentSegment, segment.Font);
+			}
+			else if (xmlElement.Name.ToLower() == LI_TAG)
+			{
+				AddNewLineSegement(parentSegment, segment.Font);
 			}
 
-			if (xmlElement.Name.ToLower() == "ul")
+			if (xmlElement.Name.ToLower() == UL_TAG)
 			{
 				segment.LineIndent = 0.0;
 				foreach (var childSegment in segment.Children.Where(s => s.Text != Environment.NewLine))
@@ -353,7 +350,7 @@ namespace Eshava.Report.Pdf.Core
 					childSegment.SkipParagraphAlignment = true;
 				}
 			}
-			else if (xmlElement.Name.ToLower() == "ol")
+			else if (xmlElement.Name.ToLower() == OL_TAG)
 			{
 				segment.LineIndent = 0.0;
 
@@ -368,7 +365,7 @@ namespace Eshava.Report.Pdf.Core
 					counter++;
 				}
 			}
-			else if (xmlElement.Name.ToLower() == "li")
+			else if (xmlElement.Name.ToLower() == LI_TAG)
 			{
 				if (segment.LineIndent == 0.0 && parentSegment.LineIndent > 0.0)
 				{
@@ -377,18 +374,45 @@ namespace Eshava.Report.Pdf.Core
 			}
 		}
 
-		private bool CheckForListTagInPreviousElements(XmlNode xmlElement)
+		private void AddNewLineSegement(TextSegmentExtended segment, Font font)
+		{
+			segment.Children.Add(new TextSegmentExtended
+			{
+				Font = font,
+				Text = Environment.NewLine
+			});
+		}
+
+		private bool CheckForTagInPreviousElements(XmlNode xmlElement, string cancelAtTag, params string[] tags)
 		{
 			while (xmlElement?.PreviousSibling != null)
 			{
-				if (xmlElement.PreviousSibling?.Name.ToLower() == "ul"
-					|| xmlElement.PreviousSibling?.Name.ToLower() == "ol"
-				)
+				if (!cancelAtTag.IsNullOrEmpty() && xmlElement.PreviousSibling?.Name.ToLower() == cancelAtTag)
+				{
+					return false;
+				}
+
+				if (tags.Contains(xmlElement.PreviousSibling?.Name.ToLower()))
 				{
 					return true;
 				}
 
 				xmlElement = xmlElement.PreviousSibling;
+			}
+
+			return false;
+		}
+
+		private bool CheckForTagInNextElements(XmlNode xmlElement, params string[] tags)
+		{
+			while (xmlElement?.NextSibling != null)
+			{
+				if (tags.Contains(xmlElement.NextSibling?.Name.ToLower()))
+				{
+					return true;
+				}
+
+				xmlElement = xmlElement.NextSibling;
 			}
 
 			return false;

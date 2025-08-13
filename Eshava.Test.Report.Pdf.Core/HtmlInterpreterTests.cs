@@ -244,13 +244,10 @@ come about partiality Prepared on <b style=""color: #ff0000"">when</b> wish wher
 
 			var result = _classUnderTest.AnalyzeText(font, html).ToList();
 
-			result.Should().HaveCount(4);
+			result.Should().HaveCount(3);
 
 			var index = 0;
 			result[index].Text.Should().Be("very you get up speedily if Off supposing moment");
-			
-			index++;
-			result[index].Text.Should().Be(Environment.NewLine);
 			
 			index++;
 			result[index].Text.Should().Be(Environment.NewLine);
@@ -861,6 +858,315 @@ wish where we held steepest True he questions eat Thoughts";
 			result[index].Font.Underline.Should().BeFalse();
 			result[index].Font.Color.Should().Be("255 0 0 0");
 			result[index].LineIndent.Should().Be(28.3465 / 1.5);
+		}
+
+		[TestMethod]
+		public void AnalyzeTextTwoEmbeddedListTagsWithPTagTest()
+		{
+			var font = new Font
+			{
+				Color = "#000000",
+				Size = 12.0,
+				Bold = false,
+				Underline = false,
+				Italic = false,
+				Fontfamily = "Arial"
+			};
+			var html = $"""
+				<p>very you get up speedily if Off supposing moment</p>
+				<p>very you get up speedily if Off supposing moment</p>
+				<ul>
+					<li>very you get up speedily</li>
+					<li>if Off supposing moment</li>
+				</ul>
+				<ol>
+					<li>very you get up speedily</li>
+					<li>if Off supposing moment</li>
+				</ol>
+				<p>very you get up speedily if Off supposing moment</p>
+				<p>very you get up speedily if Off supposing moment</p>
+				""";
+
+
+			var result = _classUnderTest.AnalyzeText(font, html).ToList();
+
+			result.Should().HaveCount(19);
+
+			var index = 0;
+			result[index].Text.Should().Be("very you get up speedily if Off supposing moment");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be(Environment.NewLine);
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be("very you get up speedily if Off supposing moment");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be(Environment.NewLine);
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be("-");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(28.3465 / 2.0);
+			result[index].SkipParagraphAlignment.Should().BeTrue();
+			result[index].ReduceLineIndent.Should().BeTrue();
+			result[index].ReduceLineIndentByText.Should().Be("- ");
+
+			index++;
+			result[index].Text.Should().Be(" very you get up speedily");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(28.3465 / 2.0);
+
+			index++;
+			result[index].Text.Should().Be(Environment.NewLine);
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be("-");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(28.3465 / 2.0);
+			result[index].SkipParagraphAlignment.Should().BeTrue();
+			result[index].ReduceLineIndent.Should().BeTrue();
+			result[index].ReduceLineIndentByText.Should().Be("- ");
+
+			index++;
+			result[index].Text.Should().Be(" if Off supposing moment");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(28.3465 / 2.0);
+
+			index++;
+			result[index].Text.Should().Be(Environment.NewLine);
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be("1.");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(28.3465 / 1.5);
+			result[index].SkipParagraphAlignment.Should().BeTrue();
+			result[index].ReduceLineIndent.Should().BeTrue();
+			result[index].ReduceLineIndentByText.Should().Be("1. ");
+
+			index++;
+			result[index].Text.Should().Be(" very you get up speedily");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(28.3465 / 1.5);
+
+			index++;
+			result[index].Text.Should().Be(Environment.NewLine);
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be("2.");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(28.3465 / 1.5);
+			result[index].SkipParagraphAlignment.Should().BeTrue();
+			result[index].ReduceLineIndent.Should().BeTrue();
+			result[index].ReduceLineIndentByText.Should().Be("2. ");
+
+			index++;
+			result[index].Text.Should().Be(" if Off supposing moment");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(28.3465 / 1.5);
+
+			index++;
+			result[index].Text.Should().Be(Environment.NewLine);
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be("very you get up speedily if Off supposing moment");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be(Environment.NewLine);
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be("very you get up speedily if Off supposing moment");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+		}
+
+		[TestMethod]
+		public void AnalyzeTextOnlyPTagsTest()
+		{
+			var font = new Font
+			{
+				Color = "#000000",
+				Size = 12.0,
+				Bold = false,
+				Underline = false,
+				Italic = false,
+				Fontfamily = "Arial"
+			};
+			var html = $"""
+				<p>very you get up speedily if Off supposing moment</p>
+				<p>very you get up speedily if Off supposing moment</p>
+				<p>very you get up speedily if Off supposing moment</p>
+				""";
+
+
+			var result = _classUnderTest.AnalyzeText(font, html).ToList();
+
+			result.Should().HaveCount(5);
+
+			var index = 0;
+			result[index].Text.Should().Be("very you get up speedily if Off supposing moment");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be(Environment.NewLine);
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be("very you get up speedily if Off supposing moment");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be(Environment.NewLine);
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
+
+			index++;
+			result[index].Text.Should().Be("very you get up speedily if Off supposing moment");
+			result[index].Font.Fontfamily.Should().Be("Arial");
+			result[index].Font.Size.Should().Be(12.0);
+			result[index].Font.Bold.Should().BeFalse();
+			result[index].Font.Italic.Should().BeFalse();
+			result[index].Font.Underline.Should().BeFalse();
+			result[index].Font.Color.Should().Be("255 0 0 0");
+			result[index].LineIndent.Should().Be(0);
 		}
 
 		[TestMethod]
