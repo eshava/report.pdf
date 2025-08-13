@@ -277,13 +277,17 @@ namespace Eshava.Report.Pdf.Core
 				return;
 			}
 
-			if (xmlElement.Name.ToLower() == "p" || xmlElement.Name.ToLower() == "ul" || xmlElement.Name.ToLower() == "ol")
+			if (xmlElement.Name.ToLower() == "ul" || xmlElement.Name.ToLower() == "ol")
 			{
-				parentSegment.Children.Add(new TextSegmentExtended
+				if (!CheckForListTagInPreviousElements(xmlElement))
 				{
-					Font = segment.Font,
-					Text = Environment.NewLine
-				});
+					// Add only a new line if the previous node is no list tag (<br> is be ignored)
+					parentSegment.Children.Add(new TextSegmentExtended
+					{
+						Font = segment.Font,
+						Text = Environment.NewLine
+					});
+				}
 
 				// HACK
 				if (xmlElement.Name.ToLower() == "ul")
@@ -294,6 +298,14 @@ namespace Eshava.Report.Pdf.Core
 				{
 					segment.LineIndent = 1.5;
 				}
+			}
+			else if (xmlElement.Name.ToLower() == "p")
+			{
+				parentSegment.Children.Add(new TextSegmentExtended
+				{
+					Font = segment.Font,
+					Text = Environment.NewLine
+				});
 			}
 			else if (xmlElement.Name.ToLower() == "b" || xmlElement.Name.ToLower() == "strong")
 			{
@@ -349,15 +361,11 @@ namespace Eshava.Report.Pdf.Core
 				foreach (var childSegment in segment.Children.Where(s => s.Text != Environment.NewLine))
 				{
 					childSegment.Text = $"{counter}.";
-					counter++;
-				}
-
-				counter--;
-				foreach (var childSegment in segment.Children.Where(s => s.Text != Environment.NewLine))
-				{
 					childSegment.ReduceLineIndent = true;
-					childSegment.ReduceLineIndentByText = $"{counter}. ";
+					childSegment.ReduceLineIndentByText = $"{childSegment.Text} ";
 					childSegment.SkipParagraphAlignment = true;
+
+					counter++;
 				}
 			}
 			else if (xmlElement.Name.ToLower() == "li")
@@ -367,6 +375,23 @@ namespace Eshava.Report.Pdf.Core
 					segment.LineIndent = CENTIMETERTOPOINTFACTOR / parentSegment.LineIndent;
 				}
 			}
+		}
+
+		private bool CheckForListTagInPreviousElements(XmlNode xmlElement)
+		{
+			while (xmlElement?.PreviousSibling != null)
+			{
+				if (xmlElement.PreviousSibling?.Name.ToLower() == "ul"
+					|| xmlElement.PreviousSibling?.Name.ToLower() == "ol"
+				)
+				{
+					return true;
+				}
+
+				xmlElement = xmlElement.PreviousSibling;
+			}
+
+			return false;
 		}
 
 		private void CheckAttributes(XmlElement xmlElement, TextSegment textSegment)

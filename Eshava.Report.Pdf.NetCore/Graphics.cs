@@ -251,6 +251,11 @@ namespace Eshava.Report.Pdf
 
 		private XColor TranslateColor(string color)
 		{
+			if (color.IsNullOrEmpty())
+			{
+				return XColor.FromArgb(0, 0, 0);
+			}
+
 			try
 			{
 				var parts = color.Split(' ');
