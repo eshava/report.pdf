@@ -284,7 +284,7 @@ namespace Eshava.Report.Pdf.Core
 
 			if (xmlElement.Name.ToLower() == UL_TAG || xmlElement.Name.ToLower() == OL_TAG)
 			{
-				if (!CheckForTagInPreviousElements(xmlElement, null, UL_TAG, OL_TAG))
+				if (!CheckForTagInPreviousElements(xmlElement, P_TAG, UL_TAG, OL_TAG))
 				{
 					// Add only a new line if the previous node is no list tag (<br> is be ignored)
 					AddNewLineSegement(parentSegment, segment.Font);
@@ -330,7 +330,7 @@ namespace Eshava.Report.Pdf.Core
 				AnalyzeNode(item, segment);
 			}
 
-			if (xmlElement.Name.ToLower() == P_TAG && !CheckForTagInNextElements(xmlElement, P_TAG))
+			if (xmlElement.Name.ToLower() == P_TAG && !CheckForTagInNextElements(xmlElement, P_TAG, UL_TAG, OL_TAG))
 			{
 				AddNewLineSegement(parentSegment, segment.Font);
 			}
